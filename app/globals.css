@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Iansui&display=swap');
+body{
+    margin: 0;
+    padding: 0;
+}
+.wrapper{
+    min-height: 100vh;
+    min-width: 100vw;
+    overflow: hidden;
+}

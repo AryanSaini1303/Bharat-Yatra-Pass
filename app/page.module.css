@@ -1,0 +1,54 @@
+.background {
+  background-position: center;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  filter: drop-shadow(0 -5px 100px #ffd500);
+}
+.googleLogin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  border: none;
+  border-radius: 3rem;
+  padding: 0.3rem 1.3rem;
+  cursor: pointer;
+  transition: 0.2s all ease-in-out;
+  width: 90%;
+  box-shadow: inset -5px -5px 6px darkgrey;
+  margin: 3rem auto;
+  animation:float 2s infinite;
+}
+.googleLogin:active {
+  background-color: rgb(44, 44, 44);
+  color: whitesmoke;
+  transform: scale(0.98);
+  opacity: 0.5;
+  box-shadow: inset -5px -5px 10px whitesmoke;
+}
+.header * {
+  font-family: "Iansui", cursive;
+  font-weight: lighter;
+  font-style: normal;
+  text-align: center;
+  margin: 0.8rem 0;
+}
+.header h1 {
+  font-weight: bolder;
+}
+.content {
+  margin: 7rem 0;
+}
+@keyframes float{
+    0%{
+        transform: translateY(0);
+    }
+    50%{
+        transform: translateY(-0.2rem);
+    }
+    100%{
+        transform: translateY(0);
+    }
+}
