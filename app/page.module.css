@@ -1,10 +1,9 @@
 .background {
-  background-position: center;
   position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;
-  filter: drop-shadow(0 -5px 100px #ffd500);
+  filter: drop-shadow(0 -5px 50px #ffd500);
 }
 .googleLogin {
   display: flex;
@@ -19,7 +18,7 @@
   width: 90%;
   box-shadow: inset -5px -5px 6px darkgrey;
   margin: 3rem auto;
-  animation:float 2s infinite;
+  animation: float 2s infinite;
 }
 .googleLogin:active {
   background-color: rgb(44, 44, 44);
@@ -35,20 +34,23 @@
   text-align: center;
   margin: 0.8rem 0;
 }
+.header {
+  padding: 0 1rem;
+}
 .header h1 {
   font-weight: bolder;
 }
 .content {
-  margin: 7rem 0;
+  margin: 4rem 0;
 }
-@keyframes float{
-    0%{
-        transform: translateY(0);
-    }
-    50%{
-        transform: translateY(-0.2rem);
-    }
-    100%{
-        transform: translateY(0);
-    }
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.2rem);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
