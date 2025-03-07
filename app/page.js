@@ -3,6 +3,7 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { Noto_Sans } from "next/font/google";
 import { signIn, useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 const notoSans = Noto_Sans({
   weight: "400",
@@ -12,6 +13,9 @@ const notoSans = Noto_Sans({
 export default function Home() {
   const { data: session } = useSession();
   console.log(session);
+  useEffect(()=>{
+    session&&window.location.replace("/home");
+  },[session])
   return (
     <div className="wrapper">
       <div className={styles.loginPage}>
