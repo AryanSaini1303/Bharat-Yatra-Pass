@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BharatYatraPass
 
-## Getting Started
+BharatYatraPass is a seamless and efficient online ticket booking platform for India's iconic monuments and tourist attractions. Designed with a mobile-first approach, it offers a user-friendly experience for travelers, administrators, and gate authorities.
 
-First, run the development server:
+## 🚀 Features
+
+### **User Portal**
+
+* 📱 **Mobile-First, Responsive UI** – Optimized for all devices.
+* 🏛️ **Browse & Filter Monuments** – Discover famous Indian landmarks.
+* 🔐 **Secure Authentication** – Login via Email/Google.
+* 🎫 **Easy Ticket Booking** – Select date, book, and pay securely.
+* 💳 **Payment Gateway Integration** – Multiple payment options.
+* 📄 **Digital Ticket with QR & Reference ID** – Instant e-ticket generation.
+* 📂 **User Dashboard** – View and manage bookings with ease.
+
+### **Admin Panel**
+
+* 🏗️ **Monument & Ticket Management** – Add, edit, or remove listings.
+* 📊 **Booking & Transaction Tracking** – Monitor bookings and revenue.
+* 📈 **Reports & Analytics** – Gain insights on user activity and trends.
+* 👥 **User & Support Management** – Handle customer queries and issues.
+
+### **Vendor/Gate Authority System**
+
+* 🔍 **QR Code Scanning** – Instant ticket validation.
+* 🔢 **Reference ID Verification** – Manual ticket authentication.
+* 📡 **Real-time Status Updates** – Track validated entries.
+
+## 🛠️ Tech Stack
+
+* **Frontend** – Next.js, React, Tailwind CSS
+* **Backend** – Node.js, Express.js
+* **Database** – PostgreSQL with Prisma ORM
+* **Authentication** – NextAuth.js (Google, Email login)
+* **Payment Gateway** – Razorpay / Stripe
+* **QR Code Generation & Scanning** – QR Code API
+* **Hosting & Deployment** – Vercel / AWS / Railway
+
+## 📌 Installation & Setup
+
+### **Clone the Repository**
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+ git clone https://github.com/yourusername/BharatYatraPass.git
+ cd BharatYatraPass
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### **Install Dependencies**
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+ npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### **Environment Variables**
 
-## Learn More
+Create a `.env` file and configure the required variables:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+DATABASE_URL=your_postgres_url
+NEXTAUTH_SECRET=your_auth_secret
+NEXT_PUBLIC_PAYMENT_KEY=your_payment_key
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### **Run the Development Server**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+ npm run dev
+```
 
-## Deploy on Vercel
+## 🚧 Future Prospects
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* **🚆 Integration with Railway Ticketing** – Expanding to travel routes.
+* **🛎️ AI-Powered Travel Assistance** – Smart recommendations for tourists.
+* **📍 Augmented Reality Guide** – Immersive historical insights at monuments.
+* **📲 Mobile App** – Native Android & iOS app for better accessibility.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open issues, submit PRs, or suggest improvements.
+
+---
+
+*Developed with ❤️ by Aryan & Team.*
