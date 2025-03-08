@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Iansui&display=swap');
-body{
-    margin: 0;
-    padding: 0;
-    user-select: none;
+@import url("https://fonts.googleapis.com/css2?family=Iansui&display=swap");
+:root {
+  --font: "Iansui", cursive;
 }
-:root{
-    --font:"Iansui", cursive;
+body {
+  margin: 0;
+  padding: 0;
+  user-select: none;
 }
-.wrapper{
-    min-height: 100vh;
+.wrapper {
+  min-height: 100vh;
 }

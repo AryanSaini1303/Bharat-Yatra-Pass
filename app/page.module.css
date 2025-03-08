@@ -54,9 +54,8 @@
     transform: translateY(0);
   }
 }
-.loginPage{
-    display: flex;
-    flex-direction: column;
-    /* overflow: hidden; */
-    min-height: 100vh;
+.loginPage {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
