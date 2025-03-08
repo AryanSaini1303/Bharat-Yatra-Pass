@@ -2,6 +2,7 @@
   left: 0;
   bottom: 0;
   width: 100%;
+  filter: drop-shadow(0 -5px 60px gold);
 }
 .googleLogin {
   display: flex;
@@ -15,7 +16,7 @@
   transition: 0.2s all ease-in-out;
   width: 90%;
   box-shadow: inset -5px -5px 6px darkgrey;
-  margin: 3rem auto;
+  margin: 0 auto;
   animation: float 2s infinite;
 }
 .googleLogin:active {

@@ -159,13 +159,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 1rem 0;
 }
 .monumentList ul{
   list-style-type: none;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 1rem;
 }
 .monumentList li{
   width: 88%;
@@ -174,13 +175,15 @@
   border-radius: 20px;
   margin: auto;
   transition: 0.2s all ease-in-out;
+  box-shadow: 8px 8px 3px black;
 }
 .monumentList li a{
   text-decoration: none;
 }
 .monumentList li:active{
+  box-shadow: 3px 3px 10px black;
   transform: scale(0.98);
-  opacity: 0.5;
+  filter: brightness(80%);
 }
 .monumentList li::before{
   content: '';
