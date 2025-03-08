@@ -34,7 +34,7 @@
   position: absolute;
   backdrop-filter: blur(2px);
   z-index: 1000;
-  height: 100vh;
+  height: 89vh;
   top: 4rem;
   /* right: 0.2rem; */
   width: 100vw;
@@ -57,6 +57,8 @@
   animation: dropdownReveal 0.3s ease-in-out;
   box-shadow: 5px 5px 1px black;
   margin: 0;
+  max-height: 50vh;
+  overflow: scroll;
 }
 @keyframes dropdownReveal {
   0% {
@@ -140,4 +142,12 @@
   left: 1.5rem;
   transform: translate(-50%, -50%);
   pointer-events: none;
+}
+.location .dropdown ul {
+  left: 1rem;
+  width: fit-content;
+}
+.location .dropdown ul li button:active {
+  background-color: black;
+  color: whitesmoke;
 }

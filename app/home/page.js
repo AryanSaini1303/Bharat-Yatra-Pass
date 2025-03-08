@@ -6,8 +6,28 @@ import { useSession, signOut } from "next-auth/react";
 export default function Home() {
   const { data: session, status } = useSession();
   const [profileClick, setProfileClick] = useState(false);
+  const [locationClick, setLocationClick] = useState(false);
   const [location, setLocation] = useState("Udaipur");
   const dropdownRef = useRef(null); // React hook which is used to point to a div something like "document.getElementById"
+  const locationRef = useRef(null);
+  const cities = [
+    "Jaipur",
+    "Jodhpur",
+    "Kota",
+    "Bikaner",
+    "Bhiwadi",
+    "Udaipur",
+    "Ajmer",
+    "Bhilwara",
+    "Alwar",
+    "Sikar",
+    "Bharatpur",
+    "Pali",
+    "Sri",
+    "Ganganagar",
+    "Beawar",
+    "Baran",
+  ];
 
   function handleSearch(e) {
     e.preventDefault();
@@ -19,7 +39,12 @@ export default function Home() {
     if (profileClick && dropdownRef.current) {
       dropdownRef.current.focus();
     }
-  }, [profileClick]);// Here what we are doing is we just check on every profileClick that if it's true then we autofocus that particular div to make the onBlur work properly later on as without this the dropdown gets visible but it isn't focused so we have to click on it to get focused then click anywhere else to trigger onBlur, that's why this autofocus is needed.
+  }, [profileClick]); // Here what we are doing is we just check on every profileClick that if it's true then we autofocus that particular div to make the onBlur work properly later on as without this the dropdown gets visible but it isn't focused so we have to click on it to get focused then click anywhere else to trigger onBlur, that's why this autofocus is needed.
+  useEffect(() => {
+    if (locationClick && locationRef.current) {
+      locationRef.current.focus();
+    }
+  }, [locationClick]);
 
   if (status == "loading") return <div>Loading...</div>;
   if (status == "unauthenticated") return <div>Unauthenticated...</div>;
@@ -27,11 +52,59 @@ export default function Home() {
     <div className="wrapper">
       <header className={styles.header}>
         <section className={styles.location}>
-          <img src="/images/location.png" alt="" />
+          {!locationClick ? (
+            <img
+              src="/images/location.png"
+              alt=""
+              onClick={(e) => {
+                setLocationClick((prev) => !prev);
+              }}
+            />
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="2.5em"
+              height="2.5em"
+              onClick={() => {
+                setLocationClick((prev) => !prev);
+              }}
+            >
+              <path
+                fill="currentColor"
+                d="M19.1 4.9C15.2 1 8.8 1 4.9 4.9S1 15.2 4.9 19.1s10.2 3.9 14.1 0s4-10.3.1-14.2m-4.3 11.3L12 13.4l-2.8 2.8l-1.4-1.4l2.8-2.8l-2.8-2.8l1.4-1.4l2.8 2.8l2.8-2.8l1.4 1.4l-2.8 2.8l2.8 2.8z"
+              ></path>
+            </svg>
+          )}
           <section className={styles.text}>
             <h5>Location</h5>
             <h4>{location}</h4>
           </section>
+          {locationClick && (
+            <section className={styles.dropdown}>
+              <ul
+                ref={locationRef}
+                tabIndex={0}
+                onBlur={(e) => {
+                  !locationRef.current.contains(e.relatedTarget) &&
+                    setLocationClick(false);
+                }}
+              >
+                {cities.map((city) => (
+                  <li key={city}>
+                    <button
+                      onClick={() => {
+                        setLocation(city);
+                        setLocationClick(false);
+                      }}
+                    >
+                      {city}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </section>
         <section className={styles.profile}>
           {!profileClick ? (
