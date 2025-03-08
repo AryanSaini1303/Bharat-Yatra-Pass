@@ -2,7 +2,6 @@
   left: 0;
   bottom: 0;
   width: 100%;
-  filter:  contrast(200%) brightness(0%);
 }
 .googleLogin {
   display: flex;

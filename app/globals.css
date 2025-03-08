@@ -5,9 +5,8 @@ body{
     user-select: none;
 }
 :root{
-    --font:"Iansui", cursive
+    --font:"Iansui", cursive;
 }
 .wrapper{
-    background:linear-gradient(0deg,orange, yellow, lightyellow, white, rgba(255, 255, 255, 0));
     min-height: 100vh;
 }

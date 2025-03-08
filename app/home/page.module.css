@@ -151,3 +151,62 @@
   background-color: black;
   color: whitesmoke;
 }
+.monumentList img{
+  width: 100%;
+  border-radius: 20px;
+}
+.monumentList{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.monumentList ul{
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.monumentList li{
+  width: 88%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  margin: auto;
+  transition: 0.2s all ease-in-out;
+}
+.monumentList li a{
+  text-decoration: none;
+}
+.monumentList li:active{
+  transform: scale(0.98);
+  opacity: 0.5;
+}
+.monumentList li::before{
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:linear-gradient(rgba(255, 255, 255, 0), black);
+}
+.monumentList ul li .info{
+  font-family: var(--font);
+  font-weight: bolder;
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  left: 1rem;
+  color: white;
+}
+.monumentList .info{
+  margin: 1rem 0;
+}
+.monumentList .info *{
+  margin: 0.1rem 0;
+}
+.monumentList .info h4{
+  font-weight: lighter;
+  color: lightgrey;
+}

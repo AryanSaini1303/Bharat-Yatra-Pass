@@ -42,7 +42,7 @@ export default function Home() {
           </button>
         </div>
         <img
-          src="/images/background-mobile1.png"
+          src="/images/background-mobile.png"
           alt=""
           className={styles.background}
         />

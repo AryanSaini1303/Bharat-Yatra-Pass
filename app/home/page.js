@@ -186,6 +186,28 @@ export default function Home() {
           </g>
         </svg>
       </form>
+      <section className={styles.monumentList}>
+        <ul>
+          <li>
+            <a href="#">
+              <img src="/images/monument1.jpg" alt="" />
+              <div className={styles.info}>
+                <h1>Hawa Mahal</h1>
+                <h4>Udaipur</h4>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <img src="/images/monument2.jpg" alt="" />
+              <div className={styles.info}>
+                <h1>Rajgarh Fort</h1>
+                <h4>Jaipur</h4>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </section>
     </div>
   );
 }
