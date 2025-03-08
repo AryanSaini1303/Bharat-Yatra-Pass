@@ -10,6 +10,9 @@ export default function Home() {
   const [location, setLocation] = useState("Udaipur");
   const dropdownRef = useRef(null); // React hook which is used to point to a div something like "document.getElementById"
   const locationRef = useRef(null);
+  const [monuments, setMonuments] = useState([]);
+  const [loadingMonuments, setLoadingMonuments] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const cities = [
     "Jaipur",
     "Jodhpur",
@@ -32,7 +35,8 @@ export default function Home() {
   function handleSearch(e) {
     e.preventDefault();
     const monument = e.target.value;
-    console.log("Searching for: ", monument);
+    setSearchQuery(monument);
+    // console.log("Searching for: ", monument);
   }
 
   useEffect(() => {
@@ -40,14 +44,52 @@ export default function Home() {
       dropdownRef.current.focus();
     }
   }, [profileClick]); // Here what we are doing is we just check on every profileClick that if it's true then we autofocus that particular div to make the onBlur work properly later on as without this the dropdown gets visible but it isn't focused so we have to click on it to get focused then click anywhere else to trigger onBlur, that's why this autofocus is needed.
+
   useEffect(() => {
     if (locationClick && locationRef.current) {
       locationRef.current.focus();
     }
   }, [locationClick]);
 
+  useEffect(() => {
+    const fetchMonuments = async () => {
+      try {
+        const response = await fetch(`/api/fetchMonuments?city=${location}`);
+        const data = await response.json();
+        setMonuments(data);
+        setLoadingMonuments(false);
+      } catch (error) {
+        console.error("Error fetching monuments:", error);
+        setLoadingMonuments(false);
+      }
+    };
+    fetchMonuments();
+  }, [location]);
+
+  useEffect(() => {
+    setLoadingMonuments(true);
+    const fectchMonumentsByName = async () => {
+      try {
+        const response = await fetch(
+          `/api/fetchMonumentsByName?name=${searchQuery}`
+        );
+        const data = await response.json();
+        setMonuments(data);
+        setLoadingMonuments(false);
+      } catch (error) {
+        console.error("Error fetching monuments:", error);
+        setLoadingMonuments(false);
+      }
+    };
+    const delayDebounceFn = setTimeout(() => {
+      searchQuery.length != 0 && fectchMonumentsByName();
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
   if (status == "loading") return <div>Loading...</div>;
   if (status == "unauthenticated") return <div>Unauthenticated...</div>;
+
   return (
     <div className="wrapper">
       <header className={styles.header}>
@@ -97,6 +139,11 @@ export default function Home() {
                         setLocation(city);
                         setLocationClick(false);
                       }}
+                      style={
+                        location == city
+                          ? { color: "white", backgroundColor: "darkgrey" }
+                          : null
+                      }
                     >
                       {city}
                     </button>
@@ -188,24 +235,33 @@ export default function Home() {
       </form>
       <section className={styles.monumentList}>
         <ul>
-          <li>
-            <a href="#">
-              <img src="/images/monument1.jpg" alt="" />
-              <div className={styles.info}>
-                <h1>Hawa Mahal</h1>
-                <h4>Udaipur</h4>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <img src="/images/monument2.jpg" alt="" />
-              <div className={styles.info}>
-                <h1>Rajgarh Fort</h1>
-                <h4>Jaipur</h4>
-              </div>
-            </a>
-          </li>
+          {monuments.length == 0 && !loadingMonuments ? (
+            <p
+              style={{
+                color: "red",
+                fontFamily: "var(--font)",
+                fontWeight: "bolder",
+              }}
+            >
+              No Monuments Found!
+            </p>
+          ) : monuments.length != 0 ? (
+            monuments.map((monument) => (
+              <li key={monument.id}>
+                <a href={`booking/${monument.id}`}>
+                  <img src={monument.image_url} alt="" />
+                  <div className={styles.info}>
+                    <h1>{monument.name}</h1>
+                    <h4>{monument.city}</h4>
+                  </div>
+                </a>
+              </li>
+            ))
+          ) : (
+            <p style={{ fontFamily: "var(--font)", fontWeight: "bolder" }}>
+              Loading...
+            </p>
+          )}
         </ul>
       </section>
     </div>
