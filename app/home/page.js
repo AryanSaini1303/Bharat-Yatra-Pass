@@ -36,7 +36,7 @@ export default function Home() {
                 <button>Past Tickets</button>
               </li>
               <li>
-                <button>Log Out</button>
+                <button onClick={(()=>{signOut({callbackUrl:"/"})})}>Log Out</button>
               </li>
             </ul>
           )}

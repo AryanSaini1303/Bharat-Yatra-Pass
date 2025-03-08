@@ -26,9 +26,9 @@
   align-items: center;
   position: relative;
 }
-.profile img:active{
-    opacity: 0.5;
-    transform: scale(0.98);
+.profile img:active {
+  opacity: 0.5;
+  transform: scale(0.98);
 }
 .dropdown {
   position: absolute;
@@ -44,48 +44,50 @@
   padding: 0.7rem;
   min-width: 40vw;
   animation: dropdownReveal 0.3s ease-in-out;
+  box-shadow: 5px 5px 1px black;
 }
 @keyframes dropdownReveal {
-    0%{
-        opacity: 0;
-        transform: translateY(-1rem);
-    }
-    100%{
-        opacity: 1;
-        transform: translateY(0);
-    }
+  0% {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-.dropdown li{
-    border-radius: 5px;
+.dropdown li {
+  border-radius: 5px;
 }
 .dropdown li button {
-    padding: 0.5rem;
-    font-family: var(--font);
-    border: darkgrey solid 1px;
-    border-radius: 5px;
-    width: 100%;
-    transition: all 0.15s ease-in-out;
-    animation: dropdownButtonReveal 0.4s ease-in-out;
+  padding: 0.5rem;
+  font-family: var(--font);
+  font-weight: 550;
+  border: darkgrey dashed 1px;
+  border-radius: 5px;
+  width: 100%;
+  transition: all 0.15s ease-in-out;
+  animation: dropdownButtonReveal 0.4s ease-in-out;
 }
 @keyframes dropdownButtonReveal {
-    0%{
-        opacity: 0;
-        transform: translateY(-1rem);
-    }
-    100%{
-        opacity: 1;
-        transform: translateY(0);
-    }
+  0% {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .header img {
   filter: brightness(0%);
   transition: 0.2s all ease-in-out;
 }
 .dropdown li:not(:last-child) button:active {
-  background:linear-gradient(45deg, #ffd500, #ff6a00);
+  background-color: black;
   color: whitesmoke;
 }
 .dropdown li:last-child button:active {
-  background-color:rgb(209, 0, 0);
+  background-color: rgb(209, 0, 0);
   color: whitesmoke;
 }
