@@ -176,7 +176,7 @@
   margin: auto;
   transition: 0.2s all ease-in-out;
   box-shadow: 0 10px 3px black;
-  animation: monumentDrop all 1s ease-in-out;
+  animation: monumentDrop 0.5s ease-in-out;
 }
 @keyframes monumentDrop {
   0% {
