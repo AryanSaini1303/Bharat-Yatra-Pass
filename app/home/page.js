@@ -125,7 +125,7 @@ export default function Home() {
           {!locationClick ? (
             <img
               src="/images/location.png"
-              alt=""
+              alt="Location Icon"
               onClick={(e) => {
                 setLocationClick((prev) => !prev);
               }}
@@ -187,7 +187,7 @@ export default function Home() {
           {!profileClick ? (
             <img
               src="/images/profile.png"
-              alt=""
+              alt="Profile Icon"
               onClick={() => {
                 setProfileClick(!profileClick);
               }}
@@ -248,7 +248,7 @@ export default function Home() {
           type="text"
           name="monument"
           id=""
-          placeholder="Rajgarh Fort"
+          placeholder="Bhangarh Fort"
           onChange={handleSearch}
         />
         <svg
@@ -284,7 +284,7 @@ export default function Home() {
                       href={`booking/${monument.id}`}
                       className={styles.cardLink}
                     >
-                      <img src={monument.image_url} alt="" />
+                      <img src={monument.image_url} alt="Monument Image" />
                       <div className={styles.info}>
                         <h1>{monument.name}</h1>
                         <h4>{monument.city}</h4>

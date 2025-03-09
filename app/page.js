@@ -71,7 +71,7 @@ export default function Home() {
         </div>
         <img
           src="/images/background-mobile.png"
-          alt=""
+          alt="Background Monuments"
           className={styles.background}
         />
       </div>
