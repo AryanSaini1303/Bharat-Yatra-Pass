@@ -40,7 +40,7 @@
   flex-direction: column;
   margin: 0;
 }
-.timings .time p {
+.timings p {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -58,4 +58,7 @@
 }
 .dateTimePicker > div {
   margin: 0;
+}
+.blurClass{
+    filter: blur(10px);
 }

@@ -14,6 +14,7 @@ export default function BookingPage({ params }) {
   const [user, setUser] = useState();
   const [loadingUser, setLoadingUser] = useState(true);
   const [dateTime, setDateTime] = useState(new Date());
+  const [blurFlag, setBlurFlag] = useState(false);
 
   useEffect(() => {
     const fetchMonuments = async () => {
@@ -83,8 +84,8 @@ export default function BookingPage({ params }) {
         "Loading..."
       ) : monument.length != 0 ? (
         <div className={styles.container}>
-          <img src={monument.image_url} alt="Monument Image" />
-          <section className={styles.info}>
+          <img src={monument.image_url} alt="Monument Image" style={blurFlag?{filter:"blur(10px)"}:null}/>
+          <section className={styles.info} style={blurFlag?{filter:"blur(10px)"}:null}>
             <section>
               <h3>About {monument.name}</h3>
               <p>{monument.description}</p>
@@ -97,38 +98,42 @@ export default function BookingPage({ params }) {
               <h3>Opening Hours</h3>
               <div>
                 <p>
-                  Opening Time:{" "}
-                  {(() => {
-                    const [hours, minutes] = monument.opening_time.split(":");
-                    const date = new Date();
-                    date.setHours(hours, minutes);
-                    return date.toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    });
-                  })()}
+                  Opening Time:
+                  <span>
+                    {(() => {
+                      const [hours, minutes] = monument.opening_time.split(":");
+                      const date = new Date();
+                      date.setHours(hours, minutes);
+                      return date.toLocaleTimeString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      });
+                    })()}
+                  </span>
                 </p>
 
                 <p>
-                  Closing Time:{" "}
-                  {(() => {
-                    const [hours, minutes] = monument.closing_time.split(":");
-                    const date = new Date();
-                    date.setHours(hours, minutes);
-                    return date.toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    });
-                  })()}
+                  Closing Time:
+                  <span>
+                    {(() => {
+                      const [hours, minutes] = monument.closing_time.split(":");
+                      const date = new Date();
+                      date.setHours(hours, minutes);
+                      return date.toLocaleTimeString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      });
+                    })()}
+                  </span>
                 </p>
               </div>
             </section>
           </section>
           <section className={styles.booking}>
             <section>
-              <h3>Book a slot</h3>
+              <h3 style={blurFlag?{filter:"blur(10px)"}:null}>Book a slot</h3>
               <div className={styles.dateTimePicker}>
                 <DatePicker
                   selected={dateTime}
@@ -138,6 +143,8 @@ export default function BookingPage({ params }) {
                   timeIntervals={15}
                   dateFormat="MMMM d, yyyy h:mm aa"
                   className="datepicker"
+                  onCalendarOpen={() => setBlurFlag(true)} // Trigger when the popper opens
+                  onCalendarClose={() => setBlurFlag(false)} // Trigger when the popper closes
                 />
               </div>
             </section>
