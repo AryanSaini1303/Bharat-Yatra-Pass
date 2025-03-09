@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
 import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [profileClick, setProfileClick] = useState(false);
@@ -12,10 +13,8 @@ export default function Home() {
   const [monuments, setMonuments] = useState([]);
   const [loadingMonuments, setLoadingMonuments] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [userData, setUserData] = useState({});
-  const [profileImage, setProfileImage] = useState("");
-  const [changeLocationFlag, setChangeLocationFlag] = useState(false);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState();
+  const [loadingUser, setLoadingUser] = useState(true);
   const cities = [
     "Jaipur",
     "Jodhpur",
@@ -34,6 +33,12 @@ export default function Home() {
     "Beawar",
     "Baran",
   ];
+  const router = useRouter();
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+  };
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -41,7 +46,10 @@ export default function Home() {
         if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
           const { user } = session;
           setUser(user);
+          setLoadingUser(false);
+          // console.log(user);
         } else {
+          setLoadingUser(false);
           setUser(null);
         }
       }
@@ -115,8 +123,13 @@ export default function Home() {
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
-  // if (status == "loading") return <div>Loading...</div>;
-  // if (status == "unauthenticated") return <div>Unauthenticated...</div>;
+  if (loadingUser) {
+    return <div>Loading...</div>;
+  } else {
+    if (!user) {
+      return <div>Unauthenticated...</div>;
+    }
+  }
 
   return (
     <div className="wrapper">
@@ -167,7 +180,6 @@ export default function Home() {
                         setLocation(city);
                         localStorage.setItem("userCity", city);
                         setLocationClick(false);
-                        setChangeLocationFlag(true);
                       }}
                       style={
                         location == city
@@ -227,7 +239,7 @@ export default function Home() {
                 <li>
                   <button
                     onClick={() => {
-                      signOut({ callbackUrl: "/" });
+                      signOut();
                     }}
                   >
                     Log Out

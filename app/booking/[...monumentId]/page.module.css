@@ -1,0 +1,61 @@
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.header svg {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s ease-in-out;
+}
+.header svg:active {
+  opacity: 0.5;
+}
+.container {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+}
+.container img {
+  width: 100%;
+  border-radius: 10px;
+}
+.container section * {
+  margin: 0.5rem 0;
+}
+.container section p {
+  font-size: 0.9rem;
+}
+.container .info {
+  margin: 1rem 0;
+  padding-bottom: 1rem;
+  border-bottom: dashed 2px black;
+}
+.timings .time {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+.timings .time p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+}
+.booking section h3 {
+  margin: 0;
+}
+.dateTimePicker input {
+  margin: 0;
+  padding: 0.5rem 0.5rem;
+  border-radius: 10px;
+  border: dashed grey 1.5px;
+  min-width: 60vw;
+}
+.dateTimePicker > div {
+  margin: 0;
+}
