@@ -1,10 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
-import { useSession, signOut } from "next-auth/react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Home() {
-  const { data: session, status } = useSession();
   const [profileClick, setProfileClick] = useState(false);
   const [locationClick, setLocationClick] = useState(false);
   const [location, setLocation] = useState("Udaipur");
@@ -13,6 +12,10 @@ export default function Home() {
   const [monuments, setMonuments] = useState([]);
   const [loadingMonuments, setLoadingMonuments] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [userData, setUserData] = useState({});
+  const [profileImage, setProfileImage] = useState("");
+  const [changeLocationFlag, setChangeLocationFlag] = useState(false);
+  const [user, setUser] = useState({});
   const cities = [
     "Jaipur",
     "Jodhpur",
@@ -31,6 +34,31 @@ export default function Home() {
     "Beawar",
     "Baran",
   ];
+
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
+          const { user } = session;
+          setUser(user);
+        } else {
+          setUser(null);
+        }
+      }
+    );
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  // On page load, fetch the city from localStorage
+  useEffect(() => {
+    const savedCity = localStorage.getItem("userCity");
+    if (savedCity) {
+      // console.log("📍 City found in localStorage:", savedCity);
+      setLocation(savedCity);
+    }
+  }, []);
 
   function handleSearch(e) {
     e.preventDefault();
@@ -87,8 +115,8 @@ export default function Home() {
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
-  if (status == "loading") return <div>Loading...</div>;
-  if (status == "unauthenticated") return <div>Unauthenticated...</div>;
+  // if (status == "loading") return <div>Loading...</div>;
+  // if (status == "unauthenticated") return <div>Unauthenticated...</div>;
 
   return (
     <div className="wrapper">
@@ -137,7 +165,9 @@ export default function Home() {
                     <button
                       onClick={() => {
                         setLocation(city);
+                        localStorage.setItem("userCity", city);
                         setLocationClick(false);
+                        setChangeLocationFlag(true);
                       }}
                       style={
                         location == city
@@ -246,17 +276,23 @@ export default function Home() {
               No Monuments Found!
             </p>
           ) : monuments.length != 0 ? (
-            monuments.map((monument) => (
-              <li key={monument.id}>
-                <a href={`booking/${monument.id}`}>
-                  <img src={monument.image_url} alt="" />
-                  <div className={styles.info}>
-                    <h1>{monument.name}</h1>
-                    <h4>{monument.city}</h4>
-                  </div>
-                </a>
-              </li>
-            ))
+            monuments.map(
+              (monument) =>
+                monument.image_url && (
+                  <li key={monument.id}>
+                    <a
+                      href={`booking/${monument.id}`}
+                      className={styles.cardLink}
+                    >
+                      <img src={monument.image_url} alt="" />
+                      <div className={styles.info}>
+                        <h1>{monument.name}</h1>
+                        <h4>{monument.city}</h4>
+                      </div>
+                    </a>
+                  </li>
+                )
+            )
           ) : (
             <p style={{ fontFamily: "var(--font)", fontWeight: "bolder" }}>
               Loading...

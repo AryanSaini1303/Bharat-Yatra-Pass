@@ -2,8 +2,8 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import { Noto_Sans } from "next/font/google";
-import { signIn, useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 const notoSans = Noto_Sans({
   weight: "400",
@@ -11,11 +11,39 @@ const notoSans = Noto_Sans({
 });
 
 export default function Home() {
-  const { data: session } = useSession();
-  console.log(session);
+  const [user, setUser]=useState('');
+
+  const signIn = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+    });
+    if (error) {
+      console.log(error);
+      return;
+    }
+  };
+
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
+          const { user } = session;
+          setUser(user);
+          console.log(user);
+        } else {
+          setUser(null);
+        }
+      }
+    );
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
   useEffect(()=>{
-    session&&window.location.replace("/home");
-  },[session])
+    user&&window.location.replace("/home");
+  },[user])
+
   return (
     <div className="wrapper">
       <div className={styles.loginPage}>
@@ -29,7 +57,7 @@ export default function Home() {
             </h5>
           </header>
           <button
-            onClick={() => signIn("google")}
+            onClick={() => signIn()}
             className={`${styles.googleLogin} ${notoSans.className}`}
           >
             <Image
