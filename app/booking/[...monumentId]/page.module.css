@@ -112,3 +112,9 @@
   opacity: 0.8;
   box-shadow: inset -4px -4px 12px lightgrey, 0 2px 2px black;
 }
+.totalAmount{
+  border: dashed grey 2px;
+  border-radius: 5px;
+  padding: 0 0.5rem;
+  font-weight: bolder;
+}

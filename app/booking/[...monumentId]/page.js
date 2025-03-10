@@ -21,6 +21,7 @@ export default function BookingPage({ params }) {
     adult: 0,
     foreigner: 0,
   });
+  const [totalAmount, setTotalAmount] = useState(0);
   // console.log(ticketNum);
 
   const convertTime = (timeStr) => {
@@ -30,6 +31,31 @@ export default function BookingPage({ params }) {
     date.setMinutes(parseInt(minutes));
     return date;
   };
+
+  // You can't directly map() over an object, BUT you can convert it into an array using Object methods like:
+  // Object.entries() → Best for key-value pairs.
+  // Object.keys() → Best if you only need keys.
+  // Object.values() → Best if you only need values.
+  function handleCheckout() {
+    for (let i = 0; i < Object.values(ticketNum).length; i++) {
+      if (Object.values(ticketNum)[i] > 0) break;
+      if (
+        i == Object.values(ticketNum).length - 1 &&
+        Object.values(ticketNum)[i] == 0
+      ) {
+        alert("Select at least 1 ticket before the checkout");
+      }
+    }
+  }
+
+  useEffect(() => {
+    monument.ticket_price&&setTotalAmount(
+      ticketNum.foreigner * monument.ticket_price.foreigner +
+        ticketNum.senior * monument.ticket_price.senior +
+        ticketNum.kid * monument.ticket_price.child +
+        ticketNum.adult * monument.ticket_price.adult
+    );
+  }, [ticketNum, monument]);
 
   useEffect(() => {
     const fetchMonuments = async () => {
@@ -415,11 +441,49 @@ export default function BookingPage({ params }) {
                   </div>
                 </section>
               </div>
+              <section className={styles.timings}>
+                <h3>Summary</h3>
+                <div>
+                  <p>
+                    Senior Citizen tickets:
+                    <span>
+                      &#8377;{ticketNum.senior * monument.ticket_price.senior}
+                    </span>
+                  </p>
+                  <p>
+                    Kid tickets:
+                    <span>
+                      &#8377;{ticketNum.kid * monument.ticket_price.child}
+                    </span>
+                  </p>
+                  <p>
+                    Adult tickets:
+                    <span>
+                      &#8377;{ticketNum.adult * monument.ticket_price.adult}
+                    </span>
+                  </p>
+                  <p>
+                    Non - Indian tickets:
+                    <span>
+                      &#8377;
+                      {ticketNum.foreigner * monument.ticket_price.foreigner}
+                    </span>
+                  </p>
+                  <p className={styles.totalAmount}>
+                    Total payable amount:
+                    <span>
+                      &#8377;
+                      {totalAmount}
+                    </span>
+                  </p>
+                </div>
+              </section>
             </section>
           </section>
           <button
             className={styles.checkout}
             style={blurFlag ? { filter: "blur(10px)" } : null}
+            onClick={handleCheckout}
           >
             Checkout
           </button>
