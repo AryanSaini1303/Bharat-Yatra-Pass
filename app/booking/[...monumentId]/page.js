@@ -52,8 +52,8 @@ export default function BookingPage({ params }) {
         alert("Select at least 1 ticket before the checkout");
       }
     }
-    console.log(dateTime.toLocaleTimeString());
-    console.log(monument.opening_time);
+    // console.log(dateTime.toLocaleTimeString());
+    // console.log(monument.opening_time);
     if (
       (dateTime.toLocaleTimeString() < monument.opening_time ||
         dateTime.toLocaleTimeString() > monument.closing_time) &&
