@@ -39,14 +39,27 @@ export default function BookingPage({ params }) {
   // Object.keys() → Best if you only need keys.
   // Object.values() → Best if you only need values.
   function handleCheckout() {
+    let breakFlag = false;
     for (let i = 0; i < Object.values(ticketNum).length; i++) {
-      if (Object.values(ticketNum)[i] > 0) break;
+      if (Object.values(ticketNum)[i] > 0) {
+        breakFlag = true;
+        break;
+      }
       if (
         i == Object.values(ticketNum).length - 1 &&
         Object.values(ticketNum)[i] == 0
       ) {
         alert("Select at least 1 ticket before the checkout");
       }
+    }
+    console.log(dateTime.toLocaleTimeString());
+    console.log(monument.opening_time);
+    if (
+      (dateTime.toLocaleTimeString() < monument.opening_time ||
+        dateTime.toLocaleTimeString() > monument.closing_time) &&
+      breakFlag
+    ) {
+      alert("Choose a suitable time slot!");
     }
   }
 
@@ -215,6 +228,13 @@ export default function BookingPage({ params }) {
                       : convertTime(monument.closing_time)
                   }
                   minDate={new Date()} // Here we are setting min. date of the calender to the current date i.e. new Date() as we don't want the user to book tickets for the past
+                  customInput={
+                    <button className={styles.datepicker_button}>
+                      {dateTime.toLocaleString()
+                        ? dateTime.toLocaleString()
+                        : "Select Date & Time"}
+                    </button>
+                  }
                 />
               </div>
             </section>
