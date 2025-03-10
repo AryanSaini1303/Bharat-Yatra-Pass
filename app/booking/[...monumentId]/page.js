@@ -22,7 +22,7 @@ export default function BookingPage({ params }) {
     foreigner: 0,
   });
   const [totalAmount, setTotalAmount] = useState(0);
-  const current_date=new Date();
+  const current_date = new Date();
   // console.log(dateTime);
   // console.log(current_date);
 
@@ -51,12 +51,13 @@ export default function BookingPage({ params }) {
   }
 
   useEffect(() => {
-    monument.ticket_price&&setTotalAmount(
-      ticketNum.foreigner * monument.ticket_price.foreigner +
-        ticketNum.senior * monument.ticket_price.senior +
-        ticketNum.kid * monument.ticket_price.child +
-        ticketNum.adult * monument.ticket_price.adult
-    );
+    monument.ticket_price &&
+      setTotalAmount(
+        ticketNum.foreigner * monument.ticket_price.foreigner +
+          ticketNum.senior * monument.ticket_price.senior +
+          ticketNum.kid * monument.ticket_price.child +
+          ticketNum.adult * monument.ticket_price.adult
+      );
   }, [ticketNum, monument]);
 
   useEffect(() => {
@@ -198,12 +199,21 @@ export default function BookingPage({ params }) {
                   onCalendarOpen={() => setBlurFlag(true)} // Trigger when the popper opens
                   onCalendarClose={() => setBlurFlag(false)} // Trigger when the popper closes
                   minTime={
-                    // Here we are setting the minTime for the calender as either the opening_time of the monument or the current_time i.e. new Date() if it is greater than opening_time
-                    (new Date() > convertTime(monument.opening_time)) && (current_date>(dateTime))
-                      ? new Date()
-                      : convertTime(monument.opening_time)
+                    // If today’s date matches selected date & current time has passed closing time, disable all time slots
+                    current_date.toDateString() === dateTime.toDateString() &&
+                    new Date() > convertTime(monument.closing_time)
+                      ? convertTime(monument.closing_time) // Disable all slots
+                      : new Date() > convertTime(monument.opening_time) &&
+                        current_date.toDateString() === dateTime.toDateString()
+                      ? new Date() // Allow selection from current time onwards if within hours
+                      : convertTime(monument.opening_time) // Default to opening time
                   }
-                  maxTime={convertTime(monument.closing_time)}
+                  maxTime={
+                    current_date.toDateString() === dateTime.toDateString() &&
+                    new Date() > convertTime(monument.closing_time)
+                      ? convertTime(monument.closing_time) // Disable all slots
+                      : convertTime(monument.closing_time)
+                  }
                   minDate={new Date()} // Here we are setting min. date of the calender to the current date i.e. new Date() as we don't want the user to book tickets for the past
                 />
               </div>
