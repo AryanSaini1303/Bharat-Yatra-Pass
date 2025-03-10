@@ -100,7 +100,7 @@ export default function Home() {
       }
     };
     fetchMonuments();
-  }, [location]);
+  }, [location, user]);
 
   useEffect(() => {
     setLoadingMonuments(true);
