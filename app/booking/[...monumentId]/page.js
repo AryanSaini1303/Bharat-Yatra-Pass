@@ -15,6 +15,21 @@ export default function BookingPage({ params }) {
   const [loadingUser, setLoadingUser] = useState(true);
   const [dateTime, setDateTime] = useState(new Date());
   const [blurFlag, setBlurFlag] = useState(false);
+  const [ticketNum, setTicketNum] = useState({
+    senior: 0,
+    kid: 0,
+    adult: 0,
+    foreigner: 0,
+  });
+  // console.log(ticketNum);
+
+  const convertTime = (timeStr) => {
+    const [hours, minutes] = timeStr.split(":");
+    const date = new Date();
+    date.setHours(parseInt(hours));
+    date.setMinutes(parseInt(minutes));
+    return date;
+  };
 
   useEffect(() => {
     const fetchMonuments = async () => {
@@ -84,8 +99,15 @@ export default function BookingPage({ params }) {
         "Loading..."
       ) : monument.length != 0 ? (
         <div className={styles.container}>
-          <img src={monument.image_url} alt="Monument Image" style={blurFlag?{filter:"blur(10px)"}:null}/>
-          <section className={styles.info} style={blurFlag?{filter:"blur(10px)"}:null}>
+          <img
+            src={monument.image_url}
+            alt="Monument Image"
+            style={blurFlag ? { filter: "blur(10px)" } : null}
+          />
+          <section
+            className={styles.info}
+            style={blurFlag ? { filter: "blur(10px)" } : null}
+          >
             <section>
               <h3>About {monument.name}</h3>
               <p>{monument.description}</p>
@@ -133,7 +155,9 @@ export default function BookingPage({ params }) {
           </section>
           <section className={styles.booking}>
             <section>
-              <h3 style={blurFlag?{filter:"blur(10px)"}:null}>Book a slot</h3>
+              <h3 style={blurFlag ? { filter: "blur(10px)" } : null}>
+                Book a slot
+              </h3>
               <div className={styles.dateTimePicker}>
                 <DatePicker
                   selected={dateTime}
@@ -145,13 +169,260 @@ export default function BookingPage({ params }) {
                   className="datepicker"
                   onCalendarOpen={() => setBlurFlag(true)} // Trigger when the popper opens
                   onCalendarClose={() => setBlurFlag(false)} // Trigger when the popper closes
+                  minTime={
+                    // Here we are setting the minTime for the calender as either the opening_time of the monument or the current_time i.e. new Date() if it is greater than opening_time
+                    new Date() > convertTime(monument.opening_time)
+                      ? new Date()
+                      : convertTime(monument.opening_time)
+                  }
+                  maxTime={convertTime(monument.closing_time)}
+                  minDate={new Date()} // Here we are setting min. date of the calender to the current date i.e. new Date() as we don't want the user to book tickets for the past
                 />
               </div>
             </section>
-            {/* <section>
-                <h3>Add Travelers</h3>
-            </section> */}
+            <section
+              className={styles.ticketsSection}
+              style={blurFlag ? { filter: "blur(10px)" } : null}
+            >
+              <h3>Add Travelers</h3>
+              <div className={styles.tickets}>
+                <section>
+                  <div className={styles.ticketInfo}>
+                    <h1>Senior Citizen</h1>
+                    <h4>&#8377;{monument.ticket_price.senior}</h4>
+                  </div>
+                  <div className={styles.counter}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 48 48"
+                      width="2em"
+                      height="2em"
+                      style={
+                        ticketNum.senior <= 0
+                          ? { pointerEvents: "none", opacity: "0.5" }
+                          : null
+                      }
+                      onClick={() => {
+                        setTicketNum((prev) => ({
+                          ...prev,
+                          senior: prev.senior - 1 <= 0 ? 0 : prev.senior - 1,
+                        }));
+                      }}
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M6.5 24c0-9.665 7.835-17.5 17.5-17.5S41.5 14.335 41.5 24S33.665 41.5 24 41.5S6.5 33.665 6.5 24M24 4C12.954 4 4 12.954 4 24s8.954 20 20 20s20-8.954 20-20S35.046 4 24 4M14 24c0-.69.56-1.25 1.25-1.25h17.5a1.25 1.25 0 1 1 0 2.5h-17.5c-.69 0-1.25-.56-1.25-1.25"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeWidth="1.2"
+                      ></path>
+                    </svg>
+                    <h1>{ticketNum.senior}</h1>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 14 14"
+                      width="2em"
+                      height="2em"
+                      onClick={() => {
+                        setTicketNum((prev) => ({
+                          ...prev,
+                          senior: prev.senior + 1,
+                        }));
+                      }}
+                    >
+                      <g
+                        fill="none"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="7" cy="7" r="6.5"></circle>
+                        <path d="M7 4v6M4 7h6"></path>
+                      </g>
+                    </svg>
+                  </div>
+                </section>
+                <hr />
+                <section>
+                  <div className={styles.ticketInfo}>
+                    <h1>Kids</h1>
+                    <h4>&#8377;{monument.ticket_price.child}</h4>
+                  </div>
+                  <div className={styles.counter}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 48 48"
+                      width="2em"
+                      height="2em"
+                      style={
+                        ticketNum.kid <= 0
+                          ? { pointerEvents: "none", opacity: "0.5" }
+                          : null
+                      }
+                      onClick={() => {
+                        setTicketNum((prev) => ({
+                          ...prev,
+                          kid: prev.kid - 1 <= 0 ? 0 : prev.kid - 1,
+                        }));
+                      }}
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M6.5 24c0-9.665 7.835-17.5 17.5-17.5S41.5 14.335 41.5 24S33.665 41.5 24 41.5S6.5 33.665 6.5 24M24 4C12.954 4 4 12.954 4 24s8.954 20 20 20s20-8.954 20-20S35.046 4 24 4M14 24c0-.69.56-1.25 1.25-1.25h17.5a1.25 1.25 0 1 1 0 2.5h-17.5c-.69 0-1.25-.56-1.25-1.25"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeWidth="1.2"
+                      ></path>
+                    </svg>
+                    <h1>{ticketNum.kid}</h1>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 14 14"
+                      width="2em"
+                      height="2em"
+                      onClick={() => {
+                        setTicketNum((prev) => ({
+                          ...prev,
+                          kid: prev.kid + 1,
+                        }));
+                      }}
+                    >
+                      <g
+                        fill="none"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="7" cy="7" r="6.5"></circle>
+                        <path d="M7 4v6M4 7h6"></path>
+                      </g>
+                    </svg>
+                  </div>
+                </section>
+                <hr />
+                <section>
+                  <div className={styles.ticketInfo}>
+                    <h1>Adult</h1>
+                    <h4>&#8377;{monument.ticket_price.adult}</h4>
+                  </div>
+                  <div className={styles.counter}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 48 48"
+                      width="2em"
+                      height="2em"
+                      style={
+                        ticketNum.adult <= 0
+                          ? { pointerEvents: "none", opacity: "0.5" }
+                          : null
+                      }
+                      onClick={() => {
+                        setTicketNum((prev) => ({
+                          ...prev,
+                          adult: prev.adult - 1 <= 0 ? 0 : prev.adult - 1,
+                        }));
+                      }}
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M6.5 24c0-9.665 7.835-17.5 17.5-17.5S41.5 14.335 41.5 24S33.665 41.5 24 41.5S6.5 33.665 6.5 24M24 4C12.954 4 4 12.954 4 24s8.954 20 20 20s20-8.954 20-20S35.046 4 24 4M14 24c0-.69.56-1.25 1.25-1.25h17.5a1.25 1.25 0 1 1 0 2.5h-17.5c-.69 0-1.25-.56-1.25-1.25"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeWidth="1.2"
+                      ></path>
+                    </svg>
+                    <h1>{ticketNum.adult}</h1>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 14 14"
+                      width="2em"
+                      height="2em"
+                      onClick={() => {
+                        setTicketNum((prev) => ({
+                          ...prev,
+                          adult: prev.adult + 1,
+                        }));
+                      }}
+                    >
+                      <g
+                        fill="none"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="7" cy="7" r="6.5"></circle>
+                        <path d="M7 4v6M4 7h6"></path>
+                      </g>
+                    </svg>
+                  </div>
+                </section>
+                <hr />
+                <section>
+                  <div className={styles.ticketInfo}>
+                    <h1>{"(Non - Indians)"}</h1>
+                    <h4>&#8377;{monument.ticket_price.foreigner}</h4>
+                  </div>
+                  <div className={styles.counter}>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 48 48"
+                      width="2em"
+                      height="2em"
+                      style={
+                        ticketNum.foreigner <= 0
+                          ? { pointerEvents: "none", opacity: "0.5" }
+                          : null
+                      }
+                      onClick={() => {
+                        setTicketNum((prev) => ({
+                          ...prev,
+                          foreigner:
+                            prev.foreigner - 1 <= 0 ? 0 : prev.foreigner - 1,
+                        }));
+                      }}
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M6.5 24c0-9.665 7.835-17.5 17.5-17.5S41.5 14.335 41.5 24S33.665 41.5 24 41.5S6.5 33.665 6.5 24M24 4C12.954 4 4 12.954 4 24s8.954 20 20 20s20-8.954 20-20S35.046 4 24 4M14 24c0-.69.56-1.25 1.25-1.25h17.5a1.25 1.25 0 1 1 0 2.5h-17.5c-.69 0-1.25-.56-1.25-1.25"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeWidth="1.2"
+                      ></path>
+                    </svg>
+                    <h1>{ticketNum.foreigner}</h1>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 14 14"
+                      width="2em"
+                      height="2em"
+                      onClick={() => {
+                        setTicketNum((prev) => ({
+                          ...prev,
+                          foreigner: prev.foreigner + 1,
+                        }));
+                      }}
+                    >
+                      <g
+                        fill="none"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="7" cy="7" r="6.5"></circle>
+                        <path d="M7 4v6M4 7h6"></path>
+                      </g>
+                    </svg>
+                  </div>
+                </section>
+              </div>
+            </section>
           </section>
+          <button
+            className={styles.checkout}
+            style={blurFlag ? { filter: "blur(10px)" } : null}
+          >
+            Checkout
+          </button>
         </div>
       ) : (
         "No Monument Found!"

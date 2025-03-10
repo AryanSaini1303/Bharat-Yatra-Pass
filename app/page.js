@@ -29,7 +29,7 @@ export default function Home() {
         if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
           const { user } = session;
           setUser(user);
-          console.log(user);
+          // console.log(user);
         } else {
           setUser(null);
         }

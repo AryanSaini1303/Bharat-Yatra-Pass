@@ -202,6 +202,7 @@
   left: 1rem;
   color: white;
   z-index: 1;
+  transition: all 0.2s ease-in-out;
 }
 .monumentList .info * {
   margin: 0.1rem 0;
@@ -228,6 +229,9 @@
 }
 .monumentList li:active img{
   transform: scale(1.1);
+}
+.monumentList li:active .info{
+  transform: translateY(-0.3rem);
 }
 @keyframes monumentDrop {
   0% {
