@@ -22,7 +22,9 @@ export default function BookingPage({ params }) {
     foreigner: 0,
   });
   const [totalAmount, setTotalAmount] = useState(0);
-  // console.log(ticketNum);
+  const current_date=new Date();
+  // console.log(dateTime);
+  // console.log(current_date);
 
   const convertTime = (timeStr) => {
     const [hours, minutes] = timeStr.split(":");
@@ -197,7 +199,7 @@ export default function BookingPage({ params }) {
                   onCalendarClose={() => setBlurFlag(false)} // Trigger when the popper closes
                   minTime={
                     // Here we are setting the minTime for the calender as either the opening_time of the monument or the current_time i.e. new Date() if it is greater than opening_time
-                    new Date() > convertTime(monument.opening_time)
+                    (new Date() > convertTime(monument.opening_time)) && (current_date>(dateTime))
                       ? new Date()
                       : convertTime(monument.opening_time)
                   }
@@ -221,8 +223,8 @@ export default function BookingPage({ params }) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 48 48"
-                      width="2em"
-                      height="2em"
+                      width="1.6em"
+                      height="1.6em"
                       style={
                         ticketNum.senior <= 0
                           ? { pointerEvents: "none", opacity: "0.5" }
@@ -247,8 +249,8 @@ export default function BookingPage({ params }) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 14 14"
-                      width="2em"
-                      height="2em"
+                      width="1.6em"
+                      height="1.6em"
                       onClick={() => {
                         setTicketNum((prev) => ({
                           ...prev,
@@ -278,8 +280,8 @@ export default function BookingPage({ params }) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 48 48"
-                      width="2em"
-                      height="2em"
+                      width="1.6em"
+                      height="1.6em"
                       style={
                         ticketNum.kid <= 0
                           ? { pointerEvents: "none", opacity: "0.5" }
@@ -304,8 +306,8 @@ export default function BookingPage({ params }) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 14 14"
-                      width="2em"
-                      height="2em"
+                      width="1.6em"
+                      height="1.6em"
                       onClick={() => {
                         setTicketNum((prev) => ({
                           ...prev,
@@ -335,8 +337,8 @@ export default function BookingPage({ params }) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 48 48"
-                      width="2em"
-                      height="2em"
+                      width="1.6em"
+                      height="1.6em"
                       style={
                         ticketNum.adult <= 0
                           ? { pointerEvents: "none", opacity: "0.5" }
@@ -361,8 +363,8 @@ export default function BookingPage({ params }) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 14 14"
-                      width="2em"
-                      height="2em"
+                      width="1.6em"
+                      height="1.6em"
                       onClick={() => {
                         setTicketNum((prev) => ({
                           ...prev,
@@ -392,8 +394,8 @@ export default function BookingPage({ params }) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 48 48"
-                      width="2em"
-                      height="2em"
+                      width="1.6em"
+                      height="1.6em"
                       style={
                         ticketNum.foreigner <= 0
                           ? { pointerEvents: "none", opacity: "0.5" }
@@ -419,8 +421,8 @@ export default function BookingPage({ params }) {
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 14 14"
-                      width="2em"
-                      height="2em"
+                      width="1.6em"
+                      height="1.6em"
                       onClick={() => {
                         setTicketNum((prev) => ({
                           ...prev,

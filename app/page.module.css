@@ -23,8 +23,7 @@
   background-color: rgb(44, 44, 44);
   color: whitesmoke;
   transform: scale(0.98);
-  opacity: 0.5;
-  box-shadow: inset -5px -5px 10px whitesmoke;
+  box-shadow: inset -5px -5px 10px grey;
 }
 .header * {
   font-family: "Iansui", cursive;
