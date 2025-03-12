@@ -106,13 +106,13 @@
   color: white;
   font-size: 1.2rem;
   transition: all 0.2s ease-in-out;
-  box-shadow: 0 8px 8px black;
+  box-shadow: 0 6px 5px rgb(69, 69, 69);
   border: none;
 }
 .checkout:active{
   transform: scale(0.98);
   opacity: 0.8;
-  box-shadow: 0 2px 2px black;
+  box-shadow: 0 2px 2px rgb(69, 69, 69);
 }
 .totalAmount{
   border: dashed grey 2px;
