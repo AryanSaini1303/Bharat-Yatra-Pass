@@ -19,6 +19,9 @@
   margin: 0 auto;
   animation: float 2s infinite;
 }
+.googleLogin h3{
+  font-weight: normal;
+}
 .googleLogin:active {
   background-color: rgb(44, 44, 44);
   color: whitesmoke;
@@ -27,7 +30,7 @@
 }
 .header * {
   font-family: "Iansui", cursive;
-  font-weight: lighter;
+  font-weight: normal;
   font-style: normal;
   text-align: center;
   margin: 0.8rem 0;

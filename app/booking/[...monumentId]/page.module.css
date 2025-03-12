@@ -85,9 +85,11 @@
 }
 .ticketInfo h1 {
   font-size: 1.1rem;
+  font-weight: normal;
 }
 .ticketInfo h4 {
   color: grey;
+  font-weight: normal;
 }
 .tickets .counter svg {
   transition: all 0.2s ease-in-out;
@@ -123,4 +125,7 @@
   border: dashed grey 2px;
   overflow: hidden;
   padding: 0.5rem 1rem;
+}
+.counter h1{
+  font-weight: normal;
 }
