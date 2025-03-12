@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { v4 as uuidv4 } from "uuid";
 
 export default function BookingPage({ params }) {
   const { monumentId } = use(params);
@@ -23,9 +24,10 @@ export default function BookingPage({ params }) {
   });
   const [totalAmount, setTotalAmount] = useState(0);
   const current_date = new Date();
-  const [showFlag, setShowFlag]=useState(false);
-  // console.log(dateTime);
-  // console.log(current_date);
+  const [showFlag, setShowFlag] = useState(false);
+  const [ticketId, setTicketId] = useState("");
+  const [qrValue, setQrValue] = useState("");
+  const [ticketColor, setTicketColor] = useState("");
 
   const convertTime = (timeStr) => {
     const [hours, minutes] = timeStr.split(":");
@@ -51,12 +53,43 @@ export default function BookingPage({ params }) {
         Object.values(ticketNum)[i] == 0
       ) {
         alert("Select at least 1 ticket before the checkout");
+        return;
       }
     }
-    if(breakFlag && !showFlag){
+    if (breakFlag && !showFlag) {
       alert("Choose a time slot!");
+      return;
     }
+    const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
+    setTicketId(referenceId);
+    setQrValue(referenceId);
+    setTicketColor(() => {
+      let color;
+      do {
+        color = `#${Math.floor(Math.random() * 16777215)
+          .toString(16)
+          .padStart(6, "0")}`;
+      } while (
+        color.toLowerCase() === "#000000" ||
+        color.toLowerCase() === "#ffffff"
+      );
+      return color
+    });
   }
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams({
+      tickets: encodeURIComponent(JSON.stringify({ ticketNum, dateTime })),
+      // totalAmount: encodeURIComponent(JSON.stringify(totalAmount)),
+      monumentDetails: encodeURIComponent(JSON.stringify(monument)),
+      ticketId: encodeURIComponent(JSON.stringify(ticketId)),
+      qrValue: encodeURIComponent(JSON.stringify(qrValue)),
+      ticketColor: encodeURIComponent(
+        JSON.stringify(ticketColor)
+      ),
+    });
+    ticketId.length != 0 && router.push(`/ticket?${queryParams}`);
+  }, [ticketId]);
 
   useEffect(() => {
     monument.ticket_price &&
@@ -198,7 +231,10 @@ export default function BookingPage({ params }) {
               <div className={styles.dateTimePicker}>
                 <DatePicker
                   selected={dateTime}
-                  onChange={(date) => {setDateTime(date); setShowFlag(true)}}
+                  onChange={(date) => {
+                    setDateTime(date);
+                    setShowFlag(true);
+                  }}
                   showTimeSelect
                   timeFormat="hh:mm aa"
                   timeIntervals={15}
