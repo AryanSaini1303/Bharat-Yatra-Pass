@@ -23,6 +23,7 @@ export default function BookingPage({ params }) {
   });
   const [totalAmount, setTotalAmount] = useState(0);
   const current_date = new Date();
+  const [showFlag, setShowFlag]=useState(false);
   // console.log(dateTime);
   // console.log(current_date);
 
@@ -51,6 +52,9 @@ export default function BookingPage({ params }) {
       ) {
         alert("Select at least 1 ticket before the checkout");
       }
+    }
+    if(breakFlag && !showFlag){
+      alert("Choose a time slot!");
     }
   }
 
@@ -194,7 +198,7 @@ export default function BookingPage({ params }) {
               <div className={styles.dateTimePicker}>
                 <DatePicker
                   selected={dateTime}
-                  onChange={(date) => setDateTime(date)}
+                  onChange={(date) => {setDateTime(date); setShowFlag(true)}}
                   showTimeSelect
                   timeFormat="hh:mm aa"
                   timeIntervals={15}
@@ -221,7 +225,7 @@ export default function BookingPage({ params }) {
                   minDate={new Date()} // Here we are setting min. date of the calender to the current date i.e. new Date() as we don't want the user to book tickets for the past
                   customInput={
                     <button className={styles.datepicker_button}>
-                      {dateTime.toLocaleString()
+                      {dateTime.toLocaleString() && showFlag
                         ? dateTime.toLocaleString()
                         : "Select Date & Time"}
                     </button>
