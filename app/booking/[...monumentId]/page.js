@@ -26,8 +26,8 @@ export default function BookingPage({ params }) {
   const current_date = new Date();
   const [showFlag, setShowFlag] = useState(false);
   const [ticketId, setTicketId] = useState("");
-  const [qrValue, setQrValue] = useState("");
-  const [ticketColor, setTicketColor] = useState("");
+  const [savingTicket, setSavingTicket] = useState(false);
+  // console.log(user);
 
   const convertTime = (timeStr) => {
     const [hours, minutes] = timeStr.split(":");
@@ -62,34 +62,41 @@ export default function BookingPage({ params }) {
     }
     const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
     setTicketId(referenceId);
-    setQrValue(referenceId);
-    setTicketColor(() => {
-      let color;
-      do {
-        color = `#${Math.floor(Math.random() * 16777215)
-          .toString(16)
-          .padStart(6, "0")}`;
-      } while (
-        color.toLowerCase() === "#000000" ||
-        color.toLowerCase() === "#ffffff"
-      );
-      return color
-    });
   }
 
   useEffect(() => {
-    const queryParams = new URLSearchParams({
-      tickets: encodeURIComponent(JSON.stringify({ ticketNum, dateTime })),
-      // totalAmount: encodeURIComponent(JSON.stringify(totalAmount)),
-      monumentDetails: encodeURIComponent(JSON.stringify(monument)),
-      ticketId: encodeURIComponent(JSON.stringify(ticketId)),
-      qrValue: encodeURIComponent(JSON.stringify(qrValue)),
-      ticketColor: encodeURIComponent(
-        JSON.stringify(ticketColor)
-      ),
-    });
-    ticketId.length != 0 && router.push(`/ticket?${queryParams}`);
-  }, [ticketId]);
+    if (!ticketId || !user?.id) return; // Ensure required fields are available
+    const saveTickets = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("tickets")
+          .insert([
+            {
+              monumentName: monument.name,
+              monumentCity: monument.city,
+              monumentImage: monument.image_url,
+              dateTime:dateTime,
+              ticketId,
+              ticketNum,
+              user_id: user.id,
+            },
+          ])
+          .select();
+        if (error) {
+          console.error("❌ Error saving ticket:", error.message);
+          return;
+        }
+        if (data) {
+          // console.log("✅ Ticket saved successfully:", data);
+          router.push(`/ticket?q=${encodeURIComponent(ticketId)}`);
+        }
+      } catch (err) {
+        console.error("❌ Unexpected error:", err.message);
+      }
+    };
+    saveTickets();
+  }, [ticketId, user?.id]);
+  // For now, inserting directly in the component works because Supabase’s Row-Level Security (RLS) applies stricter policies on API routes. When using useEffect, the request is made from the client-side with the authenticated user's session, ensuring the correct user_id is attached. This bypasses the "violating RLS policy" error that occurs when inserting via a Next.js API route (which may lack the necessary auth context).
 
   useEffect(() => {
     monument.ticket_price &&
