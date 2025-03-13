@@ -72,6 +72,3 @@
     align-items: center;
     margin-top:1rem;
 }
-.ticketSection h2, .ticketSection h3, .dateTime, .ticketSection ul li, .info p{
-    text-shadow: 0 0 1px black;
-}
