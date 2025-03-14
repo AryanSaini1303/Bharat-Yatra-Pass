@@ -32,9 +32,10 @@
 }
 .dropdown {
   position: absolute;
-  backdrop-filter: blur(2px);
+  /* backdrop-filter: blur(2px); */
   z-index: 1000;
-  height: 89vh;
+  /* min-height: 89vh; */
+  /* height: 120vh; */
   top: 4rem;
   /* right: 0.2rem; */
   width: 100vw;
