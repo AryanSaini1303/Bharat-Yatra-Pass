@@ -122,6 +122,10 @@ export default function Ticket() {
                 level="H"
               />
               <p>Ticked Id: {ticketId}</p>
+              <div className={styles.status}>
+                <h5>{ticketDetails.status=='active'?"Active":"Expired"}</h5>
+                <div className={styles.statusCircle} style={ticketDetails.status=='active'?{backgroundColor:"green"}:{backgroundColor:"red"}}></div>
+              </div>
             </section>
           </section>
         </div>

@@ -49,7 +49,7 @@ export default function Tickets({ params }) {
         );
         const data = await response.json();
         setTickets(data);
-        console.log(data);
+        // console.log(data);
         setLoading(false);
       } catch (error) {
         console.log(error.message);

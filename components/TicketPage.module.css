@@ -110,3 +110,25 @@
     right: -0.5rem;
     border: dashed black 2px;
 }
+.status{
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.status .statusCircle{
+    height: 0.5rem;
+    width: 0.5rem;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%{
+        opacity: 0.1;
+    }
+    50%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0.1;
+    }
+}

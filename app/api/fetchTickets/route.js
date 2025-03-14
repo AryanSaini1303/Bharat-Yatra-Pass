@@ -13,7 +13,7 @@ export async function GET(request) {
   try {
     const { data, error } = await supabase
       .from("tickets")
-      .select("*")
+      .select("monumentName, monumentImage, dateTime, ticketId")
       .eq("status", status)
       .eq("user_id", user_id);
     if (error) {
