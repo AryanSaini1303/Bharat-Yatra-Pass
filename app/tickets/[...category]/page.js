@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { use, useEffect, useState } from "react";
 import styles from "./page.module.css";
 import { useRouter } from "next/navigation";
+import Loader from "@/components/loader";
 
 export default function Tickets({ params }) {
   const { category } = use(params);
@@ -10,6 +11,7 @@ export default function Tickets({ params }) {
   const [user, setUser] = useState();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingUser, setLoadingUser]=useState(true);
   const router = useRouter();
   // console.log(tickets[0].dateTime);
 
@@ -30,9 +32,11 @@ export default function Tickets({ params }) {
         if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
           const { user } = session;
           setUser(user);
+          setLoadingUser(false);
           // console.log(user);
         } else {
           setUser(null);
+          setLoadingUser(false);
         }
       }
     );
@@ -59,6 +63,14 @@ export default function Tickets({ params }) {
     user?.id && status && fetchTickets();
   }, [user]);
 
+  if (loadingUser) {
+    return <Loader margin={"15rem auto"}/>;
+  } else {
+    if (!user) {
+      return <div>Unauthenticated...</div>;
+    }
+  }
+
   return (
     <div className="wrapper">
       <header className={styles.header}>
@@ -76,11 +88,11 @@ export default function Tickets({ params }) {
             d="M16.88 2.88a1.25 1.25 0 0 0-1.77 0L6.7 11.29a.996.996 0 0 0 0 1.41l8.41 8.41c.49.49 1.28.49 1.77 0s.49-1.28 0-1.77L9.54 12l7.35-7.35c.48-.49.48-1.28-.01-1.77"
           ></path>
         </svg>
-        <h2>{category=='current'?"Current": "Past"} tickets</h2>
+        <h2>{category == "current" ? "Current" : "Past"} tickets</h2>
       </header>
       <div className={styles.ticketList}>
         {loading ? (
-          "Loading..."
+          <Loader margin={"10rem auto"} />
         ) : tickets.length > 0 ? (
           tickets.map((ticket) => (
             <a

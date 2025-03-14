@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabaseClient";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { v4 as uuidv4 } from "uuid";
+import Loader from "@/components/loader";
 
 export default function BookingPage({ params }) {
   const { monumentId } = use(params);
@@ -147,7 +148,7 @@ export default function BookingPage({ params }) {
   }, []);
 
   if (loadingUser) {
-    return <div>Loading...</div>;
+    return <Loader margin={"15rem auto"}/>;
   } else {
     if (!user) {
       return <div>Unauthenticated...</div>;
@@ -174,7 +175,7 @@ export default function BookingPage({ params }) {
         <h2>Details</h2>
       </header>
       {loadingMonument ? (
-        "Loading..."
+        <Loader margin={"10rem auto"}/>
       ) : monument.length != 0 ? (
         <div className={styles.container}>
           <img

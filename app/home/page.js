@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import Loader from "@/components/loader";
 
 export default function Home() {
   const [profileClick, setProfileClick] = useState(false);
@@ -124,7 +125,7 @@ export default function Home() {
   }, [searchQuery]);
 
   if (loadingUser) {
-    return <div>Loading...</div>;
+    return <Loader margin={"15rem auto"}/>;
   } else {
     if (!user) {
       return <div>Unauthenticated...</div>;
@@ -231,10 +232,22 @@ export default function Home() {
                 }} // Here we check onBlur if the click was on this div or not and if it's not then setProfileClick(false);
               >
                 <li>
-                  <button onClick={()=>{router.push("/tickets/current")}}>Current Tickets</button>
+                  <button
+                    onClick={() => {
+                      router.push("/tickets/current");
+                    }}
+                  >
+                    Current Tickets
+                  </button>
                 </li>
                 <li>
-                  <button onClick={()=>{router.push("/tickets/past")}}>Past Tickets</button>
+                  <button
+                    onClick={() => {
+                      router.push("/tickets/past");
+                    }}
+                  >
+                    Past Tickets
+                  </button>
                 </li>
                 <li>
                   <button
@@ -255,7 +268,11 @@ export default function Home() {
         onSubmit={(e) => {
           e.preventDefault();
         }}
-        style={(profileClick||locationClick)?{filter:"blur(2px)", pointerEvents:"none"}:null}
+        style={
+          profileClick || locationClick
+            ? { filter: "blur(2px)", pointerEvents: "none" }
+            : null
+        }
       >
         <input
           type="text"
@@ -276,7 +293,14 @@ export default function Home() {
           </g>
         </svg>
       </form>
-      <section className={styles.monumentList} style={(profileClick||locationClick)?{filter:"blur(2px)", pointerEvents:"none"}:null}>
+      <section
+        className={styles.monumentList}
+        style={
+          profileClick || locationClick
+            ? { filter: "blur(2px)", pointerEvents: "none" }
+            : null
+        }
+      >
         <ul>
           {monuments.length == 0 && !loadingMonuments ? (
             <p
@@ -307,9 +331,10 @@ export default function Home() {
                 )
             )
           ) : (
-            <p style={{ fontFamily: "var(--font)", fontWeight: "bolder" }}>
-              Loading...
-            </p>
+            // <p style={{ fontFamily: "var(--font)", fontWeight: "bolder" }}>
+            //   Loading...
+            // </p>
+            <Loader />
           )}
         </ul>
       </section>

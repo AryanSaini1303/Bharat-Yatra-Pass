@@ -4,6 +4,7 @@ import styles from "./TicketPage.module.css";
 import { QRCodeCanvas } from "qrcode.react";
 import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
+import Loader from "./loader";
 
 export default function Ticket() {
   const searchParams = useSearchParams();
@@ -60,7 +61,7 @@ export default function Ticket() {
   }, []);
 
   if (loadingUser) {
-    return <div>Loading...</div>;
+    return <Loader margin={"15rem auto"}/>;
   } else {
     if (!user) {
       return <div>Unauthenticated...</div>;
@@ -87,7 +88,7 @@ export default function Ticket() {
         <h2>Your Ticket</h2>
       </header>
       {loadingDetails ? (
-        "loading..."
+        <Loader margin={"10rem auto"}/>
       ) : ticketDetails.length==0 ? (
         "No ticket found!"
       ) : (
