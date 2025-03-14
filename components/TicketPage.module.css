@@ -1,15 +1,24 @@
 .ticketSection img{
     width: 100%;
     border-radius: 10px;
+    margin-top: 1rem;
+}
+.ticketSectionContainer{
+    overflow: hidden;
+    width: fit-content;
+    margin: 1rem auto;
+    width: 270px;
 }
 .ticketSection{
     border-radius: 10px;
     width: 80%;
     padding: 1rem;
-    margin: 1rem auto;
-    max-width: 270px;
-    box-shadow: 0 6px 2px black;
+    /* margin: 1rem auto; */
+    width: 235px;
+    /* box-shadow: 0 6px 2px black; */
+    border: dashed black 2px;
     background-color: #F7E6B7;
+    position: relative;
 }
 .ticketSection *{
     margin: 0;
@@ -47,6 +56,7 @@
     top: 50%;
     left: -1rem;
     transform: translate(-50%,-50%);
+    border: dashed black 2px;
 }
 .separator::after{
     content: '';
@@ -56,8 +66,9 @@
     background-color: white;
     border-radius: 50%;
     top: 50%;
-    right: -2rem;
+    right: -2.25rem;
     transform: translate(-50%,-50%);
+    border: dashed black 2px;
 }
 .ticketSection .info p{
     font-size: 0.6rem;
@@ -71,4 +82,31 @@
     gap: 0.5rem;
     align-items: center;
     margin-top:1rem;
+}
+.borderCircle{
+    height: 2rem;
+    width: 2rem;
+    border-radius: 50%;
+    background-color: white;
+    position: absolute;
+}
+.borderCircle:nth-child(1){
+    top: -0.5rem;
+    left: -0.5rem;
+    border: dashed black 2px;
+}
+.borderCircle:nth-child(2){
+    top: -0.5rem;
+    right: -0.5rem;
+    border: dashed black 2px;
+}
+.borderCircle:nth-child(3){
+    bottom: -0.5rem;
+    left: -0.5rem;
+    border: dashed black 2px;
+}
+.borderCircle:nth-child(4){
+    bottom: -0.5rem;
+    right: -0.5rem;
+    border: dashed black 2px;
 }

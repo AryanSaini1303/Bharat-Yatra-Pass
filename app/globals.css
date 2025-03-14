@@ -9,9 +9,6 @@ body {
   padding: 0;
   user-select: none;
 }
-.wrapper {
-  min-height: 100vh;
-}
 .wrapper * {
   font-family: var(--font);
 }

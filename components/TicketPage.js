@@ -73,52 +73,58 @@ export default function Ticket() {
       ) : !ticketDetails ? (
         "No ticket found!"
       ) : (
-        <section className={styles.ticketSection}>
-          <img src={ticketDetails.monumentImage} alt="" />
-          <h2>{ticketDetails.monumentName}</h2>
-          <h3>{ticketDetails.monumentCity}</h3>
-          <section className={styles.dateTime}>
-            <h4>{date}</h4>
-            <h4>{time}</h4>
+        <div className={styles.ticketSectionContainer}>
+          <section className={styles.ticketSection}>
+            <div className={styles.borderCircle}></div>
+            <div className={styles.borderCircle}></div>
+            <div className={styles.borderCircle}></div>
+            <div className={styles.borderCircle}></div>
+            <img src={ticketDetails.monumentImage} alt="" />
+            <h2>{ticketDetails.monumentName}</h2>
+            <h3>{ticketDetails.monumentCity}</h3>
+            <section className={styles.dateTime}>
+              <h4>{date}</h4>
+              <h4>{time}</h4>
+            </section>
+            {ticketDetails.ticketNum && (
+              <ul>
+                {ticketDetails.ticketNum.adult != 0 && (
+                  <li>
+                    Adult <span>x {ticketDetails.ticketNum.adult}</span>
+                  </li>
+                )}
+                {ticketDetails.ticketNum.foreigner != 0 && (
+                  <li>
+                    Non &mdash; Indian{" "}
+                    <span>x {ticketDetails.ticketNum.foreigner}</span>
+                  </li>
+                )}
+                {ticketDetails.ticketNum.kid != 0 && (
+                  <li>
+                    Kid <span>x {ticketDetails.ticketNum.kid}</span>
+                  </li>
+                )}
+                {ticketDetails.ticketNum.senior != 0 && (
+                  <li>
+                    Senior <span>x {ticketDetails.ticketNum.senior}</span>
+                  </li>
+                )}
+              </ul>
+            )}
+            <div className={styles.separator}>
+              <hr />
+            </div>
+            <section className={styles.info}>
+              <QRCodeCanvas
+                value={ticketId}
+                size={140}
+                bgColor="transparent"
+                level="H"
+              />
+              <p>Ticked Id: {ticketId}</p>
+            </section>
           </section>
-          {ticketDetails.ticketNum && (
-            <ul>
-              {ticketDetails.ticketNum.adult != 0 && (
-                <li>
-                  Adult <span>x {ticketDetails.ticketNum.adult}</span>
-                </li>
-              )}
-              {ticketDetails.ticketNum.foreigner != 0 && (
-                <li>
-                  Non &mdash; Indian{" "}
-                  <span>x {ticketDetails.ticketNum.foreigner}</span>
-                </li>
-              )}
-              {ticketDetails.ticketNum.kid != 0 && (
-                <li>
-                  Kid <span>x {ticketDetails.ticketNum.kid}</span>
-                </li>
-              )}
-              {ticketDetails.ticketNum.senior != 0 && (
-                <li>
-                  Senior <span>x {ticketDetails.ticketNum.senior}</span>
-                </li>
-              )}
-            </ul>
-          )}
-          <div className={styles.separator}>
-            <hr />
-          </div>
-          <section className={styles.info}>
-            <QRCodeCanvas
-              value={ticketId}
-              size={140}
-              bgColor="transparent"
-              level="H"
-            />
-            <p>Ticked Id: {ticketId}</p>
-          </section>
-        </section>
+        </div>
       )}
     </div>
   );
