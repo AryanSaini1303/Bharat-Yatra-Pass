@@ -1,5 +1,5 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./TicketPage.module.css";
 import { QRCodeCanvas } from "qrcode.react";
 import { supabase } from "@/lib/supabaseClient";
@@ -13,6 +13,7 @@ export default function Ticket() {
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingDetails, setLoadingDetails] = useState(true);
   const dateObj = new Date(ticketDetails?.dateTime);
+  const router=useRouter();
   const date = dateObj.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -68,9 +69,26 @@ export default function Ticket() {
 
   return (
     <div className="wrapper">
+      <header className={styles.header}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="1.5em"
+          height="1.5em"
+          onClick={() => {
+            router.back();
+          }}
+        >
+          <path
+            fill="currentColor"
+            d="M16.88 2.88a1.25 1.25 0 0 0-1.77 0L6.7 11.29a.996.996 0 0 0 0 1.41l8.41 8.41c.49.49 1.28.49 1.77 0s.49-1.28 0-1.77L9.54 12l7.35-7.35c.48-.49.48-1.28-.01-1.77"
+          ></path>
+        </svg>
+        <h2>Your Ticket</h2>
+      </header>
       {loadingDetails ? (
         "loading..."
-      ) : !ticketDetails ? (
+      ) : ticketDetails.length==0 ? (
         "No ticket found!"
       ) : (
         <div className={styles.ticketSectionContainer}>
@@ -123,8 +141,17 @@ export default function Ticket() {
               />
               <p>Ticked Id: {ticketId}</p>
               <div className={styles.status}>
-                <h5>{ticketDetails.status=='active'?"Active":"Expired"}</h5>
-                <div className={styles.statusCircle} style={ticketDetails.status=='active'?{backgroundColor:"green"}:{backgroundColor:"red"}}></div>
+                <h5>
+                  {ticketDetails.status == "active" ? "Active" : "Expired"}
+                </h5>
+                <div
+                  className={styles.statusCircle}
+                  style={
+                    ticketDetails.status == "active"
+                      ? { backgroundColor: "green" }
+                      : { backgroundColor: "red" }
+                  }
+                ></div>
               </div>
             </section>
           </section>
