@@ -231,10 +231,10 @@ export default function Home() {
                 }} // Here we check onBlur if the click was on this div or not and if it's not then setProfileClick(false);
               >
                 <li>
-                  <button>Current Tickets</button>
+                  <button onClick={()=>{router.push("/tickets/current")}}>Current Tickets</button>
                 </li>
                 <li>
-                  <button>Past Tickets</button>
+                  <button onClick={()=>{router.push("/tickets/past")}}>Past Tickets</button>
                 </li>
                 <li>
                   <button

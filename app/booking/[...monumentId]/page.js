@@ -79,6 +79,7 @@ export default function BookingPage({ params }) {
               ticketId,
               ticketNum,
               user_id: user.id,
+              status:"active",
             },
           ])
           .select();
