@@ -255,7 +255,7 @@ export default function Home() {
         onSubmit={(e) => {
           e.preventDefault();
         }}
-        style={(profileClick||locationClick)?{filter:"blur(2px)"}:null}
+        style={(profileClick||locationClick)?{filter:"blur(2px)", pointerEvents:"none"}:null}
       >
         <input
           type="text"
@@ -276,7 +276,7 @@ export default function Home() {
           </g>
         </svg>
       </form>
-      <section className={styles.monumentList} style={(profileClick||locationClick)?{filter:"blur(2px)"}:null}>
+      <section className={styles.monumentList} style={(profileClick||locationClick)?{filter:"blur(2px)", pointerEvents:"none"}:null}>
         <ul>
           {monuments.length == 0 && !loadingMonuments ? (
             <p
