@@ -1,55 +1,61 @@
-# BharatYatraPass
+# **BharatYatraPass** 🎫🚆
 
-BharatYatraPass is a seamless and efficient online ticket booking platform for India's iconic monuments and tourist attractions. Designed with a mobile-first approach, it offers a user-friendly experience for travelers, administrators, and gate authorities.
+BharatYatraPass is a seamless online ticket booking platform for India's iconic monuments and tourist attractions. With a mobile-first design and intuitive interface, it simplifies ticket reservations, verification, and entry management.
 
-## 🚀 Features
+## 🚀 **Key Features**
 
-### **User Portal**
+### **🔹 User Portal**
 
-* 📱 **Mobile-First, Responsive UI** – Optimized for all devices.
-* 🏛️ **Browse & Filter Monuments** – Discover famous Indian landmarks.
-* 🔐 **Secure Authentication** – Login via Email/Google.
-* 🎫 **Easy Ticket Booking** – Select date, book, and pay securely.
-* 💳 **Payment Gateway Integration** – Multiple payment options.
-* 📄 **Digital Ticket with QR & Reference ID** – Instant e-ticket generation.
-* 📂 **User Dashboard** – View and manage bookings with ease.
+* 📱 **Mobile-First UI** – Smooth experience across devices.
+* 🏛️ **Monument Discovery** – Browse & filter attractions.
+* 🔐 **Google & Email Authentication** – Secure login system.
+* 🎫 **Fast Ticket Booking** – Select a date & book instantly.
+* 💳 **Secure Payment Gateway** – Integrated with Razorpay.
+* 📂 **User Dashboard** – Manage & track bookings.
+* 📄 **Digital Ticket with QR & ID** – Instant e-ticket generation.
 
-### **Admin Panel**
+### **🛠️ Admin Panel**
 
-* 🏗️ **Monument & Ticket Management** – Add, edit, or remove listings.
-* 📊 **Booking & Transaction Tracking** – Monitor bookings and revenue.
-* 📈 **Reports & Analytics** – Gain insights on user activity and trends.
-* 👥 **User & Support Management** – Handle customer queries and issues.
+* 🏗️ **Monument & Pricing Management** – Add, edit, or remove places.
+* 📊 **Booking & Payment Insights** – View transactions & revenue.
+* 📈 **Reports & Analytics** – Monitor user activity & trends.
+* 👥 **User & Support Management** – Resolve issues efficiently.
 
-### **Vendor/Gate Authority System**
+### **🎫 Gate Authority System**
 
-* 🔍 **QR Code Scanning** – Instant ticket validation.
-* 🔢 **Reference ID Verification** – Manual ticket authentication.
-* 📡 **Real-time Status Updates** – Track validated entries.
+* 📷 **QR Code Scanning** – Verify tickets instantly.
+* 🔢 **Manual Ticket ID Entry** – In case of scanning issues.
+* 📡 **Real-time Ticket Status** – Check validity before allowing entry.
+* 📝 **History of Scanned Tickets** – Maintain a log for security.
 
-## 🛠️ Tech Stack
+### **🕒 Automated Ticket Expiry Management**
 
-* **Frontend** – Next.js, React, Tailwind CSS
-* **Backend** – Node.js, Express.js
-* **Database** – PostgreSQL with Prisma ORM
-* **Authentication** – NextAuth.js (Google, Email login)
-* **Payment Gateway** – Razorpay / Stripe
-* **QR Code Generation & Scanning** – QR Code API
-* **Hosting & Deployment** – Vercel / AWS / Railway
+* 🕵️ **Background Job Execution** – A scheduled Supabase job runs every minute to check for expired tickets.
+* ⏳ **Automated Expiry Updates** – If a ticket’s date-time is past, its status is automatically set to **"expired."**
 
-## 📌 Installation & Setup
+## 🛠 **Tech Stack**
+
+* **Frontend:** Next.js, React
+* **Backend:** Next.js
+* **Database:** Supabase
+* **Authentication:** Supabase
+* **Payment Processing:** Razorpay
+* **QR Code Generation & Scanning:** QR Code API
+* **Deployment:** Vercel
+
+## 🔧 **Installation & Setup**
 
 ### **Clone the Repository**
 
 ```bash
- git clone https://github.com/yourusername/BharatYatraPass.git
- cd BharatYatraPass
+git clone https://github.com/yourusername/BharatYatraPass.git
+cd BharatYatraPass
 ```
 
 ### **Install Dependencies**
 
 ```bash
- npm install
+npm install
 ```
 
 ### **Environment Variables**
@@ -57,28 +63,30 @@ BharatYatraPass is a seamless and efficient online ticket booking platform for I
 Create a `.env` file and configure the required variables:
 
 ```env
-DATABASE_URL=your_postgres_url
-NEXTAUTH_SECRET=your_auth_secret
-NEXT_PUBLIC_PAYMENT_KEY=your_payment_key
+GOOGLE_ID=your_google_id
+GOOGLE_SECRET=your_google_secret
+NEXTAUTH_SECRET=your_nextauth_secret
+
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+NEXT_PUBLIC_RAZORPAY_KEY_ID=your_public_razorpay_key_id
 ```
 
 ### **Run the Development Server**
 
 ```bash
- npm run dev
+npm run dev
 ```
 
-## 🚧 Future Prospects
+## 🚀 **Future Enhancements**
 
-* **🚆 Integration with Railway Ticketing** – Expanding to travel routes.
-* **🛎️ AI-Powered Travel Assistance** – Smart recommendations for tourists.
-* **📍 Augmented Reality Guide** – Immersive historical insights at monuments.
-* **📲 Mobile App** – Native Android & iOS app for better accessibility.
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to open issues, submit PRs, or suggest improvements.
+* **📍 AI-Powered Travel Guide** – Smart recommendations for users.
+* **📲 Mobile App** – Dedicated iOS & Android apps.
+* **📡 AR-Based Monument Navigation** – Enhance user experience.
 
 ---
 
-*Developed with ❤️ by Aryan & Team.*
+**Developed with ❤️ by Aryan & Team.**

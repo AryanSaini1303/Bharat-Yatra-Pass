@@ -161,3 +161,24 @@ export default function Ticket() {
     </div>
   );
 }
+
+// -- 🕒 Auto-Expire Old Tickets (Scheduled Job)
+// -- -----------------------------------------
+// -- This cron job runs every **minute** (`*/1 * * * *`) and updates tickets 
+// -- where `dateTime` has passed, setting `status = 'expired'`.
+// --
+// -- ✅ Why?
+// -- - Keeps tickets **up-to-date** without manual updates.
+// -- - Ensures **past tickets don’t stay valid**.
+// -- - Runs **independently** of user actions.
+// --
+// -- ⏳ Schedule Options:
+// -- - Every **minute** → `*/1 * * * *`
+// -- - Every **hour** → `0 * * * *`
+// --
+// -- 📌 Set the Job:
+// SELECT cron.schedule(
+//   'update_expired_tickets',
+//   '*/1 * * * *', -- Change to '0 * * * *' for hourly updates
+//   $$ UPDATE tickets SET status = 'expired' WHERE dateTime < CURRENT_TIMESTAMP AND status != 'expired' $$
+// );
