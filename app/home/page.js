@@ -8,7 +8,14 @@ import Loader from "@/components/loader";
 export default function Home() {
   const [profileClick, setProfileClick] = useState(false);
   const [locationClick, setLocationClick] = useState(false);
-  const [location, setLocation] = useState("Udaipur");
+  const [location, setLocation] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedCity = localStorage.getItem("userCity");
+      return savedCity || "Udaipur";
+    }
+    return "Udaipur"; // Default value for SSR
+  });
+
   const dropdownRef = useRef(null); // React hook which is used to point to a div something like "document.getElementById"
   const locationRef = useRef(null);
   const [monuments, setMonuments] = useState([]);
@@ -66,6 +73,8 @@ export default function Home() {
     if (savedCity) {
       // console.log("📍 City found in localStorage:", savedCity);
       setLocation(savedCity);
+    } else {
+      setLocation("Udaipur");
     }
   }, []);
 
@@ -125,7 +134,7 @@ export default function Home() {
   }, [searchQuery]);
 
   if (loadingUser) {
-    return <Loader margin={"15rem auto"}/>;
+    return <Loader margin={"15rem auto"} />;
   } else {
     if (!user) {
       return <div>Unauthenticated...</div>;
