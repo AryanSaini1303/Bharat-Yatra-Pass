@@ -1,47 +1,75 @@
 .container {
   max-width: 400px;
   margin: 0 auto;
-  padding: 20px;
   text-align: center;
+  padding: 0;
   border-radius: 8px;
-  background: #f9f9f9;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .title {
   font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 15px;
+  margin: 1rem 0;
 }
 
 .scannerBox {
-  border: 2px dashed #007bff;
+  border: 2px dashed grey;
   padding: 10px;
   border-radius: 8px;
-  background: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 250px;
+  height: 280px;
+  width: 280px;
+  margin: 1rem auto;
+  overflow: hidden;
+  background: url("/images/qr.png");
+  background-origin: border-box;
+  background-position: center;
+  background-size: 240px 240px;
+  background-repeat: no-repeat;
 }
 
 .infoText {
   font-size: 14px;
   color: #666;
-  margin-top: 10px;
+  margin: 1.5rem 0;
 }
 
 .inputField {
-  width: 100%;
+  width: 80%;
   padding: 8px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
+  border: 2px dashed grey;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .resultText {
   margin-top: 10px;
   font-weight: bold;
   color: #007bff;
+}
+.btn {
+  padding: 0.5rem 1.2rem;
+  background-color: black;
+  box-shadow: 4px 4px 5px rgb(85, 85, 85);
+  border-radius: 60px;
+  color: white;
+  font-size: 1rem;
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+.btn:active {
+  box-shadow: 2px 2px 2px rgb(85, 85, 85);
+  transform: scale(0.98);
+}
+.container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.container form input:focus {
+  border: solid black 2px;
+  outline: none;
 }
