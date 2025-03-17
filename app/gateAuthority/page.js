@@ -62,7 +62,7 @@ export default function GateAuthority() {
 
       <div className={styles.buttonContainer}>
         {!isScanning ? (
-          <button className={styles.startButton} onClick={startScanning}>
+          <button className={styles.startButton} onClick={startScanning} disabled={isScanning&&true}>
             Start Scanning
           </button>
         ) : (
