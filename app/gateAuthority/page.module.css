@@ -1,0 +1,47 @@
+.container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+  background: #f9f9f9;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.scannerBox {
+  border: 2px dashed #007bff;
+  padding: 10px;
+  border-radius: 8px;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 250px;
+}
+
+.infoText {
+  font-size: 14px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.inputField {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.resultText {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #007bff;
+}
