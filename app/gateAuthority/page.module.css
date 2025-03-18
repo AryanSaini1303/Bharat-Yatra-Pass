@@ -111,6 +111,7 @@
   margin: 0;
   max-height: 50vh;
   overflow: scroll;
+  z-index: 1000;
 }
 @keyframes dropdownReveal {
   0% {
