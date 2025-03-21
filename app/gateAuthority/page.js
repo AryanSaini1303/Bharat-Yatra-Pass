@@ -26,7 +26,7 @@ export default function GateAuthority() {
   const router = useRouter();
   const authorizedEmail = ["saini.aryan9999@gmail.com", "yograj.rr@gmail.com"];
   const [counter, setCounter] = useState(5);
-  const [loading, setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -79,7 +79,7 @@ export default function GateAuthority() {
         redirectTo: `${window.location.origin}${redirectPath}`,
       },
     });
-
+  
     if (error) {
       console.error("Authentication Error:", error);
     }
@@ -88,7 +88,7 @@ export default function GateAuthority() {
   const signOut = async () => {
     await supabase.auth.signOut();
     router.push("/gateAuthority");
-  };
+  };  
 
   useEffect(() => {
     return () => {
