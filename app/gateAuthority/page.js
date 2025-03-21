@@ -26,6 +26,7 @@ export default function GateAuthority() {
   const router = useRouter();
   const authorizedEmail = ["saini.aryan9999@gmail.com", "yograj.rr@gmail.com"];
   const [counter, setCounter] = useState(5);
+  const [loading, setLoading]=useState(false);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -97,18 +98,19 @@ export default function GateAuthority() {
   }, []);
 
   useEffect(() => {
-    if (ticketId.length != 0) {
+    if (!loading) {
       const interval = setInterval(() => {
         setCounter((prev) => prev - 1);
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [ticketId]);
+  }, [loading]);
 
   useEffect(() => {
     if (counter == 0) {
       setTicketId("");
       setCounter(5);
+      setTicket([]);
     }
   }, [counter]);
 
@@ -147,12 +149,16 @@ export default function GateAuthority() {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
+    // const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     const verifyTicket = async () => {
       setVerifying(true);
       try {
         const response = await fetch(`/api/verifyTicket?ticketId=${ticketId}`);
         const data = await response.json();
+        // await delay(2000); // Simulates network delay
         setTicket(data);
+        setLoading(false);
         // console.log(data);
         if (inputRef.current) {
           inputRef.current.value = ""; // Clears the input
@@ -406,14 +412,16 @@ export default function GateAuthority() {
                   >
                     Ticket ID: {ticketId}
                   </p>
-                  <button
-                    onClick={() => {
-                      setTicketId("");
-                    }}
-                    className={styles.okbtn}
-                  >
-                    Scan next <span>{counter}</span>
-                  </button>
+                  {!loading && (
+                    <button
+                      onClick={() => {
+                        setCounter(0);
+                      }}
+                      className={styles.okbtn}
+                    >
+                      Scan next <span>{counter}</span>
+                    </button>
+                  )}
                 </div>
               )}
             </section>
