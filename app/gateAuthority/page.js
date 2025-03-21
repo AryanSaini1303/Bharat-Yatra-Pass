@@ -348,7 +348,7 @@ export default function GateAuthority() {
                             : { color: "red" }
                         }
                       >
-                        Ticket doesn't exist !
+                        Ticket doesn&apos;t exist !
                       </p>
                     </div>
                   ) : ticket[0]?.status == "active" ? (
