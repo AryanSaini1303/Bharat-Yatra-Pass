@@ -173,14 +173,14 @@ export default function GateAuthority() {
   }, [ticketId]);
 
   useEffect(() => {
-    if (ticket[0]?.ticketId && ticket[0]?.status === "active") {
+    // console.log(ticket);
+    if (ticket[0]?.ticketId && ticket[0]?.status == "active") {
       const expireTicket = async () => {
         try {
           const { data, error } = await supabase
             .from("tickets")
-            .update({ status: "expired", verifierId: user.id })
+            .update({ status: "expired", verifierId: user?.id })
             .eq("ticketId", ticket[0].ticketId)
-            .eq("user_id", ticket[0].user_id)
             .select(); // Ensures it returns the updated data
           if (error) {
             console.error("Supabase Error:", error.message);
