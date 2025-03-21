@@ -1,9 +1,9 @@
 "use client";
 import Image from "next/image";
 import styles from "./page.module.css";
-import { Noto_Sans } from "next/font/google";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { Noto_Sans } from "next/font/google";
 
 const notoSans = Noto_Sans({
   weight: "400",
@@ -13,15 +13,19 @@ const notoSans = Noto_Sans({
 export default function Home() {
   const [user, setUser]=useState('');
 
-  const signIn = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
+  const signIn = async (redirectPath = "/home") => {
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}${redirectPath}`,
+      },
     });
+  
     if (error) {
-      console.log(error);
-      return;
+      console.error("Authentication Error:", error);
     }
   };
+  
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -40,9 +44,9 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(()=>{
-    user&&window.location.replace("/home");
-  },[user])
+  // useEffect(()=>{
+  //   user&&window.location.replace("/home");
+  // },[user])
 
   return (
     <div className="wrapper">

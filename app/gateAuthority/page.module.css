@@ -42,10 +42,6 @@
   border-radius: 4px;
   font-size: 14px;
 }
-
-.resultText {
-  font-size: 0.9rem;
-}
 .btn {
   padding: 0.5rem 1.2rem;
   background-color: black;
@@ -160,4 +156,116 @@
 .hamburger svg:active {
   opacity: 0.5;
   transform: scale(0.98);
+}
+
+.background {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  filter: drop-shadow(0 -5px 60px gold);
+}
+.googleLogin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  border: none;
+  border-radius: 3rem;
+  padding: 0.3rem 1.3rem;
+  cursor: pointer;
+  transition: 0.2s all ease-in-out;
+  width: 90%;
+  box-shadow: inset -5px -5px 6px darkgrey;
+  margin: 0 auto;
+  animation: float 2s infinite;
+}
+.googleLogin h3{
+  font-weight: normal;
+}
+.googleLogin:active {
+  background-color: rgb(44, 44, 44);
+  color: whitesmoke;
+  transform: scale(0.98);
+  box-shadow: inset -5px -5px 10px grey;
+}
+.header * {
+  font-family: "Iansui", cursive;
+  font-weight: normal;
+  font-style: normal;
+  text-align: center;
+  margin: 0.8rem 0;
+}
+.header {
+  padding: 0 1rem;
+  margin: 4rem 0;
+}
+.header h1 {
+  font-weight: bolder;
+}
+.content {
+  flex: 1;
+}
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.2rem);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.loginPage {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.content button img{
+  height: 30px;
+  width: 30px;
+}
+.resultContainer{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  backdrop-filter: blur(10px);
+  background-color:white;
+  height: 100vh;
+  width: 100vw;
+  justify-content: center;
+  align-items: center;
+}
+.resultInfo img{
+  height: 15rem;
+  width: 15rem;
+}
+.okbtn {
+  padding: 0.5rem 1rem;
+  background: rgb(0, 0, 0); /* Semi-transparent white */
+  backdrop-filter: blur(10px); /* Blurry effect */
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 60px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin: 1rem 0;
+}
+.okbtn span{
+  font-size: 1.1rem;
+  margin-left:1rem;
+  color: lightblue;
+}
+/* .okbtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+} */
+
+.okbtn:active {
+  transform: scale(0.95); /* Click effect */
 }

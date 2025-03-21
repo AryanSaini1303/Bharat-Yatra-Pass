@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const ticketId = searchParams.get("ticketId");
-  console.log(ticketId);
+  // console.log(ticketId);
   if (!ticketId) {
     return NextResponse.json(
       { error: "ticketId is required" },
@@ -14,7 +14,7 @@ export async function GET(request) {
   try {
     const { data, error } = await supabase
       .from("tickets")
-      .select("monumentName, monumentImage, dateTime, ticketId, status")
+      .select("monumentName, monumentImage, dateTime, ticketId, status, user_id")
       .eq("ticketId", ticketId);
     if (error) {
       console.log(error.message);
