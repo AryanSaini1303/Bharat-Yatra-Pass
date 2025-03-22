@@ -461,3 +461,6 @@ CREATE POLICY "Allow users to update their own tickets"
 ON tickets
 FOR UPDATE
 USING (user_id = auth.uid());*/
+/*But the above policy is for the users not the gate authority individuals to change user data so the updated policy is 
+the update policy where the logged in user id is matched in the gate_authority_users table to verify the gate authority official by using
+(select auth.uid()) in (select verifier_id from gate_authority_users) */
