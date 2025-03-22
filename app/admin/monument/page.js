@@ -40,7 +40,10 @@ export default function AdminPage() {
 
   return (
     <div className="wrapper">
-      <h1 style={{ textAlign: "center" }}>Dashboard</h1>
+      <header className={styles.header}>
+        <h1>Dashboard</h1>
+        <button onClick={signOut}>Sign Out</button>
+      </header>
       <section className={styles.container}>
         <Navbar pathName={pathName} />
         <section className={styles.content}></section>
