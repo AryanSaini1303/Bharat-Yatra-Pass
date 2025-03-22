@@ -15,6 +15,7 @@ export default function Home() {
     }
     return "Udaipur"; // Default value for SSR
   });
+  const authorizedUsers = ["210160223018.aryan@gdgu.org"];
 
   const dropdownRef = useRef(null); // React hook which is used to point to a div something like "document.getElementById"
   const locationRef = useRef(null);
@@ -132,6 +133,10 @@ export default function Home() {
     }, 500);
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
+
+  useEffect(() => {
+    user && authorizedUsers.includes(user.email) ? router.push("/admin") : null;
+  }, [user]);
 
   if (loadingUser) {
     return <Loader margin={"15rem auto"} />;
