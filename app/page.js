@@ -44,9 +44,9 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(()=>{
-    user&&window.location.replace("/home");
-  },[user])
+  // useEffect(()=>{
+  //   user&&window.location.replace("/home");
+  // },[user])
 
   return (
     <div className="wrapper">

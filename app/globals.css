@@ -12,6 +12,15 @@ body {
 .wrapper * {
   font-family: var(--font);
 }
+.wrapper *::-webkit-scrollbar{
+  display: none;
+}
+body *::-webkit-scrollbar {
+  display: none;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
 /* .datepicker-container {
   display: flex;
   justify-content: center;
