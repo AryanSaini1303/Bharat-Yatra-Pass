@@ -73,13 +73,17 @@ export default function GateAuthority() {
   };
 
   const signIn = async (redirectPath = "/gateAuthority") => {
+    const redirectUrl =
+      process.env.NODE_ENV === "development"
+        ? `${window.location.origin}${redirectPath}`
+        : "https://bharat-yatra-pass.vercel.app" + redirectPath;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}${redirectPath}`,
+        redirectTo: redirectUrl,
       },
     });
-  
+
     if (error) {
       console.error("Authentication Error:", error);
     }
@@ -88,7 +92,7 @@ export default function GateAuthority() {
   const signOut = async () => {
     await supabase.auth.signOut();
     router.push("/gateAuthority");
-  };  
+  };
 
   useEffect(() => {
     return () => {

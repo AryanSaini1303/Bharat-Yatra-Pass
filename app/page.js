@@ -11,21 +11,24 @@ const notoSans = Noto_Sans({
 });
 
 export default function Home() {
-  const [user, setUser]=useState('');
+  const [user, setUser] = useState("");
 
   const signIn = async (redirectPath = "/home") => {
+    const redirectUrl =
+      process.env.NODE_ENV === "development"
+        ? `${window.location.origin}${redirectPath}`
+        : "https://bharat-yatra-pass.vercel.app" + redirectPath;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}${redirectPath}`,
+        redirectTo: redirectUrl,
       },
     });
-  
+
     if (error) {
       console.error("Authentication Error:", error);
     }
   };
-  
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
