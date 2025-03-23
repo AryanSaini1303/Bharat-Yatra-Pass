@@ -1,5 +1,6 @@
 .container {
   display: flex;
+  background-color: white;
 }
 .content {
   flex: 1;
@@ -7,6 +8,7 @@
   padding: 1rem 2rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 15px;
+  background-color: white;
 }
 .cardContainer{
   display: flex;
@@ -50,6 +52,7 @@
   justify-content: space-between;
   padding: 0 1rem;
   align-items: center;
+  background-color: white;
 }
 .header button{
   padding: 0.5rem 1rem;

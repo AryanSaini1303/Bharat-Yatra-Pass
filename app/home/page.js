@@ -17,7 +17,7 @@ export default function Home() {
   });
   const authorizedUsers =
     process.env.NEXT_PUBLIC_AUTHORIZED_EMAILS?.split(",") || [];
-  console.log("here", authorizedUsers);
+  // console.log("here", authorizedUsers);
 
   const dropdownRef = useRef(null); // React hook which is used to point to a div something like "document.getElementById"
   const locationRef = useRef(null);

@@ -60,6 +60,7 @@
   margin: 0;
   max-height: 50vh;
   overflow: scroll;
+  background-color: #F7EDDD;
 }
 @keyframes dropdownReveal {
   0% {
@@ -125,12 +126,13 @@
   width: 75vw;
   border-radius: 50px;
   padding: 0.6rem 0.5rem 0.6rem 2.6rem;
-  border: dashed lightgrey 2px;
+  border:none;
   font-size: 1rem;
   color: grey;
   font-family: var(--font);
   box-shadow: 8px 8px 1px black;
   transition: all 0.2s ease-in-out;
+  background-color: #F7EDDD;
 }
 .searchBar input:focus {
   outline: none;
@@ -147,6 +149,7 @@
 .location .dropdown ul {
   left: 1rem;
   width: fit-content;
+  background-color: #F7EDDD;
 }
 .location .dropdown ul li button:active {
   background-color: black;

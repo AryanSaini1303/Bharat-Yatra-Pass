@@ -88,6 +88,7 @@
   border: solid black 1px;
   border-radius: 20px;
   padding: 0 1.5rem;
+  background-color: #F7EDDD;
 }
 .ticketsSection {
   display: flex;
@@ -136,6 +137,7 @@
   border: dashed grey 2px;
   overflow: hidden;
   padding: 0.5rem 1rem;
+  background-color: #F7EDDD;
 }
 .counter h1 {
   font-weight: normal;

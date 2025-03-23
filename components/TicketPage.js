@@ -69,7 +69,7 @@ export default function Ticket() {
   }
 
   return (
-    <div className="wrapper">
+    <div className="wrapper" style={{backgroundColor: "white", background:"none"}}>
       <header className={styles.header}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
