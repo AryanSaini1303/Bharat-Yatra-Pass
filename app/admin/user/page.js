@@ -139,7 +139,7 @@ export default function AdminUserPage() {
               type="text"
               name="user"
               id=""
-              placeholder="Aryan Saini"
+              placeholder="Find a user..."
               onChange={handleSearch}
             />
             <svg

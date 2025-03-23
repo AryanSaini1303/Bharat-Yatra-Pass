@@ -294,7 +294,7 @@ export default function Home() {
           type="text"
           name="monument"
           id=""
-          placeholder="Bhangarh Fort"
+          placeholder="Look up historical sites..."
           onChange={handleSearch}
         />
         <svg
