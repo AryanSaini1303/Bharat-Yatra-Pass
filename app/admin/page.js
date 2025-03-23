@@ -2,7 +2,6 @@
 
 import Loader from "@/components/loader";
 import { supabase } from "@/lib/supabaseClient";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./page.module.css";
@@ -10,15 +9,14 @@ import Navbar from "@/components/Navbar";
 import Image from "next/image";
 
 export default function AdminPage() {
-  const authorizedUsers = [
-    "210160223018.aryan@gdgu.org",
-    "yograj.rr@gmail.com",
-  ]; // change this in page.js in home folder too if adding or removing authorized users, the one on the home page controls the redirection to this page and this one controls the access to this page
+  const authorizedUsers =
+    process.env.NEXT_PUBLIC_AUTHORIZED_EMAILS?.split(",") || []; // change this in page.js in home folder too if adding or removing authorized users, the one on the home page controls the redirection to this page and this one controls the access to this page
   const [user, setUser] = useState();
   const router = useRouter();
   const [loadingUser, setLoadingUser] = useState(true);
   const pathName = usePathname();
   // console.log(pathName);
+  // console.log("here", authorizedUsers);
 
   const signOut = async () => {
     await supabase.auth.signOut();

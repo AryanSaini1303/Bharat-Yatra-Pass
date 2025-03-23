@@ -7,13 +7,14 @@ import { useEffect, useState } from "react";
 import styles from "../page.module.css";
 import Navbar from "@/components/Navbar";
 
-export default function AdminPage() {
-  const authorizedUsers = ["210160223018.aryan@gdgu.org"]; // change this in page.js in home folder too if adding or removing authorized users, the one on the home page controls the redirection to this page and this one controls the access to this page
+export default function AdminMonumentPage() {
+  const authorizedUsers =
+    process.env.NEXT_PUBLIC_AUTHORIZED_EMAILS?.split(",") || []; // change this in page.js in home folder too if adding or removing authorized users, the one on the home page controls the redirection to this page and this one controls the access to this page
   const [user, setUser] = useState();
   const router = useRouter();
   const [loadingUser, setLoadingUser] = useState(true);
   const pathName = usePathname();
-  console.log(pathName);
+  // console.log(pathName);
 
   const signOut = async () => {
     await supabase.auth.signOut();
