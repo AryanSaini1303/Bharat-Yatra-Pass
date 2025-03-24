@@ -3,11 +3,25 @@ import { supabase } from "@/lib/supabaseClient";
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("query");
+
+  if (!query) {
+    return new Response(
+      JSON.stringify({ error: "Query parameter is required" }),
+      {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+
   try {
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from("tickets")
       .select("*")
-      .ilike("monumentName", `%${query}%`)
+      .or(
+        `monumentName.ilike.%${query}%,monumentCity.ilike.%${query}%,ticketId.ilike.%${query}%`
+      );
+
     if (error) {
       console.error("Supabase Error:", error.message);
       return new Response(JSON.stringify({ error: error.message }), {
@@ -15,6 +29,7 @@ export async function GET(request) {
         headers: { "Content-Type": "application/json" },
       });
     }
+
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { "Content-Type": "application/json" },
