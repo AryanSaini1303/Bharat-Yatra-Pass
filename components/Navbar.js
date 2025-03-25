@@ -122,13 +122,23 @@ export default function Navbar({ pathName }) {
                     pointerEvents: "none",
                     fontWeight: "bold",
                   }
+                : pathName.endsWith("/monument/add")
+                ? {
+                    color: "white",
+                    backgroundColor: "#8280ff",
+                    fontWeight: "bold",
+                  }
                 : null
             }
           >
-            {pathName.endsWith("/monument") && (
+            {(pathName.endsWith("/monument") ||
+              pathName.endsWith("/monument/add")) && (
               <div className={styles.marker}></div>
             )}
-            {!pathName.endsWith("/monument") ? (
+            {!(
+              pathName.endsWith("/monument") ||
+              pathName.endsWith("/monument/add")
+            ) ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"

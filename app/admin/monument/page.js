@@ -140,31 +140,51 @@ export default function AdminUserPage() {
       <section className={styles.container}>
         <Navbar pathName={pathName} />
         <section className={styles.content}>
-          <form
-            className={styles.searchBar}
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-          >
-            <input
-              type="text"
-              name="monument"
-              id=""
-              placeholder="Search monument..."
-              onChange={handleSearch}
-            />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width="1.5em"
-              height="1.5em"
+          <div className={styles.inputContainer}>
+            <form
+              className={styles.searchBar}
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}
             >
-              <g fill="grey" fillRule="evenodd" clipRule="evenodd">
-                <path d="M10.5 5.5a5 5 0 1 0 0 10a5 5 0 0 0 0-10m-6.5 5a6.5 6.5 0 1 1 13 0a6.5 6.5 0 0 1-13 0"></path>
-                <path d="M14.47 14.47a.75.75 0 0 1 1.06 0l4 4a.75.75 0 1 1-1.06 1.06l-4-4a.75.75 0 0 1 0-1.06"></path>
-              </g>
-            </svg>
-          </form>
+              <input
+                type="text"
+                name="monument"
+                id=""
+                placeholder="Search monument..."
+                onChange={handleSearch}
+              />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="1.5em"
+                height="1.5em"
+              >
+                <g fill="grey" fillRule="evenodd" clipRule="evenodd">
+                  <path d="M10.5 5.5a5 5 0 1 0 0 10a5 5 0 0 0 0-10m-6.5 5a6.5 6.5 0 1 1 13 0a6.5 6.5 0 0 1-13 0"></path>
+                  <path d="M14.47 14.47a.75.75 0 0 1 1.06 0l4 4a.75.75 0 1 1-1.06 1.06l-4-4a.75.75 0 0 1 0-1.06"></path>
+                </g>
+              </svg>
+            </form>
+            <button onClick={()=>{router.push("/admin/monument/add")}}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 32 32"
+                  width="1.5em"
+                  height="1.5em"
+                >
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M16 25V7m-9 9h18"
+                  ></path>
+                </svg>
+              <h1>Add Monument</h1>
+            </button>
+          </div>
           {loading ? (
             <Loader margin={"15rem auto"} />
           ) : monuments?.length != 0 ? (

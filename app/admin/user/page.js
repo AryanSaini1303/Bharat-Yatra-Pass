@@ -168,7 +168,8 @@ export default function AdminUserPage() {
                   <th>Email</th>
                   {/* <th>Created At</th> */}
                   <th>Last Sign in</th>
-                  <th>Action</th>
+                  {/* <th>Action</th> */}
+                  <th>User Id</th>
                 </tr>
               </thead>
               <tbody>
@@ -202,7 +203,7 @@ export default function AdminUserPage() {
                         hour12: true, // Enables 12-hour format with AM/PM
                       })}
                     </td>
-                    <td>
+                    {/* <td>
                       <button
                         className={styles.terminateButton}
                         onClick={() => {
@@ -217,6 +218,9 @@ export default function AdminUserPage() {
                       >
                         Terminate
                       </button>
+                    </td> */}
+                    <td>
+                      {user.id}
                     </td>
                   </tr>
                 ))}

@@ -19,7 +19,7 @@ export async function GET(request) {
       .from("tickets")
       .select("*")
       .or(
-        `monumentName.ilike.%${query}%,monumentCity.ilike.%${query}%,ticketId.ilike.%${query}%`
+        `monumentName.ilike.%${query}%,monumentCity.ilike.%${query}%,ticketId.ilike.%${query}%,user_id.eq.${query}`
       );
 
     if (error) {

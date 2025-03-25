@@ -179,3 +179,40 @@
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
+.inputContainer{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: fadeReveal 0.5s ease-in-out forwards;
+}
+.inputContainer button {
+  background-color: #007bff; /* Primary blue */
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  /* font-weight: bold; */
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.inputContainer button h1{
+  margin: 0 0.2rem;
+  font-weight: normal;
+}
+
+.inputContainer button:hover {
+  background-color: #0056b3; /* Darker blue */
+}
+
+.inputContainer button:active {
+  transform: scale(0.98);
+}
+
+.inputContainer button:focus {
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
+}
