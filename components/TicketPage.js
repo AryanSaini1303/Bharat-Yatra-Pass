@@ -14,7 +14,7 @@ export default function Ticket() {
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingDetails, setLoadingDetails] = useState(true);
   const dateObj = new Date(ticketDetails?.dateTime);
-  const router=useRouter();
+  const router = useRouter();
   const date = dateObj.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -61,7 +61,7 @@ export default function Ticket() {
   }, []);
 
   if (loadingUser) {
-    return <Loader margin={"15rem auto"}/>;
+    return <Loader margin={"15rem auto"} />;
   } else {
     if (!user) {
       return <div>Unauthenticated...</div>;
@@ -69,7 +69,10 @@ export default function Ticket() {
   }
 
   return (
-    <div className="wrapper" style={{backgroundColor: "white", background:"none"}}>
+    <div
+      className="wrapper"
+      style={{ backgroundColor: "white", background: "none" }}
+    >
       <header className={styles.header}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -88,8 +91,8 @@ export default function Ticket() {
         <h2>Your Ticket</h2>
       </header>
       {loadingDetails ? (
-        <Loader margin={"10rem auto"}/>
-      ) : ticketDetails.length==0 ? (
+        <Loader margin={"10rem auto"} />
+      ) : ticketDetails.length == 0 ? (
         "No ticket found!"
       ) : (
         <div className={styles.ticketSectionContainer}>
@@ -164,7 +167,7 @@ export default function Ticket() {
 
 // -- 🕒 Auto-Expire Old Tickets (Scheduled Job)
 // -- -----------------------------------------
-// -- This cron job runs every **minute** (`*/1 * * * *`) and updates tickets 
+// -- This cron job runs every **minute** (`*/1 * * * *`) and updates tickets
 // -- where `dateTime` has passed, setting `status = 'expired'`.
 // --
 // -- ✅ Why?

@@ -92,6 +92,8 @@ export default function AdminUserPage() {
   useEffect(() => {
     const terminateUser = async () => {
       if (tmtUser) {
+        setTerminating(true);
+        setTerminated(false);
         try {
           const response = await fetch(`/api/terminateUser?id=${tmtUser}`, {
             method: "DELETE",

@@ -77,7 +77,7 @@ export default function AdminUserPage() {
   }, [searchQuery, terminated]);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchAllTickets = async () => {
       try {
         const response = await fetch("/api/fetchAllTickets");
         const data = await response.json();
@@ -89,7 +89,7 @@ export default function AdminUserPage() {
         setLoading(false);
       }
     };
-    fetchUsers();
+    fetchAllTickets();
   }, []);
   // console.log(tickets);
 
@@ -97,6 +97,7 @@ export default function AdminUserPage() {
     const terminateTicket = async () => {
       if (tmtTicket) {
         setTerminating(true);
+        setTerminated(false);
         try {
           const response = await fetch(
             `/api/terminateTicket?ticketId=${tmtTicket}`,
@@ -148,7 +149,7 @@ export default function AdminUserPage() {
               type="text"
               name="monument"
               id=""
-              placeholder="Search monument..."
+              placeholder="Search ticket..."
               onChange={handleSearch}
             />
             <svg
