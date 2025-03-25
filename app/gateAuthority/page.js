@@ -111,6 +111,7 @@ export default function GateAuthority() {
       setTicketId("");
       setCounter(5);
       setTicket([]);
+      window.location.reload();
     }
   }, [counter]);
 
