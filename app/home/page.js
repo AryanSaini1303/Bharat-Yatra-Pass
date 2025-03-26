@@ -47,9 +47,18 @@ export default function Home() {
   const router = useRouter();
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push("/"); // Redirect after successful sign-out
+    } catch (err) {
+      console.error("Error signing out:", err.message);
+    }
   };
+
+  function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -119,9 +128,14 @@ export default function Home() {
     setLoadingMonuments(true);
     const fectchMonumentsByName = async () => {
       try {
-        const response = await fetch(
-          `/api/fetchMonumentsByName?name=${searchQuery}`
-        );
+        let response;
+        if (searchQuery.length != 0) {
+          response = await fetch(
+            `/api/fetchMonumentsByName?name=${searchQuery}`
+          );
+        } else {
+          response = await fetch(`/api/fetchMonuments?city=${location}`);
+        }
         const data = await response.json();
         setMonuments(data);
         setLoadingMonuments(false);
@@ -131,7 +145,7 @@ export default function Home() {
       }
     };
     const delayDebounceFn = setTimeout(() => {
-      searchQuery.length != 0 && fectchMonumentsByName();
+      fectchMonumentsByName();
     }, 500);
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
@@ -340,7 +354,7 @@ export default function Home() {
                       <img src={monument.image_url} alt="Monument Image" />
                       <div className={styles.info}>
                         <h1>{monument.name}</h1>
-                        <h4>{monument.city}</h4>
+                        <h4>{capitalizeFirstLetter(monument.city)}</h4>
                       </div>
                     </a>
                   </li>

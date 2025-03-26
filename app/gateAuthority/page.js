@@ -79,16 +79,21 @@ export default function GateAuthority() {
         redirectTo: `${window.location.origin}${redirectPath}`,
       },
     });
-  
+
     if (error) {
       console.error("Authentication Error:", error);
     }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/gateAuthority");
-  };  
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push("/gateAuthority"); // Redirect after successful sign-out
+    } catch (err) {
+      console.error("Error signing out:", err.message);
+    }
+  };
 
   useEffect(() => {
     return () => {

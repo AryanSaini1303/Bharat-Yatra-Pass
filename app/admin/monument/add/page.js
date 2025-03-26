@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "@/app/admin/page.module.css";
 import Navbar from "@/components/Navbar";
+import AddMonumentForm from "@/components/AddMonumentForm";
 
 export default function AdminUserPage() {
   const authorizedUsers =
@@ -13,11 +14,16 @@ export default function AdminUserPage() {
   const [user, setUser] = useState();
   const router = useRouter();
   const [loadingUser, setLoadingUser] = useState(true);
-  const pathName=usePathname();
+  const pathName = usePathname();
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push("/"); // Redirect after successful sign-out
+    } catch (err) {
+      console.error("Error signing out:", err.message);
+    }
   };
 
   useEffect(() => {
@@ -47,7 +53,7 @@ export default function AdminUserPage() {
       <section className={styles.container}>
         <Navbar pathName={pathName} />
         <section className={styles.content}>
-          <h1>Add monument input fields</h1>
+          <AddMonumentForm />
         </section>
       </section>
     </div>

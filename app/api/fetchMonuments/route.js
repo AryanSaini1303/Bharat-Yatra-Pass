@@ -16,7 +16,7 @@ export async function GET(request) {
       const { data, error } = await supabase
         .from("monuments")
         .select("image_url, name, city, id")
-        .eq("city", city);
+        .ilike("city", `%${city}%`);
       if (error) {
         throw error;
       }

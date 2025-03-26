@@ -23,8 +23,13 @@ export default function AdminUserPage() {
   // console.log(pathName);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push("/"); // Redirect after successful sign-out
+    } catch (err) {
+      console.error("Error signing out:", err.message);
+    }
   };
 
   const handleSearch = (e) => {

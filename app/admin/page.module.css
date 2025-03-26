@@ -186,7 +186,7 @@
   animation: fadeReveal 0.5s ease-in-out forwards;
 }
 .inputContainer button {
-  background-color: #007bff; /* Primary blue */
+  background-color: #8280FF; /* Primary blue */
   color: white;
   border: none;
   padding: 10px 12px;
@@ -205,7 +205,7 @@
 }
 
 .inputContainer button:hover {
-  background-color: #0056b3; /* Darker blue */
+  background-color: #615eff; /* Darker blue */
 }
 
 .inputContainer button:active {
@@ -214,5 +214,5 @@
 
 .inputContainer button:focus {
   outline: none;
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
+  box-shadow: 0 0 8px #4643fc;
 }

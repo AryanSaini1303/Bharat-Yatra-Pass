@@ -23,8 +23,13 @@ export default function AdminUserPage() {
   // console.log(pathName);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push("/"); // Redirect after successful sign-out
+    } catch (err) {
+      console.error("Error signing out:", err.message);
+    }
   };
 
   const handleSearch = (e) => {
@@ -50,7 +55,7 @@ export default function AdminUserPage() {
   }, []);
 
   useEffect(() => {
-    console.log("here");
+    // console.log("here");
     setLoading(true);
     const fetchMonumentsByQuery = async () => {
       try {
@@ -166,22 +171,26 @@ export default function AdminUserPage() {
                 </g>
               </svg>
             </form>
-            <button onClick={()=>{router.push("/admin/monument/add")}}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 32 32"
-                  width="1.5em"
-                  height="1.5em"
-                >
-                  <path
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M16 25V7m-9 9h18"
-                  ></path>
-                </svg>
+            <button
+              onClick={() => {
+                router.push("/admin/monument/add");
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 32 32"
+                width="1.5em"
+                height="1.5em"
+              >
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M16 25V7m-9 9h18"
+                ></path>
+              </svg>
               <h1>Add Monument</h1>
             </button>
           </div>
