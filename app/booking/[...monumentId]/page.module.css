@@ -1,0 +1,153 @@
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.header svg {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.header svg:active {
+  opacity: 0.5;
+}
+.container {
+  /* width: 90%; */
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+  animation: reveal 0.5s ease-in-out forwards;
+}
+@keyframes reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.container img {
+  /* width: 100%; */
+  width: 100%;
+  margin: auto;
+  border-radius: 10px;
+  box-shadow: 0 8px 5px black;
+}
+.container section * {
+  margin: 0.5rem 0;
+}
+.container section p {
+  font-size: 0.9rem;
+}
+.container .info {
+  margin: 1rem 0;
+  padding-bottom: 1rem;
+  border-bottom: dashed 2px black;
+}
+.timings .time {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+.timings p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+}
+.booking section h3 {
+  margin: 0;
+}
+.dateTimePicker input {
+  margin: 0;
+  padding: 0.5rem 0.5rem;
+  border-radius: 10px;
+  border: dashed grey 1.5px;
+  min-width: 60vw;
+}
+.dateTimePicker > div {
+  margin: 0;
+}
+.blurClass {
+  filter: blur(10px);
+}
+.tickets section {
+  display: flex;
+  justify-content: space-between;
+}
+.tickets .counter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+}
+.tickets {
+  border: solid black 1px;
+  border-radius: 20px;
+  padding: 0 1.5rem;
+  background-color: #f7eddd;
+}
+.ticketsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ticketInfo h1 {
+  font-size: 1.1rem;
+  font-weight: normal;
+}
+.ticketInfo h4 {
+  color: grey;
+  font-weight: normal;
+}
+.tickets .counter svg {
+  transition: all 0.2s ease-in-out;
+}
+.tickets .counter svg:active {
+  transform: scale(0.95);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.74));
+}
+.checkout {
+  padding: 1rem 0;
+  margin: 1rem 0;
+  border-radius: 60px;
+  background-color: black;
+  color: white;
+  font-size: 1.2rem;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 6px 5px rgb(69, 69, 69);
+  border: none;
+  cursor: pointer;
+}
+.checkout:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+  box-shadow: 0 2px 2px rgb(69, 69, 69);
+}
+.totalAmount {
+  border: dashed grey 2px;
+  border-radius: 5px;
+  padding: 0 0.5rem;
+  font-weight: bolder;
+}
+.datepicker_button {
+  border-radius: 60px;
+  border: dashed grey 2px;
+  overflow: hidden;
+  padding: 0.5rem 1rem;
+  background-color: #f7eddd;
+}
+.counter h1 {
+  font-weight: normal;
+}
+@media only screen and (min-width: 600px) {
+  .container img{
+    display: none;
+  }
+}

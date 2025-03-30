@@ -1,0 +1,272 @@
+.container {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 1rem 0;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.title {
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.scannerBox {
+  border: 2px dashed grey;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 280px;
+  width: 280px;
+  margin: 1rem auto;
+  overflow: hidden;
+  background: url("/images/qr.png");
+  background-origin: border-box;
+  background-position: center;
+  background-size: 240px 240px;
+  background-repeat: no-repeat;
+}
+
+.infoText {
+  font-size: 14px;
+  color: #666;
+  margin: 1.5rem 0;
+}
+
+.inputField {
+  width: 80%;
+  padding: 8px;
+  border: 2px dashed grey;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.btn {
+  padding: 0.5rem 1.2rem;
+  background-color: black;
+  box-shadow: 4px 4px 5px rgb(85, 85, 85);
+  border-radius: 60px;
+  color: white;
+  font-size: 1rem;
+  border: none;
+  transition: all 0.2s ease-in-out;
+}
+.btn:active {
+  box-shadow: 2px 2px 2px rgb(85, 85, 85);
+  transform: scale(0.98);
+}
+.container form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.container form input:focus {
+  border: solid black 2px;
+  outline: none;
+}
+.result {
+  display: flex;
+  flex-direction: column;
+  margin: 1.5rem 0;
+  padding: 0 0.5rem;
+}
+.result * {
+  margin: 0;
+  font-weight: bold;
+}
+.container header {
+  position: relative;
+}
+.container header .hamburger {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+}
+.container header ul {
+  outline: none;
+  position: absolute;
+  right: 1rem;
+  top: 2.8rem;
+  display: flex;
+  gap: 0.8rem;
+  min-width: 40vw;
+  cursor: pointer;
+  list-style-type: none;
+  flex-direction: column;
+  background-color: whitesmoke;
+  border-radius: 10px;
+  padding: 0.7rem;
+  animation: dropdownReveal 0.3s ease-in-out;
+  box-shadow: 5px 5px 1px black;
+  margin: 0;
+  max-height: 50vh;
+  overflow: scroll;
+  z-index: 1000;
+}
+@keyframes dropdownReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.container header ul li {
+  border-radius: 5px;
+}
+.container header ul li button {
+  padding: 0.5rem;
+  font-family: var(--font);
+  font-weight: normal;
+  border: darkgrey dashed 1px;
+  border-radius: 5px;
+  width: 100%;
+  transition: all 0.15s ease-in-out;
+  animation: dropdownButtonReveal 0.4s ease-in-out;
+}
+@keyframes dropdownButtonReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.container header ul li:not(:last-child) button:active {
+  background-color: black;
+  color: whitesmoke;
+}
+.container header ul li:last-child button:active {
+  background-color: rgb(209, 0, 0);
+  color: whitesmoke;
+}
+.hamburger svg {
+  transition: all 0.2s ease-in-out;
+}
+.hamburger svg:active {
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+
+.background {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  filter: drop-shadow(0 -5px 60px gold);
+}
+.googleLogin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  border: none;
+  border-radius: 3rem;
+  padding: 0.3rem 1.3rem;
+  cursor: pointer;
+  transition: 0.2s all ease-in-out;
+  width: 90%;
+  box-shadow: inset -5px -5px 6px darkgrey;
+  margin: 0 auto;
+  animation: float 2s infinite;
+}
+.googleLogin h3{
+  font-weight: normal;
+}
+.googleLogin:active {
+  background-color: rgb(44, 44, 44);
+  color: whitesmoke;
+  transform: scale(0.98);
+  box-shadow: inset -5px -5px 10px grey;
+}
+.header * {
+  font-family: "Iansui", cursive;
+  font-weight: normal;
+  font-style: normal;
+  text-align: center;
+  margin: 0.8rem 0;
+}
+.header {
+  padding: 0 1rem;
+  margin: 4rem 0;
+}
+.header h1 {
+  font-weight: bolder;
+}
+.content {
+  flex: 1;
+}
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.2rem);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.loginPage {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.content button img{
+  height: 30px;
+  width: 30px;
+}
+.resultContainer{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  backdrop-filter: blur(10px);
+  background-color:white;
+  height: 100vh;
+  width: 100vw;
+  justify-content: center;
+  align-items: center;
+}
+.resultInfo img{
+  height: 15rem;
+  width: 15rem;
+}
+.okbtn {
+  padding: 0.5rem 1rem;
+  background: rgb(0, 0, 0); /* Semi-transparent white */
+  backdrop-filter: blur(10px); /* Blurry effect */
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 60px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin: 1rem 0;
+}
+.okbtn span{
+  font-size: 1.1rem;
+  margin-left:1rem;
+  color: lightblue;
+}
+/* .okbtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+} */
+
+.okbtn:active {
+  transform: scale(0.95); /* Click effect */
+}

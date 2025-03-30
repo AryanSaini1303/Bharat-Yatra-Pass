@@ -1,0 +1,162 @@
+.ticketSection img {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 1rem;
+}
+.ticketSectionContainer {
+  overflow: hidden;
+  width: fit-content;
+  margin: 1rem auto;
+  width: 270px;
+  animation: ticketReveal 0.5s forwards ease-in-out;
+}
+@keyframes ticketReveal {
+  0%{
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  100%{
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ticketSection {
+  border-radius: 10px;
+  width: 80%;
+  padding: 1rem;
+  /* margin: 1rem auto; */
+  width: 234px;
+  /* box-shadow: 0 6px 2px black; */
+  border: dashed black 2px;
+  background-color: #f7e6b7;
+  position: relative;
+}
+.ticketSection * {
+  margin: 0;
+  font-weight: normal;
+}
+.dateTime {
+  display: flex;
+  justify-content: space-between;
+}
+.ticketSection ul {
+  padding: 0;
+  list-style-type: none;
+  margin: 1rem 0;
+}
+.ticketSection ul li {
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+}
+.separator hr {
+  border: dashed black 1.5px;
+  width: 100%;
+  height: 0;
+}
+.separator {
+  position: relative;
+}
+.separator::before {
+  content: "";
+  position: absolute;
+  height: 1rem;
+  width: 1rem;
+  background-color: white;
+  border-radius: 50%;
+  top: 50%;
+  left: -1rem;
+  transform: translate(-50%, -50%);
+  border: dashed black 2px;
+}
+.separator::after {
+  content: "";
+  position: absolute;
+  height: 1rem;
+  width: 1rem;
+  background-color: white;
+  border-radius: 50%;
+  top: 50%;
+  right: -2.25rem;
+  transform: translate(-50%, -50%);
+  border: dashed black 2px;
+}
+.ticketSection .info p {
+  font-size: 0.6rem;
+}
+.ticketSection .info {
+  width: 100%;
+}
+.ticketSection .info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+.borderCircle {
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute;
+}
+.borderCircle:nth-child(1) {
+  top: -0.5rem;
+  left: -0.5rem;
+  border: dashed black 2px;
+}
+.borderCircle:nth-child(2) {
+  top: -0.5rem;
+  right: -0.5rem;
+  border: dashed black 2px;
+}
+.borderCircle:nth-child(3) {
+  bottom: -0.5rem;
+  left: -0.5rem;
+  border: dashed black 2px;
+}
+.borderCircle:nth-child(4) {
+  bottom: -0.5rem;
+  right: -0.5rem;
+  border: dashed black 2px;
+}
+.status {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.status .statusCircle {
+  height: 0.5rem;
+  width: 0.5rem;
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.1;
+  }
+}
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.header svg {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.header svg:active {
+  opacity: 0.5;
+}

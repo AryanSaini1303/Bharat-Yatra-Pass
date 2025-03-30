@@ -1,0 +1,1 @@
+self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/Users/aryansaini/FOLDER/My Projects/bharat-yatra-pass/app/page\":[\"static/media/2dcd4f0f2e72cbfd-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"

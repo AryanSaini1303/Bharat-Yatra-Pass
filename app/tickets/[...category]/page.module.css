@@ -1,0 +1,96 @@
+.ticketList {
+  display: flex;
+  /* flex-direction: column; */
+  flex-wrap: wrap;
+  gap: 20px; /* Increased vertical spacing */
+  padding: 16px;
+}
+
+.ticketCard {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px dashed #ccc; /* Dashed border */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 14px;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  animation: ticketReveal 0.5s forwards ease-in-out;
+  /* min-width: 90%; */
+  flex: 1;
+}
+@keyframes ticketReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* .ticketCard:hover {
+  transform: translateY(-2px);
+  border-color: #007bff; 
+} */
+.ticketCard:active {
+  transform: scale(0.98);
+  background-color: black;
+  opacity: 0.7;
+}
+.ticketCard:active * {
+  color: white;
+}
+
+.ticketImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 14px;
+}
+
+.ticketDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.monumentName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.ticketId {
+  font-size: 14px;
+  color: #555;
+}
+
+.noTickets {
+  text-align: center;
+  font-size: 16px;
+  color: #888;
+}
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.header svg {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.header svg:active {
+  opacity: 0.5;
+}
+.ticketDetails * {
+  margin: 0;
+}
