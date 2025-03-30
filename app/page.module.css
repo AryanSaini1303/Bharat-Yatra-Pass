@@ -19,7 +19,7 @@
   margin: 0 auto;
   animation: float 2s infinite;
 }
-.googleLogin h3{
+.googleLogin h3 {
   font-weight: normal;
 }
 .googleLogin:active {
