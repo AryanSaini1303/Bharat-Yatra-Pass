@@ -1,9 +1,0 @@
-{
-  "/api/fetchMonuments/route": "app/api/fetchMonuments/route.js",
-  "/api/fetchTickets/route": "app/api/fetchTickets/route.js",
-  "/api/fetchTicket/route": "app/api/fetchTicket/route.js",
-  "/page": "app/page.js",
-  "/tickets/[...category]/page": "app/tickets/[...category]/page.js",
-  "/home/page": "app/home/page.js",
-  "/ticket/page": "app/ticket/page.js"
-}
