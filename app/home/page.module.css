@@ -62,8 +62,8 @@
   margin: 0;
   max-height: 50vh;
   overflow: scroll;
-  background-color: #F7EDDD;
-  cursor:auto;
+  background-color: #f7eddd;
+  cursor: auto;
 }
 @keyframes dropdownReveal {
   0% {
@@ -130,13 +130,13 @@
   width: 75vw;
   border-radius: 50px;
   padding: 0.6rem 0.5rem 0.6rem 2.6rem;
-  border:none;
+  border: none;
   font-size: 1rem;
   color: grey;
   font-family: var(--font);
   box-shadow: 8px 8px 1px black;
   transition: all 0.2s ease-in-out;
-  background-color: #F7EDDD;
+  background-color: #f7eddd;
 }
 .searchBar input:focus {
   outline: none;
@@ -153,7 +153,7 @@
 .location .dropdown ul {
   left: 1rem;
   width: fit-content;
-  background-color: #F7EDDD;
+  background-color: #f7eddd;
 }
 .location .dropdown ul li button:active {
   background-color: black;
@@ -237,10 +237,10 @@
   filter: brightness(85%);
   transition: transform 0.1s ease-in-out;
 }
-.monumentList li:active img{
+.monumentList li:active img {
   transform: scale(1.1);
 }
-.monumentList li:active .info{
+.monumentList li:active .info {
   transform: translateY(-0.3rem);
 }
 @keyframes monumentDrop {
@@ -257,6 +257,6 @@
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
-.cardLink h1{
+.cardLink h1 {
   font-weight: lighter;
 }
