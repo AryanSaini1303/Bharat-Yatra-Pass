@@ -18,6 +18,9 @@ export default function Home() {
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}${redirectPath}`,
+        queryParams:{
+          prompt:"select_account" // Forces google to always show account selection
+        }
       },
     });
   
