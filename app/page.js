@@ -13,6 +13,8 @@ const notoSans = Noto_Sans({
 export default function Home() {
   const [user, setUser] = useState("");
   const [token, setToken] = useState(null);
+  console.log(token);
+  console.log(window.location.href);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -21,6 +23,7 @@ export default function Home() {
     if (accessToken) {
       setToken(accessToken);
       console.log(accessToken);
+      console.log(urlParams);
     } else {
       console.warn("No token found in URL");
     }
