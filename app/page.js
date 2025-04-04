@@ -23,7 +23,7 @@ export default function Home() {
 
       if (accessToken) {
         setToken(accessToken);
-        console.log('Extracted token:', accessToken);
+        alert(accessToken);
         // You can now use this token to authenticate with Supabase
       } else {
         console.warn('No token found in URL');
@@ -74,6 +74,7 @@ export default function Home() {
       <div className={styles.loginPage}>
         <div className={styles.content}>
           <header className={styles.header}>
+          <p>{token}</p>
             <h2>Welcome to</h2>
             <h1>Bharat Yatra Pass</h1>
             <h5>
