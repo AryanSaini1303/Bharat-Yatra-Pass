@@ -13,12 +13,12 @@ const notoSans = Noto_Sans({
 export default function Home() {
   const [user, setUser] = useState("");
   const [token, setToken] = useState(null);
-  console.log(token);
-  console.log(window.location.href);
-
+  
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken = urlParams.get("token");
+    console.log(accessToken);
+    console.log(window.location.href);
 
     if (accessToken) {
       setToken(accessToken);
