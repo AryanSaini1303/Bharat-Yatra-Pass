@@ -4,6 +4,7 @@ import styles from "./page.module.css";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Noto_Sans } from "next/font/google";
+import { useRouter } from "next/navigation";
 
 const notoSans = Noto_Sans({
   weight: "400",
@@ -12,6 +13,23 @@ const notoSans = Noto_Sans({
 
 export default function Home() {
   const [user, setUser]=useState('');
+  const router = useRouter();
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    if (router.isReady) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const accessToken = urlParams.get('token');
+
+      if (accessToken) {
+        setToken(accessToken);
+        console.log('Extracted token:', accessToken);
+        // You can now use this token to authenticate with Supabase
+      } else {
+        console.warn('No token found in URL');
+      }
+    }
+  }, [router.isReady]);
 
   const signIn = async (redirectPath = "/home") => {
     const { error } = await supabase.auth.signInWithOAuth({
