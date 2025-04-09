@@ -11,6 +11,7 @@ body {
 }
 .wrapper {
   background: linear-gradient(#d3a357, white);
+  min-height: 100vh;
 }
 .wrapper * {
   font-family: var(--font);
