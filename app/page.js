@@ -15,6 +15,7 @@ const isValidSSOAccessToken = async (token) => {
   const serverUrl = "https://keycloak.mogiio.com"; // ✅ Fixed URL
   const realmName = "udaipurinsider";
   const url = `${serverUrl}/realms/${realmName}/protocol/openid-connect/userinfo`;
+  console.log(response);
   try {
     const response = await axios.get(url, {
       headers: {
