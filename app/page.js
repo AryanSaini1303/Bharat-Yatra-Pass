@@ -21,7 +21,7 @@ const isValidSSOAccessToken = async (token) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response);
+    console.log(response.data.email);
     if (response.status === 200) {
       console.log("✅ Token successfully validated");
       return { status: true, data: response.data };
