@@ -15,13 +15,13 @@ const isValidSSOAccessToken = async (token) => {
   const serverUrl = "https://keycloak.mogiio.com"; // ✅ Fixed URL
   const realmName = "udaipurinsider";
   const url = `${serverUrl}/realms/${realmName}/protocol/openid-connect/userinfo`;
-  console.log(response);
   try {
     const response = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log(response);
     if (response.status === 200) {
       console.log("✅ Token successfully validated");
       return { status: true, data: response.data };
