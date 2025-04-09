@@ -12,7 +12,7 @@ const notoSans = Noto_Sans({
 });
 
 const isValidSSOAccessToken = async (token) => {
-  const serverUrl = "https://keycloak.mogiio.com/";
+  const serverUrl = "https:/keycloak.mogiio.com";
   const realmName = "udaipurinsider";
   // console.log("realName : ", realmName, " ===> serverUrl : ", serverUrl);
   const url = `${serverUrl}/realms/${realmName}/protocol/openid-connect/userinfo`;
