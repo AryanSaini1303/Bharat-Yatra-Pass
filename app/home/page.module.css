@@ -1,262 +1,63 @@
-.header {
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem 0.8rem;
-  align-items: center;
-  position: relative;
-}
-.location {
-  display: flex;
-  font-family: var(--font);
-  align-items: center;
-  gap: 0.4rem;
-  cursor: pointer;
-}
-.location .text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-.location * {
-  margin: 0;
-}
-.location .text h5 {
-  font-weight: normal;
-}
-.profile {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-.profile img:active {
-  opacity: 0.5;
-  transform: scale(0.98);
-}
-.dropdown {
-  position: absolute;
-  /* backdrop-filter: blur(2px); */
-  z-index: 1000;
-  /* min-height: 89vh; */
-  /* height: 120vh; */
-  top: 4rem;
-  /* right: 0.2rem; */
-  width: 100vw;
-  right: 0;
-}
-.dropdown ul {
-  outline: none;
-  position: absolute;
-  right: 1rem;
-  top: 0;
-  display: flex;
-  gap: 0.8rem;
-  min-width: 40vw;
-  cursor: pointer;
-  list-style-type: none;
-  flex-direction: column;
-  background-color: whitesmoke;
-  border-radius: 10px;
-  padding: 0.7rem;
-  animation: dropdownReveal 0.3s ease-in-out;
-  box-shadow: 5px 5px 1px black;
-  margin: 0;
-  max-height: 50vh;
-  overflow: scroll;
-  background-color: #f7eddd;
-  cursor: auto;
-}
-@keyframes dropdownReveal {
-  0% {
-    opacity: 0;
-    transform: translateY(-1rem);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.dropdown ul li {
-  border-radius: 5px;
-}
-.dropdown ul li button {
-  cursor: pointer;
-  padding: 0.5rem;
-  font-family: var(--font);
-  font-weight: normal;
-  border: darkgrey dashed 1px;
-  border-radius: 5px;
-  width: 100%;
-  transition: all 0.15s ease-in-out;
-  animation: dropdownButtonReveal 0.4s ease-in-out;
-}
-@keyframes dropdownButtonReveal {
-  0% {
-    opacity: 0;
-    transform: translateY(-1rem);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.header img {
-  filter: brightness(0%);
-  transition: 0.2s all ease-in-out;
-}
-.dropdown ul li:not(:last-child) button:active {
-  background-color: black;
-  color: whitesmoke;
-}
-.dropdown ul li:last-child button:active {
-  background-color: rgb(209, 0, 0);
-  color: whitesmoke;
-}
-@keyframes profileReveal {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-.searchBar {
-  position: relative;
-  width: fit-content;
-  margin: 0.8rem auto;
-}
-.searchBar input {
-  width: 75vw;
-  border-radius: 50px;
-  padding: 0.6rem 0.5rem 0.6rem 2.6rem;
-  border: none;
-  font-size: 1rem;
-  color: grey;
-  font-family: var(--font);
-  box-shadow: 8px 8px 1px black;
-  transition: all 0.2s ease-in-out;
-  background-color: #f7eddd;
-}
-.searchBar input:focus {
-  outline: none;
-  color: black;
-  box-shadow: 5px 5px 3px black;
-}
-.searchBar svg {
-  position: absolute;
-  top: 50%;
-  left: 1.5rem;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-.location .dropdown ul {
-  left: 1rem;
-  width: fit-content;
-  background-color: #f7eddd;
-}
-.location .dropdown ul li button:active {
-  background-color: black;
-  color: whitesmoke;
-}
-.monumentList img {
-  width: 100%;
-  border-radius: 20px;
-}
-.monumentList {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 1rem 0;
-}
-.monumentList ul {
-  list-style-type: none;
-  padding: 0;
-  display: flex;
-  /* flex-direction: column; */
-  flex-wrap: wrap;
-  gap: 1.2rem;
-  justify-content: center;
-}
-
-.monumentList li {
-  max-width: 88%;
-  position: relative;
-  overflow: hidden;
-  border-radius: 20px;
-  /* margin: auto; */
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
-  animation: monumentDrop 0.5s ease-in-out;
-  transition: transform 0.2s ease-in-out;
-}
-.monumentList li a {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-  height: 100%;
-  width: 100%;
-  position: relative;
-}
-.monumentList li img {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
-  border-radius: 20px;
-  transition: transform 0.2s ease-in-out;
-}
-.monumentList li .info {
-  font-family: var(--font);
-  font-weight: bolder;
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-  color: white;
-  z-index: 1;
-  transition: all 0.2s ease-in-out;
-}
-.monumentList .info * {
-  margin: 0.1rem 0;
-}
-.monumentList .info h4 {
-  font-weight: lighter;
-  color: lightgrey;
-}
-.monumentList li a::before {
-  content: "";
-  position: absolute;
-  bottom: 0;
+.background {
   left: 0;
+  bottom: 0;
   width: 100%;
-  height: 100%;
-  background: linear-gradient(rgba(255, 255, 255, 0), rgb(0, 0, 0));
-  z-index: 1;
+  filter: drop-shadow(0 -5px 60px gold);
 }
-.monumentList li:active {
-  transform: scale(0.97);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-  filter: brightness(85%);
-  transition: transform 0.1s ease-in-out;
+.googleLogin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  border: none;
+  border-radius: 3rem;
+  padding: 0.3rem 1.3rem;
+  cursor: pointer;
+  transition: 0.2s all ease-in-out;
+  width: 90%;
+  box-shadow: inset -5px -5px 6px darkgrey;
+  margin: 0 auto;
+  animation: float 2s infinite;
 }
-.monumentList li:active img {
-  transform: scale(1.1);
+.googleLogin h3 {
+  font-weight: normal;
 }
-.monumentList li:active .info {
-  transform: translateY(-0.3rem);
+.googleLogin:active {
+  background-color: rgb(44, 44, 44);
+  color: whitesmoke;
+  transform: scale(0.98);
+  box-shadow: inset -5px -5px 10px grey;
 }
-@keyframes monumentDrop {
+.header * {
+  font-family: "Iansui", cursive;
+  font-weight: normal;
+  font-style: normal;
+  text-align: center;
+  margin: 0.8rem 0;
+}
+.header {
+  padding: 0 1rem;
+  margin: 4rem 0;
+}
+.header h1 {
+  font-weight: bolder;
+}
+.content {
+  flex: 1;
+}
+@keyframes float {
   0% {
-    opacity: 0;
-    transform: translateY(-1rem);
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.2rem);
   }
   100% {
-    opacity: 1;
     transform: translateY(0);
   }
 }
-.monumentList li * {
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.cardLink h1 {
-  font-weight: lighter;
+.loginPage {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
