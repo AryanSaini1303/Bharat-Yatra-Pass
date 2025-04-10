@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/loader";
 import axios from "axios";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Home() {
   const [profileClick, setProfileClick] = useState(false);
@@ -25,9 +26,12 @@ export default function Home() {
   const [monuments, setMonuments] = useState([]);
   const [loadingMonuments, setLoadingMonuments] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  // const [user, setUser] = useState();
+  const [user, setUser] = useState();
   const [loadingUser, setLoadingUser] = useState(true);
   const [userEmail, setUserEmail] = useState("");
+  const [sub, setSub] = useState("");
+  const [name, setName] = useState("");
+  const [urlToken, setUrlToken] = useState("");
   // const [token, setToken] = useState(null);
   const cities = [
     "Jaipur",
@@ -49,20 +53,58 @@ export default function Home() {
   ];
   const router = useRouter();
 
-  // const signOut = async () => {
-  //   try {
-  //     const { error } = await supabase.auth.signOut();
-  //     if (error) throw error;
-  //     router.push("/"); // Redirect after successful sign-out
-  //   } catch (err) {
-  //     console.error("Error signing out:", err.message);
-  //   }
-  // };
+  const signOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push("https://udaipurinsider.com"); // Redirect after successful sign-out
+    } catch (err) {
+      console.error("Error signing out:", err.message);
+    }
+  };
 
   function capitalizeFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   }
+  /**************************************************************************************************************** */
 
+  async function setUserSession(token) {
+    let jwtToken;
+    if (!token) {
+      const res = await fetch("/api/generateToken", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: userEmail, sub }),
+      });
+      const data = await res.json();
+      jwtToken = data.token;
+    }
+    const { data, error } = await supabase.auth.setSession({
+      access_token: token || jwtToken,
+      refresh_token: token || jwtToken,
+    });
+    if (error) {
+      console.error("Session error:", error.message);
+    } else {
+      // console.log("Supabase session established ✅", data);
+    }
+  }
+
+  useEffect(() => {
+    const fetchToken = async (email) => {
+      const res = await fetch("/api/createOrLoginUser", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, sub, name }),
+      });
+      const { token } = await res.json(); // <-- This token is what Supabase accepts
+      setUrlToken(token);
+      // console.log(token);
+      setUserSession(token);
+    };
+    userEmail?.length != 0 && fetchToken(userEmail);
+  }, [userEmail]);
+  /**************************************************************************************************************** */
   const isValidSSOAccessToken = async (token) => {
     const serverUrl = "https://keycloak.mogiio.com"; // ✅ Fixed URL
     const realmName = "udaipurinsider";
@@ -73,11 +115,13 @@ export default function Home() {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data.email);
+      // console.log(response.data);
+      setName(response.data.name);
+      setSub(response.data.sub);
       setUserEmail(response.data.email);
       setLoadingUser(false);
       if (response.status === 200) {
-        console.log("✅ Token successfully validated");
+        // console.log("✅ Token successfully validated");
         return { status: true, data: response.data };
       } else {
         return { status: false, message: "❌ Unexpected status code" };
@@ -103,7 +147,7 @@ export default function Home() {
       isValidSSOAccessToken(accessToken)
         .then((response) => {
           if (response.status) {
-            console.log("Token is valid");
+            // console.log("Token is valid");
             // Perform any action you need with the valid token
           } else {
             console.error("Invalid token");
@@ -118,24 +162,24 @@ export default function Home() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   const { data: authListener } = supabase.auth.onAuthStateChange(
-  //     async (event, session) => {
-  //       if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
-  //         const { user } = session;
-  //         setUser(user);
-  //         setLoadingUser(false);
-  //         // console.log(user);
-  //       } else {
-  //         setLoadingUser(false);
-  //         setUser(null);
-  //       }
-  //     }
-  //   );
-  //   return () => {
-  //     authListener.subscription.unsubscribe();
-  //   };
-  // }, []);
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
+          const { user } = session;
+          setUser(user);
+          setLoadingUser(false);
+          // console.log(user);
+        } else {
+          setLoadingUser(false);
+          setUser(null);
+        }
+      }
+    );
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
 
   // On page load, fetch the city from localStorage
   useEffect(() => {
@@ -208,14 +252,21 @@ export default function Home() {
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
-  useEffect(() => {
-    userEmail && authorizedUsers.includes(userEmail) ? router.push("/admin") : null;
-  }, [userEmail]);
+  // useEffect(() => {
+  //   user && authorizedUsers.includes(user.email) ? router.push("/admin") : null;
+  // }, [user]);
 
+  // if (loadingUser) {
+  //   return <Loader margin={"15rem auto"} />;
+  // } else {
+  //   if (userEmail.length == 0) {
+  //     return <div>Unauthenticated...</div>;
+  //   }
+  // }
   if (loadingUser) {
     return <Loader margin={"15rem auto"} />;
   } else {
-    if (userEmail.length==0) {
+    if (!user) {
       return <div>Unauthenticated...</div>;
     }
   }
@@ -337,7 +388,7 @@ export default function Home() {
                     Past Tickets
                   </button>
                 </li>
-                {/* <li>
+                <li>
                   <button
                     onClick={() => {
                       signOut();
@@ -345,7 +396,7 @@ export default function Home() {
                   >
                     Log Out
                   </button>
-                </li> */}
+                </li>
               </ul>
             </section>
           )}

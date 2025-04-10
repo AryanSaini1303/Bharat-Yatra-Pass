@@ -71,7 +71,7 @@ export default function Ticket() {
   return (
     <div
       className="wrapper"
-      style={{ backgroundColor: "white", background: "none" }}
+      style={{ background: "linear-gradient(to bottom, white, white)" }}
     >
       <header className={styles.header}>
         <svg

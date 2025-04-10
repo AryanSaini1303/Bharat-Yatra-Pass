@@ -13,6 +13,7 @@
     "crypto-js": "^4.2.0",
     "flatpickr": "^4.6.13",
     "html5-qrcode": "^2.3.8",
+    "jsonwebtoken": "^9.0.2",
     "next": "15.2.1",
     "next-auth": "^4.24.11",
     "ngrok": "^5.0.0-beta.2",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/jsonwebtoken": "^9.0.9",
     "eslint": "^9",
     "eslint-config-next": "15.2.1"
   }
