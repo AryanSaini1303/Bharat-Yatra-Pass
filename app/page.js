@@ -252,9 +252,9 @@ export default function Home() {
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
-  // useEffect(() => {
-  //   user && authorizedUsers.includes(user.email) ? router.push("/admin") : null;
-  // }, [user]);
+  useEffect(() => {
+    user && authorizedUsers.includes(user.email) ? router.push("/admin") : null;
+  }, [user]);
 
   // if (loadingUser) {
   //   return <Loader margin={"15rem auto"} />;

@@ -171,8 +171,8 @@ export default function AdminUserPage() {
                   <th>Profile</th>
                   <th>Name</th>
                   <th>Email</th>
-                  {/* <th>Created At</th> */}
-                  <th>Last Sign in</th>
+                  <th>Joined On</th>
+                  {/* <th>Last Sign In</th> */}
                   {/* <th>Action</th> */}
                   <th>User Id</th>
                 </tr>
@@ -195,11 +195,8 @@ export default function AdminUserPage() {
                     </td>
                     <td>{user.user_metadata.full_name}</td>
                     <td>{user.email}</td>
-                    {/* <td>
-                      {new Date(user.created_at).toLocaleDateString("en-GB")}
-                    </td> */}
                     <td>
-                      {new Date(user.last_sign_in_at).toLocaleString("en-GB", {
+                      {new Date(user.created_at).toLocaleDateString("en-GB", {
                         day: "2-digit",
                         month: "2-digit",
                         year: "2-digit",
@@ -208,6 +205,16 @@ export default function AdminUserPage() {
                         hour12: true, // Enables 12-hour format with AM/PM
                       })}
                     </td>
+                    {/* <td>
+                      {new Date(user.last_sign_in_at).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true, // Enables 12-hour format with AM/PM
+                      })}
+                    </td> */}
                     {/* <td>
                       <button
                         className={styles.terminateButton}

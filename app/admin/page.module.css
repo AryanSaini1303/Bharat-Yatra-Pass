@@ -1,6 +1,7 @@
 .container {
   display: flex;
   background-color: white;
+  min-height: 88vh;
 }
 .content {
   flex: 1;
@@ -9,6 +10,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 15px;
   background-color: white;
+  height: fit-content;
 }
 .cardContainer{
   display: flex;
