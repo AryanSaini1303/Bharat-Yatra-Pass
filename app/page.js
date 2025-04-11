@@ -139,8 +139,8 @@ export default function Home() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken = urlParams.get("token");
-    console.log(accessToken);
-    console.log(window.location.href);
+    // console.log(accessToken);
+    // console.log(window.location.href);
     if (accessToken) {
       // setToken(accessToken);
       // console.log(accessToken);
@@ -253,9 +253,7 @@ export default function Home() {
   }, [searchQuery]);
 
   useEffect(() => {
-    user && authorizedUsers.includes(user.email)
-      ? router.push("https://udaipurinsider.com")
-      : null;
+    user && authorizedUsers.includes(user.email) ? router.push("https://udaipurinsider.com") : null;
   }, [user]);
 
   // if (loadingUser) {
