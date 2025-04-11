@@ -253,7 +253,9 @@ export default function Home() {
   }, [searchQuery]);
 
   useEffect(() => {
-    user && authorizedUsers.includes(user.email) ? router.push("/admin") : null;
+    user && authorizedUsers.includes(user.email)
+      ? router.push("https://udaipurinsider.com")
+      : null;
   }, [user]);
 
   // if (loadingUser) {
