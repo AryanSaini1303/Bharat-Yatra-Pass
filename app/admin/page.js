@@ -22,7 +22,7 @@ export default function AdminPage() {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      router.push("https://udaipurinsider.com"); // Redirect after successful sign-out
+      router.push("/"); // Redirect after successful sign-out
     } catch (err) {
       console.error("Error signing out:", err.message);
     }

@@ -55,11 +55,9 @@ export default function Home() {
       <div className={styles.loginPage}>
         <div className={styles.content}>
           <header className={styles.header}>
-            <h2>Welcome to</h2>
-            <h1>Bharat Yatra Pass</h1>
+            <h1>Welcome Back, Admin</h1>
             <h5>
-              Seamless ticket booking for India&apos;s iconic monuments &ndash;
-              Fast, Secure, and Hassle-Free!
+            Securely access the control panel to manage users, tickets, and platform analytics. Your gateway to streamlined hiring and oversight.
             </h5>
           </header>
           <button
