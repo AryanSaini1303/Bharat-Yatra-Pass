@@ -57,7 +57,7 @@ export default function Home() {
           <header className={styles.header}>
             <h1>Welcome Back, Admin</h1>
             <h5>
-            Securely access the control panel to manage users, tickets, and platform analytics. Your gateway to streamlined hiring and oversight.
+            Securely access the control panel to manage users, tickets, and platform analytics. Your gateway to streamlined management and oversight.
             </h5>
           </header>
           <button
