@@ -66,11 +66,12 @@ export default function Home() {
   function capitalizeFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   }
-  /**************************************************************************************************************** */
 
   async function setUserSession(token) {
+    // This function generates a user session using JWT
     let jwtToken;
     if (!token) {
+      // If there is not token i.e. an existing user logs in, then we create a JWT using the token (email, sub) from the URL
       const res = await fetch("/api/generateToken", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -92,21 +93,23 @@ export default function Home() {
 
   useEffect(() => {
     const fetchToken = async (email) => {
+      // This function returns a Supabase signed JWT when a new user signs in
       const res = await fetch("/api/createOrLoginUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, sub, name }),
       });
-      const { token } = await res.json(); // <-- This token is what Supabase accepts
+      const { token } = await res.json(); // <-- This token (JWT) is what Supabase accepts
       setUrlToken(token);
       // console.log(token);
       setUserSession(token);
     };
     userEmail?.length != 0 && fetchToken(userEmail);
   }, [userEmail]);
-  /**************************************************************************************************************** */
+
   const isValidSSOAccessToken = async (token) => {
-    const serverUrl = "https://keycloak.mogiio.com"; // ✅ Fixed URL
+    // This function takes the token from the url, verifies it through keycloak and gets user's data
+    const serverUrl = "https://keycloak.mogiio.com";
     const realmName = "udaipurinsider";
     const url = `${serverUrl}/realms/${realmName}/protocol/openid-connect/userinfo`;
     try {
@@ -115,16 +118,24 @@ export default function Home() {
           Authorization: `Bearer ${token}`,
         },
       });
-      // console.log(response.data);
-      setName(response.data.name);
-      setSub(response.data.sub);
-      setUserEmail(response.data.email);
-      setLoadingUser(false);
-      if (response.status === 200) {
-        // console.log("✅ Token successfully validated");
-        return { status: true, data: response.data };
+      if (authorizedUsers.includes(response.data.email)) {
+        alert(
+          "Hello Admin, please visit https://bharat-yatra-pass.vercel.app/adminLogin for admin dashboard"
+        );
+        router.push("https://udaipurinsider.com");
+        return;
       } else {
-        return { status: false, message: "❌ Unexpected status code" };
+        console.log(response.data);
+        setName(response.data.name);
+        setSub(response.data.sub);
+        setUserEmail(response.data.email);
+        setLoadingUser(false);
+        if (response.status === 200) {
+          // console.log("✅ Token successfully validated");
+          return { status: true, data: response.data };
+        } else {
+          return { status: false, message: "❌ Unexpected status code" };
+        }
       }
     } catch (error) {
       console.log(
