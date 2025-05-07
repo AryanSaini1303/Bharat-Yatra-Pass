@@ -7,6 +7,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { v4 as uuidv4 } from "uuid";
 import Loader from "@/components/loader";
+import Script from "next/script";
 
 export default function BookingPage({ params }) {
   const { monumentId } = use(params);
@@ -28,21 +29,11 @@ export default function BookingPage({ params }) {
   const [showFlag, setShowFlag] = useState(false);
   const [ticketId, setTicketId] = useState("");
   const [savingTicket, setSavingTicket] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [orderId, setOrderId] = useState("");
   // console.log(user);
 
-  const convertTime = (timeStr) => {
-    const [hours, minutes] = timeStr.split(":");
-    const date = new Date();
-    date.setHours(parseInt(hours));
-    date.setMinutes(parseInt(minutes));
-    return date;
-  };
-
-  // You can't directly map() over an object, BUT you can convert it into an array using Object methods like:
-  // Object.entries() → Best for key-value pairs.
-  // Object.keys() → Best if you only need keys.
-  // Object.values() → Best if you only need values.
-  function handleCheckout() {
+  const handlePayment = async () => {
     let breakFlag = false;
     for (let i = 0; i < Object.values(ticketNum).length; i++) {
       if (Object.values(ticketNum)[i] > 0) {
@@ -61,9 +52,81 @@ export default function BookingPage({ params }) {
       alert("Choose a time slot!");
       return;
     }
-    const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
-    setTicketId(referenceId);
-  }
+    setIsProcessing(true);
+    try {
+      const response = await fetch("/api/createOrder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ totalAmount }), // sending amount to backend
+      });
+      const data = await response.json();
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: totalAmount * 100,
+        current: "INR",
+        name: "PERIMETER NETWORK PRIVATE LIMITED",
+        description: "This is a trasaction for the ticket",
+        order_id: data.orderId,
+        handler: function (response) {
+          console.log("Payment successful", response);
+          setOrderId(response.razorpay_order_id);
+          const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
+          setTicketId(referenceId);
+        },
+        prefill: {
+          name: "John Doe",
+          email: "johndoe@example.com",
+          contact: "8473651047",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+      const rzp1 = new window.Razorpay(options);
+      rzp1.open();
+    } catch (error) {
+      console.error("Payment failed", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const convertTime = (timeStr) => {
+    const [hours, minutes] = timeStr.split(":");
+    const date = new Date();
+    date.setHours(parseInt(hours));
+    date.setMinutes(parseInt(minutes));
+    return date;
+  };
+
+  // You can't directly map() over an object, BUT you can convert it into an array using Object methods like:
+  // Object.entries() → Best for key-value pairs.
+  // Object.keys() → Best if you only need keys.
+  // Object.values() → Best if you only need values.
+  // function handleCheckout() {
+  //   let breakFlag = false;
+  //   for (let i = 0; i < Object.values(ticketNum).length; i++) {
+  //     if (Object.values(ticketNum)[i] > 0) {
+  //       breakFlag = true;
+  //       break;
+  //     }
+  //     if (
+  //       i == Object.values(ticketNum).length - 1 &&
+  //       Object.values(ticketNum)[i] == 0
+  //     ) {
+  //       alert("Select at least 1 ticket before the checkout");
+  //       return;
+  //     }
+  //   }
+  //   if (breakFlag && !showFlag) {
+  //     alert("Choose a time slot!");
+  //     return;
+  //   }
+  //   const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
+  //   setTicketId(referenceId);
+  // }
 
   useEffect(() => {
     if (!ticketId || !user?.id) return; // Ensure required fields are available
@@ -76,11 +139,11 @@ export default function BookingPage({ params }) {
               monumentName: monument.name,
               monumentCity: monument.city,
               monumentImage: monument.image_url,
-              dateTime:dateTime,
+              dateTime: dateTime,
               ticketId,
               ticketNum,
               user_id: user.id,
-              status:"active",
+              status: "active",
             },
           ])
           .select();
@@ -148,7 +211,7 @@ export default function BookingPage({ params }) {
   }, []);
 
   if (loadingUser) {
-    return <Loader margin={"15rem auto"}/>;
+    return <Loader margin={"15rem auto"} />;
   } else {
     if (!user) {
       return <div>Unauthenticated...</div>;
@@ -156,7 +219,8 @@ export default function BookingPage({ params }) {
   }
 
   return (
-    <div className="wrapper">
+    <div className="wrapper" style={orderId ? { pointerEvents: "none" } : null}>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <header className={styles.header}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -175,7 +239,7 @@ export default function BookingPage({ params }) {
         <h2>Details</h2>
       </header>
       {loadingMonument ? (
-        <Loader margin={"10rem auto"}/>
+        <Loader margin={"10rem auto"} />
       ) : monument.length != 0 ? (
         <div className={styles.container}>
           <img
@@ -555,9 +619,10 @@ export default function BookingPage({ params }) {
           <button
             className={styles.checkout}
             style={blurFlag ? { filter: "blur(10px)" } : null}
-            onClick={handleCheckout}
+            // onClick={handleCheckout}
+            onClick={handlePayment}
           >
-            Checkout
+            {isProcessing ? "Processing..." : "Checkout"}
           </button>
         </div>
       ) : (

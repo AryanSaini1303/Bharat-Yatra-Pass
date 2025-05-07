@@ -101,7 +101,7 @@ export default function Home() {
       });
       const { token } = await res.json(); // <-- This token (JWT) is what Supabase accepts
       setUrlToken(token);
-      // console.log(token);
+      console.log(token);
       setUserSession(token);
     };
     userEmail?.length != 0 && fetchToken(userEmail);
