@@ -399,7 +399,7 @@ export default function Home() {
                     Past Tickets
                   </button>
                 </li>
-                <li>
+                {/* <li>
                   <button
                     onClick={() => {
                       signOut();
@@ -407,7 +407,7 @@ export default function Home() {
                   >
                     Log Out
                   </button>
-                </li>
+                </li> */}
               </ul>
             </section>
           )}
