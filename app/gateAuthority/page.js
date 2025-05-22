@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useRef } from "react";
-import { Html5Qrcode } from "html5-qrcode";
-import styles from "./page.module.css";
-import { supabase } from "@/lib/supabaseClient";
-import { Noto_Sans } from "next/font/google";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef } from 'react';
+import { Html5Qrcode } from 'html5-qrcode';
+import styles from './page.module.css';
+import { supabase } from '@/lib/supabaseClient';
+import { Noto_Sans } from 'next/font/google';
+import { useRouter } from 'next/navigation';
 
 const notoSans = Noto_Sans({
-  weight: "400",
-  subsets: ["latin"],
+  weight: '400',
+  subsets: ['latin'],
 });
 
 export default function GateAuthority() {
-  const [ticketId, setTicketId] = useState("");
+  const [ticketId, setTicketId] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const [ticket, setTicket] = useState([]);
   const [verifying, setVerifying] = useState(false);
@@ -24,7 +24,11 @@ export default function GateAuthority() {
   const menuRef = useRef(null);
   const [user, setUser] = useState(null);
   const router = useRouter();
-  const authorizedEmail = ["saini.aryan9999@gmail.com", "yograj.rr@gmail.com"];
+  const authorizedEmail = [
+    'saini.aryan9999@gmail.com',
+    'yograj.rr@gmail.com',
+    'saurabhgodawat@gmail.com',
+  ];
   const [counter, setCounter] = useState(5);
   const [loading, setLoading] = useState(false);
 
@@ -37,12 +41,12 @@ export default function GateAuthority() {
 
   const startScanning = () => {
     if (isScanning) return; // Prevent multiple instances
-    setTicketId("");
-    html5QrCode.current = new Html5Qrcode("qr-reader");
+    setTicketId('');
+    html5QrCode.current = new Html5Qrcode('qr-reader');
     setIsScanning(true);
     html5QrCode.current
       .start(
-        { facingMode: "environment" }, // Use rear camera
+        { facingMode: 'environment' }, // Use rear camera
         {
           fps: 10,
           qrbox: 250, // Defines scanning box size
@@ -54,13 +58,13 @@ export default function GateAuthority() {
           stopScanning(); // Stop scanning after successful detection
         },
         (errorMessage) => {
-          console.warn("QR Scan Warning:", errorMessage);
-        }
+          console.warn('QR Scan Warning:', errorMessage);
+        },
       )
       // .then(() => {
       //   setIsScanning(true);
       // })
-      .catch((err) => console.error("Error starting scanner:", err));
+      .catch((err) => console.error('Error starting scanner:', err));
   };
 
   const stopScanning = () => {
@@ -72,19 +76,19 @@ export default function GateAuthority() {
     }
   };
 
-  const signIn = async (redirectPath = "/gateAuthority") => {
+  const signIn = async (redirectPath = '/gateAuthority') => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
+      provider: 'google',
       options: {
         redirectTo: `${window.location.origin}${redirectPath}`,
-        queryParams:{
-          prompt:"select_account" // Forces google to always show account selection
-        }
+        queryParams: {
+          prompt: 'select_account', // Forces google to always show account selection
+        },
       },
     });
 
     if (error) {
-      console.error("Authentication Error:", error);
+      console.error('Authentication Error:', error);
     }
   };
 
@@ -92,9 +96,9 @@ export default function GateAuthority() {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      router.push("/gateAuthority"); // Redirect after successful sign-out
+      router.push('/gateAuthority'); // Redirect after successful sign-out
     } catch (err) {
-      console.error("Error signing out:", err.message);
+      console.error('Error signing out:', err.message);
     }
   };
 
@@ -116,7 +120,7 @@ export default function GateAuthority() {
 
   useEffect(() => {
     if (counter == 0) {
-      setTicketId("");
+      setTicketId('');
       setCounter(5);
       setTicket([]);
       window.location.reload();
@@ -133,9 +137,9 @@ export default function GateAuthority() {
     if (!user) return;
 
     if (authorizedEmail.includes(user.email)) {
-      router.push("/gateAuthority");
+      router.push('/gateAuthority');
     } else {
-      alert("You are not authorized to access this page!");
+      alert('You are not authorized to access this page!');
       signOut();
     }
   }, [user]);
@@ -143,14 +147,14 @@ export default function GateAuthority() {
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
+        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
           const { user } = session;
           setUser(user);
           // console.log(user);
         } else {
           setUser(null);
         }
-      }
+      },
     );
     return () => {
       authListener.subscription.unsubscribe();
@@ -170,7 +174,7 @@ export default function GateAuthority() {
         setLoading(false);
         // console.log(data);
         if (inputRef.current) {
-          inputRef.current.value = ""; // Clears the input
+          inputRef.current.value = ''; // Clears the input
         }
         setVerifying(false);
       } catch (error) {
@@ -183,21 +187,21 @@ export default function GateAuthority() {
 
   useEffect(() => {
     // console.log(ticket);
-    if (ticket[0]?.ticketId && ticket[0]?.status == "active") {
+    if (ticket[0]?.ticketId && ticket[0]?.status == 'active') {
       const expireTicket = async () => {
         try {
           const { data, error } = await supabase
-            .from("tickets")
-            .update({ status: "expired", verifierId: user?.id })
-            .eq("ticketId", ticket[0].ticketId)
+            .from('tickets')
+            .update({ status: 'expired', verifierId: user?.id })
+            .eq('ticketId', ticket[0].ticketId)
             .select(); // Ensures it returns the updated data
           if (error) {
-            console.error("Supabase Error:", error.message);
+            console.error('Supabase Error:', error.message);
           } else {
             // console.log("Ticket status updated:", data);
           }
         } catch (err) {
-          console.error("Unexpected Error:", err.message);
+          console.error('Unexpected Error:', err.message);
         }
       };
       expireTicket();
@@ -262,7 +266,7 @@ export default function GateAuthority() {
                 <li>
                   <button
                     onClick={() => {
-                      router.push("/gateAuthority/verifiedTickets");
+                      router.push('/gateAuthority/verifiedTickets');
                     }}
                   >
                     Verified tickets
@@ -283,7 +287,7 @@ export default function GateAuthority() {
           <section
             style={
               menuClick
-                ? { filter: "blur(2px)", transition: "0.2s all ease-in-out" }
+                ? { filter: 'blur(2px)', transition: '0.2s all ease-in-out' }
                 : null
             }
           >
@@ -292,7 +296,7 @@ export default function GateAuthority() {
                 id="qr-reader"
                 className={styles.scannerBox}
                 ref={scannerRef}
-                style={isScanning ? { border: "black solid 2px" } : null}
+                style={isScanning ? { border: 'black solid 2px' } : null}
               ></div>
               <div className={styles.buttonContainer}>
                 {!isScanning ? (
@@ -302,7 +306,7 @@ export default function GateAuthority() {
                 ) : (
                   <button
                     onClick={stopScanning}
-                    style={{ backgroundColor: "rgb(206, 0, 0)" }}
+                    style={{ backgroundColor: 'rgb(206, 0, 0)' }}
                     className={styles.btn}
                   >
                     Stop Scanning
@@ -312,7 +316,7 @@ export default function GateAuthority() {
             </section>
             <p
               className={styles.infoText}
-              style={isScanning ? { filter: "blur(2px)" } : null}
+              style={isScanning ? { filter: 'blur(2px)' } : null}
             >
               Or enter manually:
             </p>
@@ -321,7 +325,7 @@ export default function GateAuthority() {
                 onSubmit={handleSubmit}
                 style={
                   isScanning
-                    ? { filter: "blur(2px)", pointerEvents: "none" }
+                    ? { filter: 'blur(2px)', pointerEvents: 'none' }
                     : null
                 }
               >
@@ -333,7 +337,7 @@ export default function GateAuthority() {
                   name="qr"
                   tabIndex={0}
                   onFocus={() => {
-                    setTicketId("");
+                    setTicketId('');
                   }}
                   ref={inputRef}
                 />
@@ -346,40 +350,40 @@ export default function GateAuthority() {
               {ticketId && (
                 <div className={styles.resultContainer}>
                   {verifying ? (
-                    "Verifying...."
+                    'Verifying....'
                   ) : ticket.length == 0 ? (
                     <div className={styles.resultInfo}>
                       <img src="/gif/failed.gif" alt="" />
                       <p
                         style={
                           ticket.length != 0
-                            ? ticket[0]?.status == "active"
-                              ? { color: "green" }
-                              : ticket[0]?.status == "expired"
-                              ? { color: "red" }
+                            ? ticket[0]?.status == 'active'
+                              ? { color: 'green' }
+                              : ticket[0]?.status == 'expired'
+                              ? { color: 'red' }
                               : null
                             : verifying
-                            ? { color: "black" }
-                            : { color: "red" }
+                            ? { color: 'black' }
+                            : { color: 'red' }
                         }
                       >
                         Ticket doesn&apos;t exist !
                       </p>
                     </div>
-                  ) : ticket[0]?.status == "active" ? (
+                  ) : ticket[0]?.status == 'active' ? (
                     <div className={styles.resultInfo}>
                       <img src="/gif/done.gif" alt="" />
                       <p
                         style={
                           ticket.length != 0
-                            ? ticket[0]?.status == "active"
-                              ? { color: "green" }
-                              : ticket[0]?.status == "expired"
-                              ? { color: "red" }
+                            ? ticket[0]?.status == 'active'
+                              ? { color: 'green' }
+                              : ticket[0]?.status == 'expired'
+                              ? { color: 'red' }
                               : null
                             : verifying
-                            ? { color: "black" }
-                            : { color: "red" }
+                            ? { color: 'black' }
+                            : { color: 'red' }
                         }
                       >
                         Verified
@@ -391,14 +395,14 @@ export default function GateAuthority() {
                       <p
                         style={
                           ticket.length != 0
-                            ? ticket[0]?.status == "active"
-                              ? { color: "green" }
-                              : ticket[0]?.status == "expired"
-                              ? { color: "red" }
+                            ? ticket[0]?.status == 'active'
+                              ? { color: 'green' }
+                              : ticket[0]?.status == 'expired'
+                              ? { color: 'red' }
                               : null
                             : verifying
-                            ? { color: "black" }
-                            : { color: "red" }
+                            ? { color: 'black' }
+                            : { color: 'red' }
                         }
                       >
                         Ticket is expired !
@@ -409,14 +413,14 @@ export default function GateAuthority() {
                     className={styles.resultText}
                     style={
                       ticket.length != 0
-                        ? ticket[0]?.status == "active"
-                          ? { color: "green" }
-                          : ticket[0]?.status == "expired"
-                          ? { color: "red" }
+                        ? ticket[0]?.status == 'active'
+                          ? { color: 'green' }
+                          : ticket[0]?.status == 'expired'
+                          ? { color: 'red' }
                           : null
                         : verifying
-                        ? { color: "black" }
-                        : { color: "red" }
+                        ? { color: 'black' }
+                        : { color: 'red' }
                     }
                   >
                     Ticket ID: {ticketId}
@@ -450,7 +454,7 @@ export default function GateAuthority() {
               onClick={() => signIn()}
               className={`${styles.googleLogin} ${notoSans.className}`}
             >
-              <img src={"/images/googleLogo.png"} alt="Google Logo" />
+              <img src={'/images/googleLogo.png'} alt="Google Logo" />
               <h3> Sign In With Google</h3>
             </button>
           </div>
