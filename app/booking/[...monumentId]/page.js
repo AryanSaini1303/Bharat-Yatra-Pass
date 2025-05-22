@@ -70,7 +70,7 @@ export default function BookingPage({ params }) {
         description: "This is a trasaction for the ticket",
         order_id: data.orderId,
         handler: function (response) {
-          console.log("Payment successful", response);
+          // console.log("Payment successful", response);
           setOrderId(response.razorpay_order_id);
           const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
           setTicketId(referenceId);

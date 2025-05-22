@@ -101,7 +101,7 @@ export default function Home() {
       });
       const { token } = await res.json(); // <-- This token (JWT) is what Supabase accepts
       setUrlToken(token);
-      console.log(token);
+      // console.log(token);
       setUserSession(token);
     };
     userEmail?.length != 0 && fetchToken(userEmail);
@@ -125,7 +125,7 @@ export default function Home() {
         router.push("https://udaipurinsider.com");
         return;
       } else {
-        console.log(response.data);
+        // console.log(response.data);
         setName(response.data.name);
         setSub(response.data.sub);
         setUserEmail(response.data.email);

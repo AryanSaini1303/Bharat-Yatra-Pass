@@ -40,7 +40,7 @@ export async function POST(req) {
 
     const imageUrl = imageData.publicUrl; // ✅ This correctly extracts the URL
 
-    console.log("Image URL:", imageUrl);
+    // console.log("Image URL:", imageUrl);
     return new Response(JSON.stringify({ imageData }), {
       status: 200,
       headers: { "Content-Type": "application/json" },

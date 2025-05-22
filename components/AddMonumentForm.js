@@ -46,7 +46,7 @@ const AddMonumentForm = () => {
       body: formData,
     });
     const data = await response.json();
-    console.log("Uploaded Image URL: ", data.imageData.publicUrl);
+    // console.log("Uploaded Image URL: ", data.imageData.publicUrl);
     setFormData((prev) => ({ ...prev, image: data.imageData.publicUrl }));
   };
 
