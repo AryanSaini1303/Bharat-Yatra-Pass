@@ -219,7 +219,7 @@ export default function BookingPage({ params }) {
   }
 
   return (
-    <div className="wrapper" style={orderId ? { pointerEvents: "none" } : null}>
+    <div className="wrapper" style={orderId || isProcessing ? { pointerEvents: "none" } : null}>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <header className={styles.header}>
         <svg

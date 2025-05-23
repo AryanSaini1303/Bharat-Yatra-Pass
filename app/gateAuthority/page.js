@@ -68,11 +68,17 @@ export default function GateAuthority() {
   };
 
   const stopScanning = () => {
-    if (html5QrCode.current) {
-      html5QrCode.current.stop().then(() => {
-        html5QrCode.current.clear();
-        setIsScanning(false);
-      });
+    if (html5QrCode.current && isScanning) {
+      html5QrCode.current
+        .stop()
+        .then(() => {
+          html5QrCode.current.clear();
+          html5QrCode.current = null;
+          setIsScanning(false);
+        })
+        .catch((err) => {
+          console.error('Error stopping scanner:', err);
+        });
     }
   };
 
@@ -103,6 +109,7 @@ export default function GateAuthority() {
   };
 
   useEffect(() => {
+    // the function we're returning below runs when the component unmounts i.e. when the page is closed
     return () => {
       // Cleanup on unmount
       stopScanning();
@@ -123,7 +130,7 @@ export default function GateAuthority() {
       setTicketId('');
       setCounter(5);
       setTicket([]);
-      window.location.reload();
+      // window.location.reload();
     }
   }, [counter]);
 
@@ -214,7 +221,14 @@ export default function GateAuthority() {
         <div className={styles.container}>
           <header>
             <h1 className={styles.title}>Scan QR Ticket</h1>
-            <div className={styles.hamburger}>
+            <div
+              className={styles.hamburger}
+              style={
+                isScanning
+                  ? { filter: 'blur(1px)', pointerEvents: 'none' }
+                  : null
+              }
+            >
               {!menuClick ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
