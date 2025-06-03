@@ -1,67 +1,67 @@
-"use client";
-import { useEffect, useRef, useState } from "react";
-import styles from "./page.module.css";
+'use client';
+import { useEffect, useRef, useState } from 'react';
+import styles from './page.module.css';
 // import { supabase } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
-import Loader from "@/components/loader";
-import axios from "axios";
-import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from 'next/navigation';
+import Loader from '@/components/loader';
+import axios from 'axios';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function Home() {
   const [profileClick, setProfileClick] = useState(false);
   const [locationClick, setLocationClick] = useState(false);
   const [location, setLocation] = useState(() => {
-    if (typeof window !== "undefined") {
-      const savedCity = localStorage.getItem("userCity");
-      return savedCity || "Udaipur";
+    if (typeof window !== 'undefined') {
+      const savedCity = localStorage.getItem('userCity');
+      return savedCity || 'Udaipur';
     }
-    return "Udaipur"; // Default value for SSR
+    return 'Udaipur'; // Default value for SSR
   });
   const authorizedUsers =
-    process.env.NEXT_PUBLIC_AUTHORIZED_EMAILS?.split(",") || [];
+    process.env.NEXT_PUBLIC_AUTHORIZED_EMAILS?.split(',') || [];
   // console.log("here", authorizedUsers);
 
   const dropdownRef = useRef(null); // React hook which is used to point to a div something like "document.getElementById"
   const locationRef = useRef(null);
   const [monuments, setMonuments] = useState([]);
   const [loadingMonuments, setLoadingMonuments] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState();
   const [loadingUser, setLoadingUser] = useState(true);
-  const [userEmail, setUserEmail] = useState("");
-  const [sub, setSub] = useState("");
-  const [name, setName] = useState("");
-  const [urlToken, setUrlToken] = useState("");
+  const [userEmail, setUserEmail] = useState('');
+  const [sub, setSub] = useState('');
+  const [name, setName] = useState('');
+  const [urlToken, setUrlToken] = useState('');
   // const [token, setToken] = useState(null);
   const cities = [
-    "Jaipur",
-    "Jodhpur",
-    "Kota",
-    "Bikaner",
-    "Bhiwadi",
-    "Udaipur",
-    "Ajmer",
-    "Bhilwara",
-    "Alwar",
-    "Sikar",
-    "Bharatpur",
-    "Pali",
-    "Sri",
-    "Ganganagar",
-    "Beawar",
-    "Baran",
+    'Jaipur',
+    'Jodhpur',
+    'Kota',
+    'Bikaner',
+    'Bhiwadi',
+    'Udaipur',
+    'Ajmer',
+    'Bhilwara',
+    'Alwar',
+    'Sikar',
+    'Bharatpur',
+    'Pali',
+    'Sri',
+    'Ganganagar',
+    'Beawar',
+    'Baran',
   ];
   const router = useRouter();
 
-  const signOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      router.push("https://udaipurinsider.com"); // Redirect after successful sign-out
-    } catch (err) {
-      console.error("Error signing out:", err.message);
-    }
-  };
+  // const signOut = async () => {
+  //   try {
+  //     const { error } = await supabase.auth.signOut();
+  //     if (error) throw error;
+  //     router.push("https://udaipurinsider.com"); // Redirect after successful sign-out
+  //   } catch (err) {
+  //     console.error("Error signing out:", err.message);
+  //   }
+  // };
 
   function capitalizeFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -72,9 +72,9 @@ export default function Home() {
     let jwtToken;
     if (!token) {
       // If there is not token i.e. an existing user logs in, then we create a JWT using the token (email, sub) from the URL
-      const res = await fetch("/api/generateToken", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/generateToken', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail, sub }),
       });
       const data = await res.json();
@@ -85,7 +85,7 @@ export default function Home() {
       refresh_token: token || jwtToken,
     });
     if (error) {
-      console.error("Session error:", error.message);
+      console.error('Session error:', error.message);
     } else {
       // console.log("Supabase session established ✅", data);
     }
@@ -94,9 +94,9 @@ export default function Home() {
   useEffect(() => {
     const fetchToken = async (email) => {
       // This function returns a Supabase signed JWT when a new user signs in
-      const res = await fetch("/api/createOrLoginUser", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/createOrLoginUser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, sub, name }),
       });
       const { token } = await res.json(); // <-- This token (JWT) is what Supabase accepts
@@ -109,8 +109,8 @@ export default function Home() {
 
   const isValidSSOAccessToken = async (token) => {
     // This function takes the token from the url, verifies it through keycloak and gets user's data
-    const serverUrl = "https://keycloak.mogiio.com";
-    const realmName = "udaipurinsider";
+    const serverUrl = 'https://keycloak.mogiio.com';
+    const realmName = 'udaipurinsider';
     const url = `${serverUrl}/realms/${realmName}/protocol/openid-connect/userinfo`;
     try {
       const response = await axios.get(url, {
@@ -120,9 +120,9 @@ export default function Home() {
       });
       if (authorizedUsers.includes(response.data.email)) {
         alert(
-          "Hello Admin, please visit https://bharat-yatra-pass.vercel.app/adminLogin for admin dashboard"
+          'Hello Admin, please visit https://bharat-yatra-pass.vercel.app/adminLogin for admin dashboard',
         );
-        router.push("https://udaipurinsider.com");
+        router.push('https://udaipurinsider.com');
         return;
       } else {
         // console.log(response.data);
@@ -134,22 +134,22 @@ export default function Home() {
           // console.log("✅ Token successfully validated");
           return { status: true, data: response.data };
         } else {
-          return { status: false, message: "❌ Unexpected status code" };
+          return { status: false, message: '❌ Unexpected status code' };
         }
       }
     } catch (error) {
       console.log(
-        "⚠️ Error during token validation:",
-        error?.response?.data || error.message
+        '⚠️ Error during token validation:',
+        error?.response?.data || error.message,
       );
       setLoadingUser(false);
-      return { status: false, message: "❌ Token validation failed" };
+      return { status: false, message: '❌ Token validation failed' };
     }
   };
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const accessToken = urlParams.get("token");
+    const accessToken = urlParams.get('token');
     // console.log(accessToken);
     // console.log(window.location.href);
     if (accessToken) {
@@ -161,22 +161,22 @@ export default function Home() {
             // console.log("Token is valid");
             // Perform any action you need with the valid token
           } else {
-            console.error("Invalid token");
+            console.error('Invalid token');
             // Handle invalid token case
           }
         })
         .catch((error) => {
-          console.error("Error validating token:", error);
+          console.error('Error validating token:', error);
         });
     } else {
-      console.warn("No token found in URL");
+      console.warn('No token found in URL');
     }
   }, []);
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
+        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
           const { user } = session;
           setUser(user);
           setLoadingUser(false);
@@ -185,7 +185,7 @@ export default function Home() {
           setLoadingUser(false);
           setUser(null);
         }
-      }
+      },
     );
     return () => {
       authListener.subscription.unsubscribe();
@@ -194,12 +194,12 @@ export default function Home() {
 
   // On page load, fetch the city from localStorage
   useEffect(() => {
-    const savedCity = localStorage.getItem("userCity");
+    const savedCity = localStorage.getItem('userCity');
     if (savedCity) {
       // console.log("📍 City found in localStorage:", savedCity);
       setLocation(savedCity);
     } else {
-      setLocation("Udaipur");
+      setLocation('Udaipur');
     }
   }, []);
 
@@ -230,7 +230,7 @@ export default function Home() {
         setMonuments(data);
         setLoadingMonuments(false);
       } catch (error) {
-        console.error("Error fetching monuments:", error);
+        console.error('Error fetching monuments:', error);
         setLoadingMonuments(false);
       }
     };
@@ -244,7 +244,7 @@ export default function Home() {
         let response;
         if (searchQuery.length != 0) {
           response = await fetch(
-            `/api/fetchMonumentsByName?name=${searchQuery}`
+            `/api/fetchMonumentsByName?name=${searchQuery}`,
           );
         } else {
           response = await fetch(`/api/fetchMonuments?city=${location}`);
@@ -253,7 +253,7 @@ export default function Home() {
         setMonuments(data);
         setLoadingMonuments(false);
       } catch (error) {
-        console.error("Error fetching monuments:", error);
+        console.error('Error fetching monuments:', error);
         setLoadingMonuments(false);
       }
     };
@@ -264,23 +264,16 @@ export default function Home() {
   }, [searchQuery]);
 
   useEffect(() => {
-    user && authorizedUsers.includes(user.email) ? router.push("/admin") : null;
+    user && authorizedUsers.includes(user.email) ? router.push('/admin') : null;
   }, [user]);
 
   // if (loadingUser) {
-  //   return <Loader margin={"15rem auto"} />;
+  //   return <Loader margin={'15rem auto'} />;
   // } else {
-  //   if (userEmail.length == 0) {
+  //   if (!user) {
   //     return <div>Unauthenticated...</div>;
   //   }
   // }
-  if (loadingUser) {
-    return <Loader margin={"15rem auto"} />;
-  } else {
-    if (!user) {
-      return <div>Unauthenticated...</div>;
-    }
-  }
 
   return (
     <div className="wrapper">
@@ -329,12 +322,12 @@ export default function Home() {
                     <button
                       onClick={() => {
                         setLocation(city);
-                        localStorage.setItem("userCity", city);
+                        localStorage.setItem('userCity', city);
                         setLocationClick(false);
                       }}
                       style={
                         location == city
-                          ? { color: "white", backgroundColor: "darkgrey" }
+                          ? { color: 'white', backgroundColor: 'darkgrey' }
                           : null
                       }
                     >
@@ -384,7 +377,7 @@ export default function Home() {
                 <li>
                   <button
                     onClick={() => {
-                      router.push("/tickets/current");
+                      router.push('/tickets/current');
                     }}
                   >
                     Current Tickets
@@ -393,7 +386,7 @@ export default function Home() {
                 <li>
                   <button
                     onClick={() => {
-                      router.push("/tickets/past");
+                      router.push('/tickets/past');
                     }}
                   >
                     Past Tickets
@@ -420,7 +413,7 @@ export default function Home() {
         }}
         style={
           profileClick || locationClick
-            ? { filter: "blur(2px)", pointerEvents: "none" }
+            ? { filter: 'blur(2px)', pointerEvents: 'none' }
             : null
         }
       >
@@ -447,7 +440,7 @@ export default function Home() {
         className={styles.monumentList}
         style={
           profileClick || locationClick
-            ? { filter: "blur(2px)", pointerEvents: "none" }
+            ? { filter: 'blur(2px)', pointerEvents: 'none' }
             : null
         }
       >
@@ -455,9 +448,9 @@ export default function Home() {
           {monuments.length == 0 && !loadingMonuments ? (
             <p
               style={{
-                color: "red",
-                fontFamily: "var(--font)",
-                fontWeight: "bolder",
+                color: 'red',
+                fontFamily: 'var(--font)',
+                fontWeight: 'bolder',
               }}
             >
               No Monuments Found!
@@ -468,7 +461,7 @@ export default function Home() {
                 monument.image_url && (
                   <li key={monument.id}>
                     <a
-                      href={`booking/${monument.id}`}
+                      href={`booking/${monument.boats?"boating":"monument"}/${monument.id}`}
                       className={styles.cardLink}
                     >
                       <img src={monument.image_url} alt="Monument Image" />
@@ -478,7 +471,7 @@ export default function Home() {
                       </div>
                     </a>
                   </li>
-                )
+                ),
             )
           ) : (
             // <p style={{ fontFamily: "var(--font)", fontWeight: "bolder" }}>

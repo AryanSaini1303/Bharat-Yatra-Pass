@@ -1,13 +1,13 @@
-"use client";
-import { use, useEffect, useState } from "react";
-import styles from "./page.module.css";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { v4 as uuidv4 } from "uuid";
-import Loader from "@/components/loader";
-import Script from "next/script";
+'use client';
+import { use, useEffect, useState } from 'react';
+import styles from './page.module.css';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabaseClient';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { v4 as uuidv4 } from 'uuid';
+import Loader from '@/components/loader';
+import Script from 'next/script';
 
 export default function BookingPage({ params }) {
   const { monumentId } = use(params);
@@ -27,10 +27,10 @@ export default function BookingPage({ params }) {
   const [totalAmount, setTotalAmount] = useState(0);
   const current_date = new Date();
   const [showFlag, setShowFlag] = useState(false);
-  const [ticketId, setTicketId] = useState("");
+  const [ticketId, setTicketId] = useState('');
   const [savingTicket, setSavingTicket] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [orderId, setOrderId] = useState("");
+  const [orderId, setOrderId] = useState('');
   // console.log(user);
 
   const handlePayment = async () => {
@@ -44,20 +44,20 @@ export default function BookingPage({ params }) {
         i == Object.values(ticketNum).length - 1 &&
         Object.values(ticketNum)[i] == 0
       ) {
-        alert("Select at least 1 ticket before the checkout");
+        alert('Select at least 1 ticket before the checkout');
         return;
       }
     }
     if (breakFlag && !showFlag) {
-      alert("Choose a time slot!");
+      alert('Choose a time slot!');
       return;
     }
     setIsProcessing(true);
     try {
-      const response = await fetch("/api/createOrder", {
-        method: "POST",
+      const response = await fetch('/api/createOrder', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ totalAmount }), // sending amount to backend
       });
@@ -65,9 +65,9 @@ export default function BookingPage({ params }) {
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: totalAmount * 100,
-        current: "INR",
-        name: "PERIMETER NETWORK PRIVATE LIMITED",
-        description: "This is a trasaction for the ticket",
+        current: 'INR',
+        name: 'PERIMETER NETWORK PRIVATE LIMITED',
+        description: 'This is a trasaction for the ticket',
         order_id: data.orderId,
         handler: function (response) {
           // console.log("Payment successful", response);
@@ -76,25 +76,25 @@ export default function BookingPage({ params }) {
           setTicketId(referenceId);
         },
         prefill: {
-          name: "John Doe",
-          email: "johndoe@example.com",
-          contact: "8473651047",
+          name: 'John Doe',
+          email: 'johndoe@example.com',
+          contact: '8473651047',
         },
         theme: {
-          color: "#3399cc",
+          color: '#3399cc',
         },
       };
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
     } catch (error) {
-      console.error("Payment failed", error);
+      console.error('Payment failed', error);
     } finally {
       setIsProcessing(false);
     }
   };
 
   const convertTime = (timeStr) => {
-    const [hours, minutes] = timeStr.split(":");
+    const [hours, minutes] = timeStr.split(':');
     const date = new Date();
     date.setHours(parseInt(hours));
     date.setMinutes(parseInt(minutes));
@@ -133,7 +133,7 @@ export default function BookingPage({ params }) {
     const saveTickets = async () => {
       try {
         const { data, error } = await supabase
-          .from("tickets")
+          .from('tickets')
           .insert([
             {
               monumentName: monument.name,
@@ -143,12 +143,12 @@ export default function BookingPage({ params }) {
               ticketId,
               ticketNum,
               user_id: user.id,
-              status: "active",
+              status: 'active',
             },
           ])
           .select();
         if (error) {
-          console.error("❌ Error saving ticket:", error.message);
+          console.error('❌ Error saving ticket:', error.message);
           return;
         }
         if (data) {
@@ -156,7 +156,7 @@ export default function BookingPage({ params }) {
           router.push(`/ticket?q=${encodeURIComponent(ticketId)}`);
         }
       } catch (err) {
-        console.error("❌ Unexpected error:", err.message);
+        console.error('❌ Unexpected error:', err.message);
       }
     };
     saveTickets();
@@ -169,7 +169,7 @@ export default function BookingPage({ params }) {
         ticketNum.foreigner * monument.ticket_price.foreigner +
           ticketNum.senior * monument.ticket_price.senior +
           ticketNum.kid * monument.ticket_price.child +
-          ticketNum.adult * monument.ticket_price.adult
+          ticketNum.adult * monument.ticket_price.adult,
       );
   }, [ticketNum, monument]);
 
@@ -177,14 +177,14 @@ export default function BookingPage({ params }) {
     const fetchMonuments = async () => {
       try {
         const response = await fetch(
-          `/api/fetchMonuments?detailed=${true}&id=${monumentId}`
+          `/api/fetchMonuments?detailed=${true}&id=${monumentId}&type=monuments`,
         );
         const data = await response.json();
         setMonument(data[0]);
         // console.log(data[0]);
         setLoadingMonument(false);
       } catch (error) {
-        console.error("Error fetching monuments:", error);
+        console.error('Error fetching monuments:', error);
         setLoadingMonument(false);
       }
     };
@@ -194,7 +194,7 @@ export default function BookingPage({ params }) {
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
+        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
           const { user } = session;
           setUser(user);
           setLoadingUser(false);
@@ -203,7 +203,7 @@ export default function BookingPage({ params }) {
           setLoadingUser(false);
           setUser(null);
         }
-      }
+      },
     );
     return () => {
       authListener.subscription.unsubscribe();
@@ -211,7 +211,7 @@ export default function BookingPage({ params }) {
   }, []);
 
   if (loadingUser) {
-    return <Loader margin={"15rem auto"} />;
+    return <Loader margin={'15rem auto'} />;
   } else {
     if (!user) {
       return <div>Unauthenticated...</div>;
@@ -219,7 +219,10 @@ export default function BookingPage({ params }) {
   }
 
   return (
-    <div className="wrapper" style={orderId || isProcessing ? { pointerEvents: "none" } : null}>
+    <div
+      className="wrapper"
+      style={orderId || isProcessing ? { pointerEvents: 'none' } : null}
+    >
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <header className={styles.header}>
         <svg
@@ -239,17 +242,17 @@ export default function BookingPage({ params }) {
         <h2>Details</h2>
       </header>
       {loadingMonument ? (
-        <Loader margin={"10rem auto"} />
+        <Loader margin={'10rem auto'} />
       ) : monument.length != 0 ? (
         <div className={styles.container}>
           <img
             src={monument.image_url}
             alt="Monument Image"
-            style={blurFlag ? { filter: "blur(10px)" } : null}
+            style={blurFlag ? { filter: 'blur(10px)' } : null}
           />
           <section
             className={styles.info}
-            style={blurFlag ? { filter: "blur(10px)" } : null}
+            style={blurFlag ? { filter: 'blur(10px)' } : null}
           >
             <section>
               <h3>About {monument.name}</h3>
@@ -266,12 +269,12 @@ export default function BookingPage({ params }) {
                   Opening Time:
                   <span>
                     {(() => {
-                      const [hours, minutes] = monument.opening_time.split(":");
+                      const [hours, minutes] = monument.opening_time.split(':');
                       const date = new Date();
                       date.setHours(hours, minutes);
-                      return date.toLocaleTimeString("en-US", {
-                        hour: "2-digit",
-                        minute: "2-digit",
+                      return date.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
                         hour12: true,
                       });
                     })()}
@@ -282,12 +285,12 @@ export default function BookingPage({ params }) {
                   Closing Time:
                   <span>
                     {(() => {
-                      const [hours, minutes] = monument.closing_time.split(":");
+                      const [hours, minutes] = monument.closing_time.split(':');
                       const date = new Date();
                       date.setHours(hours, minutes);
-                      return date.toLocaleTimeString("en-US", {
-                        hour: "2-digit",
-                        minute: "2-digit",
+                      return date.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
                         hour12: true,
                       });
                     })()}
@@ -298,7 +301,7 @@ export default function BookingPage({ params }) {
           </section>
           <section className={styles.booking}>
             <section>
-              <h3 style={blurFlag ? { filter: "blur(10px)" } : null}>
+              <h3 style={blurFlag ? { filter: 'blur(10px)' } : null}>
                 Book a slot
               </h3>
               <div className={styles.dateTimePicker}>
@@ -336,7 +339,7 @@ export default function BookingPage({ params }) {
                     <button className={styles.datepicker_button}>
                       {dateTime.toLocaleString() && showFlag
                         ? dateTime.toLocaleString()
-                        : "Select Date & Time"}
+                        : 'Select Date & Time'}
                     </button>
                   }
                 />
@@ -344,7 +347,7 @@ export default function BookingPage({ params }) {
             </section>
             <section
               className={styles.ticketsSection}
-              style={blurFlag ? { filter: "blur(10px)" } : null}
+              style={blurFlag ? { filter: 'blur(10px)' } : null}
             >
               <h3>Add Travelers</h3>
               <div className={styles.tickets}>
@@ -361,7 +364,7 @@ export default function BookingPage({ params }) {
                       height="1.6em"
                       style={
                         ticketNum.senior <= 0
-                          ? { pointerEvents: "none", opacity: "0.5" }
+                          ? { pointerEvents: 'none', opacity: '0.5' }
                           : null
                       }
                       onClick={() => {
@@ -418,7 +421,7 @@ export default function BookingPage({ params }) {
                       height="1.6em"
                       style={
                         ticketNum.kid <= 0
-                          ? { pointerEvents: "none", opacity: "0.5" }
+                          ? { pointerEvents: 'none', opacity: '0.5' }
                           : null
                       }
                       onClick={() => {
@@ -475,7 +478,7 @@ export default function BookingPage({ params }) {
                       height="1.6em"
                       style={
                         ticketNum.adult <= 0
-                          ? { pointerEvents: "none", opacity: "0.5" }
+                          ? { pointerEvents: 'none', opacity: '0.5' }
                           : null
                       }
                       onClick={() => {
@@ -521,7 +524,7 @@ export default function BookingPage({ params }) {
                 <hr />
                 <section>
                   <div className={styles.ticketInfo}>
-                    <h1>{"(Non - Indians)"}</h1>
+                    <h1>{'(Non - Indians)'}</h1>
                     <h4>&#8377;{monument.ticket_price.foreigner}</h4>
                   </div>
                   <div className={styles.counter}>
@@ -532,7 +535,7 @@ export default function BookingPage({ params }) {
                       height="1.6em"
                       style={
                         ticketNum.foreigner <= 0
-                          ? { pointerEvents: "none", opacity: "0.5" }
+                          ? { pointerEvents: 'none', opacity: '0.5' }
                           : null
                       }
                       onClick={() => {
@@ -618,15 +621,15 @@ export default function BookingPage({ params }) {
           </section>
           <button
             className={styles.checkout}
-            style={blurFlag ? { filter: "blur(10px)" } : null}
+            style={blurFlag ? { filter: 'blur(10px)' } : null}
             // onClick={handleCheckout}
             onClick={handlePayment}
           >
-            {isProcessing ? "Processing..." : "Checkout"}
+            {isProcessing ? 'Processing...' : 'Checkout'}
           </button>
         </div>
       ) : (
-        "No Monument Found!"
+        'No Monument Found!'
       )}
     </div>
   );
