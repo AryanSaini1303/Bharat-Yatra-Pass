@@ -1,35 +1,36 @@
-"use client";
-import { useRouter, useSearchParams } from "next/navigation";
-import styles from "./TicketPage.module.css";
-import { QRCodeCanvas } from "qrcode.react";
-import { supabase } from "@/lib/supabaseClient";
-import { useEffect, useState } from "react";
-import Loader from "./loader";
+'use client';
+import { useRouter, useSearchParams } from 'next/navigation';
+import styles from './TicketPage.module.css';
+import { QRCodeCanvas } from 'qrcode.react';
+import { supabase } from '@/lib/supabaseClient';
+import { useEffect, useState } from 'react';
+import Loader from './loader';
 
 export default function Ticket() {
   const searchParams = useSearchParams();
-  const ticketId = decodeURIComponent(searchParams.get("q"));
+  const ticketId = decodeURIComponent(searchParams.get('q'));
+  const type = decodeURIComponent(searchParams.get('type')) || 'monument';
   const [ticketDetails, setTicketDetails] = useState({});
   const [user, setUser] = useState();
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingDetails, setLoadingDetails] = useState(true);
   const dateObj = new Date(ticketDetails?.dateTime);
   const router = useRouter();
-  const date = dateObj.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  const date = dateObj.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
-  const time = dateObj.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: "true",
+  const time = dateObj.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: 'true',
   });
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
+        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
           const { user } = session;
           setUser(user);
           setLoadingUser(false);
@@ -38,7 +39,7 @@ export default function Ticket() {
           setLoadingUser(false);
           setUser(null);
         }
-      }
+      },
     );
     return () => {
       authListener.subscription.unsubscribe();
@@ -53,7 +54,7 @@ export default function Ticket() {
         setTicketDetails(data);
         setLoadingDetails(false);
       } catch (error) {
-        console.error("Error fetching ticket:", error);
+        console.error('Error fetching ticket:', error);
         setLoadingDetails(false);
       }
     };
@@ -71,7 +72,7 @@ export default function Ticket() {
   return (
     <div
       className="wrapper"
-      style={{ background: "linear-gradient(to bottom, white, white)" }}
+      style={{ background: 'linear-gradient(to bottom, white, white)' }}
     >
       <header className={styles.header}>
         <svg
@@ -91,9 +92,9 @@ export default function Ticket() {
         <h2>Your Ticket</h2>
       </header>
       {loadingDetails ? (
-        <Loader margin={"10rem auto"} />
-      ) : ticketDetails.length == 0 ? (
-        "No ticket found!"
+        <Loader margin={'10rem auto'} />
+      ) : ticketDetails.error ? (
+        <p style={{textAlign:"center", marginTop:"10rem"}}>No ticket found!</p>
       ) : (
         <div className={styles.ticketSectionContainer}>
           <section className={styles.ticketSection}>
@@ -108,31 +109,50 @@ export default function Ticket() {
               <h4>{date}</h4>
               <h4>{time}</h4>
             </section>
-            {ticketDetails.ticketNum && (
-              <ul>
-                {ticketDetails.ticketNum.adult != 0 && (
-                  <li>
-                    Adult <span>x {ticketDetails.ticketNum.adult}</span>
-                  </li>
-                )}
-                {ticketDetails.ticketNum.foreigner != 0 && (
-                  <li>
-                    Non &mdash; Indian{" "}
-                    <span>x {ticketDetails.ticketNum.foreigner}</span>
-                  </li>
-                )}
-                {ticketDetails.ticketNum.kid != 0 && (
-                  <li>
-                    Kid <span>x {ticketDetails.ticketNum.kid}</span>
-                  </li>
-                )}
-                {ticketDetails.ticketNum.senior != 0 && (
-                  <li>
-                    Senior <span>x {ticketDetails.ticketNum.senior}</span>
-                  </li>
-                )}
-              </ul>
-            )}
+            {ticketDetails.ticketNum &&
+              (type !== 'boating' ? (
+                <ul>
+                  {ticketDetails.ticketNum.adult != 0 && (
+                    <li>
+                      Adult <span>x {ticketDetails.ticketNum.adult}</span>
+                    </li>
+                  )}
+                  {ticketDetails.ticketNum.foreigner != 0 && (
+                    <li>
+                      Non &mdash; Indian{' '}
+                      <span>x {ticketDetails.ticketNum.foreigner}</span>
+                    </li>
+                  )}
+                  {ticketDetails.ticketNum.kid != 0 && (
+                    <li>
+                      Kid <span>x {ticketDetails.ticketNum.kid}</span>
+                    </li>
+                  )}
+                  {ticketDetails.ticketNum.senior != 0 && (
+                    <li>
+                      Senior <span>x {ticketDetails.ticketNum.senior}</span>
+                    </li>
+                  )}
+                </ul>
+              ) : (
+                <ul>
+                  {ticketDetails.ticketNum.map((item, index) => {
+                    if (item.booked > 0) {
+                      return (
+                        <li key={index}>
+                          {item.name} ( public seats ) <span>x {item.booked}</span>
+                        </li>
+                      );
+                    } else if (item.isBookedPrivate) {
+                      return (
+                        <li key={index}>
+                          {item.name} ( private ) <span>x 1</span>
+                        </li>
+                      );
+                    }
+                  })}
+                </ul>
+              ))}
             <div className={styles.separator}>
               <hr />
             </div>
@@ -146,14 +166,14 @@ export default function Ticket() {
               <p>Ticked Id: {ticketId}</p>
               <div className={styles.status}>
                 <h5>
-                  {ticketDetails.status == "active" ? "Active" : "Expired"}
+                  {ticketDetails.status == 'active' ? 'Active' : 'Expired'}
                 </h5>
                 <div
                   className={styles.statusCircle}
                   style={
-                    ticketDetails.status == "active"
-                      ? { backgroundColor: "green" }
-                      : { backgroundColor: "red" }
+                    ticketDetails.status == 'active'
+                      ? { backgroundColor: 'green' }
+                      : { backgroundColor: 'red' }
                   }
                 ></div>
               </div>

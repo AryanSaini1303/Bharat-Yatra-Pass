@@ -153,7 +153,7 @@ export default function BookingPage({ params }) {
         }
         if (data) {
           // console.log("✅ Ticket saved successfully:", data);
-          router.push(`/ticket?q=${encodeURIComponent(ticketId)}`);
+          router.push(`/ticket?q=${encodeURIComponent(ticketId)}&type=monument`);
         }
       } catch (err) {
         console.error('❌ Unexpected error:', err.message);

@@ -1,10 +1,3 @@
-/*[
-    {"name":"Boat1", "capacity":10, "booked":5, "publicSeatPrice":10,"privateBoatPrice":5000,"isBookedPrivate":false},
-    {"name":"Boat2", "capacity":50, "booked":0, "publicSeatPrice":10,"privateBoatPrice":10000,"isBookedPrivate":true},
-    {"name":"Boat3", "capacity":100, "booked":10, "publicSeatPrice":10,"privateBoatPrice":20000,"isBookedPrivate":false}
-] */
-// this is how the data of each boat is stored in the database, now code it properly
-
 'use client';
 import { use, useEffect, useState } from 'react';
 import styles from './page.module.css';
@@ -39,12 +32,12 @@ export default function BookingPage({ params }) {
 
   const handleCheckout = async () => {
     setIsProcessing(true);
-    let hasPublicSeats = Object.values(ticketNum).some((count) => count > 0);
-    let hasPrivateBoats = Object.values(privateTicketNum).some(
-      (boat) => boat.selected,
+    const hasPublicSeats = ticketNum.some(
+      (ticket) => !ticket.isBookedPrivate && ticket.booked > 0,
     );
+    const hasPrivateBoats = ticketNum.some((ticket) => ticket.isBookedPrivate);
     if (!hasPublicSeats && !hasPrivateBoats) {
-      alert('Select at least 1 seat or a private boat before the checkout');
+      alert('Select at least 1 seat or a private boat before checkout');
       setIsProcessing(false);
       return;
     }
@@ -55,34 +48,36 @@ export default function BookingPage({ params }) {
     }
     try {
       const res = await fetch(
-        `/api/fetchMonuments?detailed=${true}&id=${boatingId}&type=boating`,
+        `/api/fetchMonuments?detailed=true&id=${boatingId}&type=boating`,
       );
       const [latestData] = (await res.json()) || [];
-      // console.log(latestData);
-      for (const [boat, count] of Object.entries(ticketNum)) {
-        const available =
-          latestData.boats[boat] - latestData.booked_public[boat];
-        if (count > available) {
+      for (const ticket of ticketNum) {
+        const boat = latestData.boats.find((b) => b.name === ticket.name);
+        if (!boat) continue;
+        if (!ticket.isBookedPrivate && ticket.booked > 0) {
+          const available = boat.capacity - boat.booked;
+          if (ticket.booked > available) {
+            alert(
+              `Only ${available} seats are left for ${boat.name}. Please adjust your selection.`,
+            );
+            setFetchAgain(true);
+            setIsProcessing(false);
+            return;
+          }
+        }
+        if (
+          ticket.isBookedPrivate &&
+          (boat.booked > 0 || boat.isBookedPrivate)
+        ) {
           alert(
-            `Only ${available} seats are left for ${boat}. Please adjust your selection.`,
+            `Private boat ${boat.name} has just been booked by someone else. Please adjust your selection.`,
           );
           setFetchAgain(true);
           setIsProcessing(false);
           return;
         }
       }
-      for (const [boat, info] of Object.entries(privateTicketNum)) {
-        if (info.selected && latestData.booked_public[boat] > 0) {
-          alert(
-            `Private boat ${boat} has just been booked by someone else. Please adjust your selection.`,
-          );
-          setFetchAgain(true);
-          setIsProcessing(false);
-          return;
-        }
-      }
-      updateBoatingDatabase();
-      // handlePayment();
+      handlePayment();
     } catch (error) {
       console.error('Checkout validation error:', error);
       setIsProcessing(false);
@@ -169,22 +164,27 @@ export default function BookingPage({ params }) {
 
   const updateBoatingDatabase = async () => {
     try {
-      const updatedBookedPublic = { ...boats.booked_public };
-      const updatedBookedPrivate = { ...monument.booked_private };
-      Object.entries(ticketNum).forEach(([boat, count]) => {
-        updatedBookedPublic[boat] += count;
-      });
-      Object.entries(privateTicketNum).forEach(([boat, info]) => {
-        if (info.selected) {
-          updatedBookedPrivate[boat] = true;
+      const updatedBoats = boats.boats.map((boat) => {
+        const ticket = ticketNum.find((t) => t.name === boat.name);
+        if (!ticket) return boat;
+        if (ticket.isBookedPrivate) {
+          return {
+            ...boat,
+            isBookedPrivate: true,
+            booked: 0, // just in case public was booked before
+          };
         }
+        if (ticket.booked > 0) {
+          return {
+            ...boat,
+            booked: boat.booked + ticket.booked,
+          };
+        }
+        return boat;
       });
       const { data, error } = await supabase
         .from('boating')
-        .update({
-          booked_public: updatedBookedPublic,
-          booked_private: updatedBookedPrivate,
-        })
+        .update({ boats: updatedBoats })
         .eq('id', boatingId)
         .select();
       if (error) throw error;
@@ -197,16 +197,19 @@ export default function BookingPage({ params }) {
   };
 
   useEffect(() => {
-    if (!ticketId || !user?.id) return; // Ensure required fields are available
+    // console.log(ticketId);
+    if (!ticketId || !user?.id) return;
+    // if (!ticketId) return;
     const saveTickets = async () => {
+      updateBoatingDatabase();
       try {
         const { data, error } = await supabase
           .from('tickets')
           .insert([
             {
-              monumentName: monument.name,
-              monumentCity: monument.city,
-              monumentImage: monument.image_url,
+              monumentName: boats.name,
+              monumentCity: boats.city,
+              monumentImage: boats.image_url,
               dateTime: dateTime,
               ticketId,
               ticketNum,
@@ -221,14 +224,15 @@ export default function BookingPage({ params }) {
         }
         if (data) {
           // console.log("✅ Ticket saved successfully:", data);
-          router.push(`/ticket?q=${encodeURIComponent(ticketId)}`);
+          router.push(`/ticket?q=${encodeURIComponent(ticketId)}&type=boating`);
         }
       } catch (err) {
         console.error('❌ Unexpected error:', err.message);
       }
     };
     saveTickets();
-  }, [ticketId, user?.id]);
+    // }, [ticketId, user?.id]);
+  }, [ticketId]);
   // For now, inserting directly in the component works because Supabase’s Row-Level Security (RLS) applies stricter policies on API routes. When using useEffect, the request is made from the client-side with the authenticated user's session, ensuring the correct user_id is attached. This bypasses the "violating RLS policy" error that occurs when inserting via a Next.js API route (which may lack the necessary auth context).
 
   useEffect(() => {
@@ -242,13 +246,15 @@ export default function BookingPage({ params }) {
         const boats = data[0].boats.filter((item) => !item.isBookedPrivate); // if a boat is booked privately then it won't available for private booking or public seats booking either
         setBoats(() => ({ ...data[0], boats: boats }));
         setIsPrivateAvailable(() =>
-          data[0].boats.some((item) => item.booked === 0),
+          data[0].boats.some((item) => item.booked === 0 && !item.isBookedPrivate),
         ); // ".some" returns a boolean value, ".find" returns the first match, ".filter" returns array of all the matches
         setTicketNum(() =>
           boats.map((boat) => ({
             name: boat.name,
             booked: 0,
             isBookedPrivate: false,
+            publicSeatPrice: boat.publicSeatPrice,
+            privateBoatPrice: boat.privateBoatPrice,
           })),
         );
         setLoadingBoats(false);
@@ -281,17 +287,32 @@ export default function BookingPage({ params }) {
     };
   }, []);
 
-  // if (loadingUser) {
-  //   return <Loader margin={'15rem auto'} />;
-  // } else {
-  //   if (!user) {
-  //     return <div>Unauthenticated...</div>;
-  //   }
-  // }
+  useEffect(() => {
+    if (Object.keys(boats).length === 0) return;
+    const publicPrice =
+      Object.values(ticketNum).reduce((acc, value) => acc + value.booked, 0) *
+      boats.boats[0].publicSeatPrice;
+    const privatePrice = ticketNum.reduce((sum, ticket) => {
+      if (ticket.isBookedPrivate) {
+        const boat = boats.boats.find((b) => b.name === ticket.name);
+        return sum + (boat?.privateBoatPrice || 0);
+      }
+      return sum;
+    }, 0);
+    setTotalAmount(() => publicPrice + privatePrice);
+  }, [ticketNum, boats]);
+
+  if (loadingUser) {
+    return <Loader margin={'15rem auto'} />;
+  } else {
+    if (!user) {
+      return <div>Unauthenticated...</div>;
+    }
+  }
 
   // console.log(ticketNum);
   // console.log(privateTicketNum);
-  console.log(ticketNum);
+  // console.log(ticketNum);
 
   return (
     <div
@@ -497,8 +518,7 @@ export default function BookingPage({ params }) {
                               </div>
                             </section>
                           </div>
-                          {arr.length - 1 !==
-                            index && <hr />}
+                          {arr.length - 1 !== index && <hr />}
                         </div>
                       );
                     })}
@@ -524,7 +544,10 @@ export default function BookingPage({ params }) {
                       <section>
                         <div className={styles.ticketInfo}>
                           <h1>{item.name}</h1>
-                          <p>Available seats: {item.capacity - item.booked}/{item.capacity}</p>
+                          <p>
+                            Available seats: {item.capacity - item.booked}/
+                            {item.capacity}
+                          </p>
                         </div>
                         <div className={styles.counter}>
                           <svg
@@ -586,7 +609,7 @@ export default function BookingPage({ params }) {
                                           item.capacity - item.booked
                                             ? item.capacity - item.booked
                                             : boat.booked + 1,
-                                        isBookedPrivate:false
+                                        isBookedPrivate: false,
                                       }
                                     : boat,
                                 ),
@@ -613,28 +636,31 @@ export default function BookingPage({ params }) {
 
               <section className={styles.timings}>
                 <h3>Summary</h3>
-                {/* <div>
+                <div>
                   <p>
                     Public seats:
                     <span>
                       &#8377;
                       {Object.values(ticketNum).reduce(
-                        (acc, value) => acc + value,
+                        (acc, value) => acc + value.booked,
                         0,
-                      ) * 50}
+                      ) * boats.boats[0].publicSeatPrice}
+                      {/*taking "publicSeatPrice" of first boat as all boats have same "publicSeatPrice" */}
                     </span>
                   </p>
                   <p>
                     Private Boat:
                     <span>
                       &#8377;
-                      {Object.keys(privateTicketNum).reduce(
-                        (sum, key) =>
-                          privateTicketNum[key]?.selected
-                            ? sum + (privateTicketNum[key]?.price || 0)
-                            : sum,
-                        0,
-                      )}
+                      {ticketNum.reduce((sum, ticket) => {
+                        if (ticket.isBookedPrivate) {
+                          const boat = boats.boats.find(
+                            (b) => b.name === ticket.name,
+                          );
+                          return sum + (boat?.privateBoatPrice || 0);
+                        }
+                        return sum;
+                      }, 0)}
                     </span>
                   </p>
                   <p className={styles.totalAmount}>
@@ -644,7 +670,7 @@ export default function BookingPage({ params }) {
                       {totalAmount}
                     </span>
                   </p>
-                </div> */}
+                </div>
               </section>
             </section>
           </section>
