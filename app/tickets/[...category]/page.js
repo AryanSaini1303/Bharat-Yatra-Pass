@@ -1,18 +1,19 @@
-"use client";
-import { supabase } from "@/lib/supabaseClient";
-import { use, useEffect, useState } from "react";
-import styles from "./page.module.css";
-import { useRouter } from "next/navigation";
-import Loader from "@/components/loader";
+'use client';
+import { supabase } from '@/lib/supabaseClient';
+import { use, useEffect, useState } from 'react';
+import styles from './page.module.css';
+import { useRouter } from 'next/navigation';
+import Loader from '@/components/loader';
 
 export default function Tickets({ params }) {
   const { category } = use(params);
-  const status = category == "current" ? "active" : "expired";
+  const status = category == 'current' ? 'active' : 'expired';
   const [user, setUser] = useState();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadingUser, setLoadingUser]=useState(true);
+  const [loadingUser, setLoadingUser] = useState(true);
   const router = useRouter();
+  const [type, setType] = useState('monument');
   // console.log(tickets[0].dateTime);
 
   // const date = dateObj.toLocaleDateString("en-US", {
@@ -29,7 +30,7 @@ export default function Tickets({ params }) {
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
+        if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
           const { user } = session;
           setUser(user);
           setLoadingUser(false);
@@ -38,7 +39,7 @@ export default function Tickets({ params }) {
           setUser(null);
           setLoadingUser(false);
         }
-      }
+      },
     );
     return () => {
       authListener.subscription.unsubscribe();
@@ -49,9 +50,10 @@ export default function Tickets({ params }) {
     const fetchTickets = async () => {
       try {
         const response = await fetch(
-          `/api/fetchTickets?status=${status}&user_id=${user?.id}`
+          `/api/fetchTickets?status=${status}&user_id=${user?.id}`,
         );
         const data = await response.json();
+        setType(Array.isArray(data.ticketNum) ? 'boating' : 'monuments');
         setTickets(data);
         // console.log(data);
         setLoading(false);
@@ -64,7 +66,7 @@ export default function Tickets({ params }) {
   }, [user]);
 
   if (loadingUser) {
-    return <Loader margin={"15rem auto"}/>;
+    return <Loader margin={'15rem auto'} />;
   } else {
     if (!user) {
       return <div>Unauthenticated...</div>;
@@ -88,16 +90,18 @@ export default function Tickets({ params }) {
             d="M16.88 2.88a1.25 1.25 0 0 0-1.77 0L6.7 11.29a.996.996 0 0 0 0 1.41l8.41 8.41c.49.49 1.28.49 1.77 0s.49-1.28 0-1.77L9.54 12l7.35-7.35c.48-.49.48-1.28-.01-1.77"
           ></path>
         </svg>
-        <h2>{category == "current" ? "Current" : "Past"} tickets</h2>
+        <h2>{category == 'current' ? 'Current' : 'Past'} tickets</h2>
       </header>
       <div className={styles.ticketList}>
         {loading ? (
-          <Loader margin={"10rem auto"} />
+          <Loader margin={'10rem auto'} />
         ) : tickets.length > 0 ? (
           tickets.map((ticket) => (
             <a
               key={ticket.ticketId}
-              href={`/ticket?q=${encodeURIComponent(ticket.ticketId)}`}
+              href={`/ticket?q=${encodeURIComponent(
+                ticket.ticketId,
+              )}&type=${encodeURIComponent(type)}`}
               className={styles.ticketCard}
             >
               <img
@@ -108,17 +112,17 @@ export default function Tickets({ params }) {
               <div className={styles.ticketDetails}>
                 <h3 className={styles.monumentName}>{ticket.monumentName}</h3>
                 <p className={styles.ticketId}>
-                  {new Date(ticket?.dateTime).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
+                  {new Date(ticket?.dateTime).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
                   })}
                 </p>
                 <p className={styles.ticketId}>
-                  {new Date(ticket?.dateTime).toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: "true",
+                  {new Date(ticket?.dateTime).toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: 'true',
                   })}
                 </p>
               </div>

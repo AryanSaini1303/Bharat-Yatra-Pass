@@ -224,7 +224,11 @@ export default function BookingPage({ params }) {
         }
         if (data) {
           // console.log("✅ Ticket saved successfully:", data);
-          router.push(`/ticket?q=${encodeURIComponent(ticketId)}&type=boating`);
+          router.push(
+            `/ticket?q=${encodeURIComponent(
+              ticketId,
+            )}&type=${encodeURIComponent('boating')}`,
+          );
         }
       } catch (err) {
         console.error('❌ Unexpected error:', err.message);
@@ -246,7 +250,9 @@ export default function BookingPage({ params }) {
         const boats = data[0].boats.filter((item) => !item.isBookedPrivate); // if a boat is booked privately then it won't available for private booking or public seats booking either
         setBoats(() => ({ ...data[0], boats: boats }));
         setIsPrivateAvailable(() =>
-          data[0].boats.some((item) => item.booked === 0 && !item.isBookedPrivate),
+          data[0].boats.some(
+            (item) => item.booked === 0 && !item.isBookedPrivate,
+          ),
         ); // ".some" returns a boolean value, ".find" returns the first match, ".filter" returns array of all the matches
         setTicketNum(() =>
           boats.map((boat) => ({

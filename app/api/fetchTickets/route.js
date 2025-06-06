@@ -14,7 +14,7 @@ export async function GET(request) {
   const isVerified = verified === "true"; // Convert verified to boolean
 
   try {
-    let query = supabase.from("tickets").select("monumentName, monumentImage, dateTime, ticketId");
+    let query = supabase.from("tickets").select("monumentName, monumentImage, dateTime, ticketId, ticketNum");
 
     if (!isVerified) {
       query = query.eq("status", status).eq("user_id", user_id);
