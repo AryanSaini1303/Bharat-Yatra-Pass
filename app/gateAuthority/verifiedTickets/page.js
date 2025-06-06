@@ -11,7 +11,6 @@ export default function VerifiedTickets() {
   const [loading, setLoading] = useState(true);
   const [loadingUser, setLoadingUser] = useState(true);
   const router = useRouter();
-  const [type, setType] = useState('monument');
   // console.log(tickets[0].dateTime);
 
   // const date = dateObj.toLocaleDateString("en-US", {
@@ -51,7 +50,6 @@ export default function VerifiedTickets() {
           `/api/fetchTickets?verified=${true}&id=${user.id}`,
         );
         const data = await response.json();
-        setType(Array.isArray(data.ticketNum) ? 'boating' : 'monuments');
         setTickets(data);
         // console.log(data);
         setLoading(false);
@@ -99,7 +97,7 @@ export default function VerifiedTickets() {
               key={ticket.ticketId}
               href={`/ticket?q=${encodeURIComponent(
                 ticket.ticketId,
-              )}&type=${encodeURIComponent(type)}`}
+              )}`}
               className={styles.ticketCard}
             >
               <img

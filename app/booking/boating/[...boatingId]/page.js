@@ -224,19 +224,15 @@ export default function BookingPage({ params }) {
         }
         if (data) {
           // console.log("✅ Ticket saved successfully:", data);
-          router.push(
-            `/ticket?q=${encodeURIComponent(
-              ticketId,
-            )}&type=${encodeURIComponent('boating')}`,
-          );
+          router.push(`/ticket?q=${encodeURIComponent(ticketId)}`);
         }
       } catch (err) {
         console.error('❌ Unexpected error:', err.message);
       }
     };
     saveTickets();
-    // }, [ticketId, user?.id]);
-  }, [ticketId]);
+    }, [ticketId, user?.id]);
+  // }, [ticketId]);
   // For now, inserting directly in the component works because Supabase’s Row-Level Security (RLS) applies stricter policies on API routes. When using useEffect, the request is made from the client-side with the authenticated user's session, ensuring the correct user_id is attached. This bypasses the "violating RLS policy" error that occurs when inserting via a Next.js API route (which may lack the necessary auth context).
 
   useEffect(() => {

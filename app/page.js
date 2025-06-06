@@ -267,13 +267,13 @@ export default function Home() {
     user && authorizedUsers.includes(user.email) ? router.push('/admin') : null;
   }, [user]);
 
-  // if (loadingUser) {
-  //   return <Loader margin={'15rem auto'} />;
-  // } else {
-  //   if (!user) {
-  //     return <div>Unauthenticated...</div>;
-  //   }
-  // }
+  if (loadingUser) {
+    return <Loader margin={'15rem auto'} />;
+  } else {
+    if (!user) {
+      return <div>Unauthenticated...</div>;
+    }
+  }
 
   return (
     <div className="wrapper">

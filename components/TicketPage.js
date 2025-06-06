@@ -9,7 +9,7 @@ import Loader from './loader';
 export default function Ticket() {
   const searchParams = useSearchParams();
   const ticketId = decodeURIComponent(searchParams.get('q'));
-  const type = decodeURIComponent(searchParams.get('type')) || 'monument';
+  const [type, setType] = useState('monuments');
   const [ticketDetails, setTicketDetails] = useState({});
   const [user, setUser] = useState();
   const [loadingUser, setLoadingUser] = useState(true);
@@ -51,6 +51,7 @@ export default function Ticket() {
       try {
         const response = await fetch(`/api/fetchTicket?tickedId=${ticketId}`);
         const data = await response.json();
+        setType(Array.isArray(data.ticketNum) ? 'boating' : 'monuments');
         setTicketDetails(data);
         setLoadingDetails(false);
       } catch (error) {
@@ -62,7 +63,7 @@ export default function Ticket() {
   }, []);
 
   if (loadingUser) {
-    return <Loader margin={"15rem auto"} />;
+    return <Loader margin={'15rem auto'} />;
   } else {
     if (!user) {
       return <div>Unauthenticated...</div>;
@@ -94,7 +95,9 @@ export default function Ticket() {
       {loadingDetails ? (
         <Loader margin={'10rem auto'} />
       ) : ticketDetails.error ? (
-        <p style={{textAlign:"center", marginTop:"10rem"}}>No ticket found!</p>
+        <p style={{ textAlign: 'center', marginTop: '10rem' }}>
+          No ticket found!
+        </p>
       ) : (
         <div className={styles.ticketSectionContainer}>
           <section className={styles.ticketSection}>
@@ -140,7 +143,8 @@ export default function Ticket() {
                     if (item.booked > 0) {
                       return (
                         <li key={index}>
-                          {item.name} ( public seats ) <span>x {item.booked}</span>
+                          {item.name} ( public seats ){' '}
+                          <span>x {item.booked}</span>
                         </li>
                       );
                     } else if (item.isBookedPrivate) {
