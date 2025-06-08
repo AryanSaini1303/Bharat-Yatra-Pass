@@ -215,6 +215,8 @@ export default function BookingPage({ params }) {
               ticketNum,
               user_id: user.id,
               status: 'active',
+              service_provider_id:boats.id,
+              service_provider:'boating'
             },
           ])
           .select();
