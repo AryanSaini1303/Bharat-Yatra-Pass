@@ -1,0 +1,93 @@
+.container {
+  padding: 2rem;
+  background-color: white;
+  color: #333;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.heading {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #8280FF;
+  text-align: center;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.card {
+  background: linear-gradient(145deg, #f0f0ff, #ffffff);
+  border: 1px solid #8280FF;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(130, 128, 255, 0.1);
+  text-align: center;
+}
+
+.card h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.card p {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #8280FF;
+}
+
+.boatSection {
+  margin-top: 2rem;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #8280FF;
+  border-bottom: 2px solid #8280FF;
+  padding-bottom: 0.5rem;
+}
+
+.boatSubSection {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid #d9d9ff;
+  border-radius: 12px;
+  background-color: #f8f8ff;
+}
+
+.subHeading {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #4b48cc;
+}
+
+.boatTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.boatTable th,
+.boatTable td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.boatTable th {
+  background-color: #e6e6ff;
+  color: #333;
+  font-weight: 600;
+}
+
+.boatTable td {
+  background-color: #fff;
+}
+
+.boatTable tr:hover td {
+  background-color: #f0f0ff;
+}
