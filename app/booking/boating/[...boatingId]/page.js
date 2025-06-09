@@ -1,7 +1,7 @@
 'use client';
 import { use, useEffect, useState } from 'react';
 import styles from './page.module.css';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -28,7 +28,11 @@ export default function BookingPage({ params }) {
   const [orderId, setOrderId] = useState('');
   const [isPrivateAvailable, setIsPrivateAvailable] = useState(true);
   const [fetchAgain, setFetchAgain] = useState(true);
-  // console.log(user);
+  const searchParams = useSearchParams();
+  const isVendorMode = searchParams.get('mode') === 'vendor';
+  const [disablePayments, setDisablePayments] = useState(false);
+  const [fullBoats, setFullBoats] = useState();
+  // console.log(isVendorMode);
 
   const handleCheckout = async () => {
     setIsProcessing(true);
@@ -77,7 +81,12 @@ export default function BookingPage({ params }) {
           return;
         }
       }
-      handlePayment();
+      if (disablePayments) {
+        const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
+        setTicketId(referenceId);
+      } else {
+        handlePayment();
+      }
     } catch (error) {
       console.error('Checkout validation error:', error);
       setIsProcessing(false);
@@ -164,7 +173,7 @@ export default function BookingPage({ params }) {
 
   const updateBoatingDatabase = async () => {
     try {
-      const updatedBoats = boats.boats.map((boat) => {
+      const updatedBoats = fullBoats.map((boat) => {
         const ticket = ticketNum.find((t) => t.name === boat.name);
         if (!ticket) return boat;
         if (ticket.isBookedPrivate) {
@@ -188,7 +197,7 @@ export default function BookingPage({ params }) {
         .eq('id', boatingId)
         .select();
       if (error) throw error;
-      console.log('Database updated:', data);
+      // console.log('Database updated:', data);
     } catch (err) {
       console.error('Update error:', err);
       setIsProcessing(false);
@@ -215,8 +224,9 @@ export default function BookingPage({ params }) {
               ticketNum,
               user_id: user.id,
               status: 'active',
-              service_provider_id:boats.id,
-              service_provider:'boating'
+              service_provider_id: boats.id,
+              service_provider: 'boating',
+              origin: 'vendorPanel',
             },
           ])
           .select();
@@ -233,7 +243,7 @@ export default function BookingPage({ params }) {
       }
     };
     saveTickets();
-    }, [ticketId, user?.id]);
+  }, [ticketId, user?.id]);
   // }, [ticketId]);
   // For now, inserting directly in the component works because Supabase’s Row-Level Security (RLS) applies stricter policies on API routes. When using useEffect, the request is made from the client-side with the authenticated user's session, ensuring the correct user_id is attached. This bypasses the "violating RLS policy" error that occurs when inserting via a Next.js API route (which may lack the necessary auth context).
 
@@ -245,15 +255,19 @@ export default function BookingPage({ params }) {
           `/api/fetchMonuments?detailed=${true}&id=${boatingId}&type=boating`,
         );
         const data = await response.json();
-        const boats = data[0].boats.filter((item) => !item.isBookedPrivate); // if a boat is booked privately then it won't available for private booking or public seats booking either
-        setBoats(() => ({ ...data[0], boats: boats }));
+        // console.log(data[0], user);
+        const fullBoats = data[0].boats;
+        setFullBoats(fullBoats);
+        setDisablePayments(isVendorMode && data[0].email === user?.email);
+        const filteredBoats = fullBoats.filter((item) => !item.isBookedPrivate);
+        setBoats(() => ({ ...data[0], boats: filteredBoats }));
         setIsPrivateAvailable(() =>
           data[0].boats.some(
             (item) => item.booked === 0 && !item.isBookedPrivate,
           ),
         ); // ".some" returns a boolean value, ".find" returns the first match, ".filter" returns array of all the matches
         setTicketNum(() =>
-          boats.map((boat) => ({
+          filteredBoats.map((boat) => ({
             name: boat.name,
             booked: 0,
             isBookedPrivate: false,
@@ -269,8 +283,7 @@ export default function BookingPage({ params }) {
       }
     };
     fetchMonuments();
-  }, [fetchAgain]);
-  // console.log(boats);
+  }, [fetchAgain, user]);
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(

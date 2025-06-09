@@ -1,15 +1,37 @@
 .container {
-  padding: 2rem;
-  background-color: white;
-  color: #333;
+  padding: 0 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9fc;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .heading {
   font-size: 2.5rem;
-  margin-bottom: 2rem;
-  color: #8280FF;
-  text-align: center;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #3d3270;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+}
+
+.signOutButton {
+  padding: 0.5rem 1rem;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  position: absolute;
+  right: 2rem;
+}
+
+.signOutButton:hover {
+  background-color: #c0392b;
 }
 
 .statsGrid {
@@ -20,24 +42,24 @@
 }
 
 .card {
-  background: linear-gradient(145deg, #f0f0ff, #ffffff);
-  border: 1px solid #8280FF;
+  flex: 1;
+  background-color: #ece9f5;
+  border-radius: 10px;
   padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(130, 128, 255, 0.1);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
   text-align: center;
 }
 
 .card h2 {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   margin-bottom: 0.5rem;
-  color: #333;
+  color: #3d3270;
 }
 
 .card p {
-  font-size: 1.75rem;
+  font-size: 1.8rem;
   font-weight: bold;
-  color: #8280FF;
+  color: #2d2a45;
 }
 
 .boatSection {
@@ -45,49 +67,101 @@
 }
 
 .sectionTitle {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  color: #8280FF;
-  border-bottom: 2px solid #8280FF;
+  font-size: 1.7rem;
+  margin-bottom: 1rem;
+  color: #3d3270;
+  border-bottom: 2px solid #ddd;
   padding-bottom: 0.5rem;
 }
 
 .boatSubSection {
-  margin-top: 2rem;
-  padding: 1rem;
-  border: 1px solid #d9d9ff;
-  border-radius: 12px;
-  background-color: #f8f8ff;
+  margin-bottom: 2.5rem;
+  background-color: red;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  background-color: #ece9f5;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
 }
 
 .subHeading {
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
-  color: #4b48cc;
+  font-size: 1.3rem;
+  margin: 0 0 0.5rem 0;
+  color: #574b90;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .boatTable {
   width: 100%;
   border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .boatTable th,
 .boatTable td {
   padding: 0.75rem 1rem;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+  text-align: center;
+  border: 1px solid #eee;
 }
 
 .boatTable th {
-  background-color: #e6e6ff;
-  color: #333;
+  background-color: #f1eefc;
+  color: #3d3270;
   font-weight: 600;
 }
 
-.boatTable td {
-  background-color: #fff;
+.boatTable td input {
+  width: 70px;
+  padding: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
 }
 
-.boatTable tr:hover td {
-  background-color: #f0f0ff;
+.updateButton {
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 8px;
+  transition: background 0.2s ease;
+}
+
+.updateButton:hover {
+  background-color: #4e3edb;
+}
+
+.bookButton {
+  background-color: #2563eb; /* Tailwind blue-600 */
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.bookButton:hover {
+  background-color: #1e40af; /* Tailwind blue-800 */
+  transform: translateY(-1px);
+}
+
+.bookButton:active {
+  background-color: #1e3a8a;
+  transform: translateY(1px);
+}
+
+.bookButton:disabled {
+  background-color: #9ca3af; /* Tailwind gray-400 */
+  cursor: not-allowed;
 }
