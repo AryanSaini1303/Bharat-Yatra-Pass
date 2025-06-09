@@ -226,7 +226,7 @@ export default function BookingPage({ params }) {
               status: 'active',
               service_provider_id: boats.id,
               service_provider: 'boating',
-              origin: 'vendorPanel',
+              origin: isVendorMode?'vendorPanel':'userPanel',
             },
           ])
           .select();
