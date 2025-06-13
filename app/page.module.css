@@ -1,6 +1,7 @@
 .header {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
+  justify-content: right;
   padding: 1rem 0.8rem;
   align-items: center;
   position: relative;

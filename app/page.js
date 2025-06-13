@@ -10,13 +10,14 @@ import { supabase } from '@/lib/supabaseClient';
 export default function Home() {
   const [profileClick, setProfileClick] = useState(false);
   const [locationClick, setLocationClick] = useState(false);
-  const [location, setLocation] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const savedCity = localStorage.getItem('userCity');
-      return savedCity || 'Udaipur';
-    }
-    return 'Udaipur'; // Default value for SSR
-  });
+  // const [location, setLocation] = useState(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const savedCity = localStorage.getItem('userCity');
+  //     return savedCity || 'Udaipur';
+  //   }
+  //   return 'Udaipur'; // Default value for SSR
+  // });
+  const [location, setLocation] = useState('Udaipur');
   const authorizedUsers =
     process.env.NEXT_PUBLIC_AUTHORIZED_EMAILS?.split(',') || [];
   // console.log("here", authorizedUsers);
@@ -278,7 +279,7 @@ export default function Home() {
   return (
     <div className="wrapper">
       <header className={styles.header}>
-        <section className={styles.location}>
+        {/* <section className={styles.location}>
           {!locationClick ? (
             <img
               src="/images/location.png"
@@ -338,7 +339,7 @@ export default function Home() {
               </ul>
             </section>
           )}
-        </section>
+        </section> */}
         <section className={styles.profile}>
           {!profileClick ? (
             <img
@@ -461,7 +462,9 @@ export default function Home() {
                 monument.image_url && (
                   <li key={monument.id}>
                     <a
-                      href={`booking/${monument.boats?"boating":"monument"}/${monument.id}`}
+                      href={`booking/${
+                        monument.boats ? 'boating' : 'monument'
+                      }/${monument.id}`}
                       className={styles.cardLink}
                     >
                       <img src={monument.image_url} alt="Monument Image" />
