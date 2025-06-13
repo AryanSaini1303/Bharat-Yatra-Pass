@@ -37,10 +37,11 @@ export default function BoatingAdminPage() {
       try {
         const res = await fetch(`/api/fetchVendorDetails?email=${user.email}`);
         const data = await res.json();
+        // console.log(data);
         setBoatData(data[0]);
         fetchVendorTickets(data[0]);
         setLoading(false);
-        console.log(data[0]);
+        // console.log(data[0]);
       } catch (error) {
         setLoading(false);
         console.log(error.message);
@@ -51,7 +52,7 @@ export default function BoatingAdminPage() {
         const res = await fetch(`api/fetchVendorTickets?id=${boat.id}`);
         const data = await res.json();
         setTicketsData(data);
-        console.log(data);
+        // console.log(data);
       } catch (error) {}
     };
     fetchVendorDetails();

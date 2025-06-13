@@ -313,7 +313,7 @@ export default function BookingPage({ params }) {
                   }}
                   showTimeSelect
                   timeFormat="hh:mm aa"
-                  timeIntervals={15}
+                  timeIntervals={30}
                   dateFormat="MMMM d, yyyy h:mm aa"
                   className="datepicker"
                   onCalendarOpen={() => setBlurFlag(true)} // Trigger when the popper opens
