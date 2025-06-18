@@ -13,6 +13,7 @@ export default function BookingPage({ params }) {
   const { boatingId } = use(params);
   const router = useRouter();
   const [boats, setBoats] = useState({});
+  const [boatsAvailability, setBoatsAvailability] = useState([]);
   const [loadingBoats, setLoadingBoats] = useState(true);
   const [user, setUser] = useState();
   const [loadingUser, setLoadingUser] = useState(true);
@@ -31,8 +32,7 @@ export default function BookingPage({ params }) {
   const searchParams = useSearchParams();
   const isVendorMode = searchParams.get('mode') === 'vendor';
   const [disablePayments, setDisablePayments] = useState(false);
-  const [fullBoats, setFullBoats] = useState();
-  // console.log(isVendorMode);
+  const [activeBoatingTickets, setActiveBoatingTickets] = useState([]);
 
   const handleCheckout = async () => {
     setIsProcessing(true);
@@ -137,72 +137,21 @@ export default function BookingPage({ params }) {
   };
 
   const convertTime = (timeStr) => {
-    const [hours, minutes] = timeStr.split(':');
+    const [hours, minutes] = timeStr.split(':').map(Number);
     const date = new Date();
-    date.setHours(parseInt(hours));
-    date.setMinutes(parseInt(minutes));
-    return date;
-  };
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    date.setSeconds(0, 0);
 
-  // You can't directly map() over an object, BUT you can convert it into an array using Object methods like:
-  // Object.entries() → Best for key-value pairs.
-  // Object.keys() → Best if you only need keys.
-  // Object.values() → Best if you only need values.
-  // function handleCheckout() {
-  //   let breakFlag = false;
-  //   for (let i = 0; i < Object.values(ticketNum).length; i++) {
-  //     if (Object.values(ticketNum)[i] > 0) {
-  //       breakFlag = true;
-  //       break;
-  //     }
-  //     if (
-  //       i == Object.values(ticketNum).length - 1 &&
-  //       Object.values(ticketNum)[i] == 0
-  //     ) {
-  //       alert("Select at least 1 ticket before the checkout");
-  //       return;
-  //     }
-  //   }
-  //   if (breakFlag && !showFlag) {
-  //     alert("Choose a time slot!");
-  //     return;
-  //   }
-  //   const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
-  //   setTicketId(referenceId);
-  // }
-
-  const updateBoatingDatabase = async () => {
-    try {
-      const updatedBoats = fullBoats.map((boat) => {
-        const ticket = ticketNum.find((t) => t.name === boat.name);
-        if (!ticket) return boat;
-        if (ticket.isBookedPrivate) {
-          return {
-            ...boat,
-            isBookedPrivate: true,
-            booked: 0, // just in case public was booked before
-          };
-        }
-        if (ticket.booked > 0) {
-          return {
-            ...boat,
-            booked: boat.booked + ticket.booked,
-          };
-        }
-        return boat;
-      });
-      const { data, error } = await supabase
-        .from('boating')
-        .update({ boats: updatedBoats })
-        .eq('id', boatingId)
-        .select();
-      if (error) throw error;
-      // console.log('Database updated:', data);
-    } catch (err) {
-      console.error('Update error:', err);
-      setIsProcessing(false);
-      alert('Failed to update boating data. Please try again.');
+    // Round to nearest 30-min slot
+    const currentMinutes = date.getMinutes();
+    if (currentMinutes % 30 !== 0) {
+      const roundedMinutes = currentMinutes <= 30 ? 30 : 0;
+      if (roundedMinutes === 0) date.setHours(date.getHours() + 1);
+      date.setMinutes(roundedMinutes);
     }
+
+    return date;
   };
 
   useEffect(() => {
@@ -210,7 +159,6 @@ export default function BookingPage({ params }) {
     if (!ticketId || !user?.id) return;
     // if (!ticketId) return;
     const saveTickets = async () => {
-      updateBoatingDatabase();
       try {
         const { data, error } = await supabase
           .from('tickets')
@@ -259,26 +207,16 @@ export default function BookingPage({ params }) {
           `/api/fetchMonuments?detailed=${true}&id=${boatingId}&type=boating`,
         );
         const data = await response.json();
-        // console.log(data[0], user);
-        const fullBoats = data[0].boats;
-        setFullBoats(fullBoats);
-        setDisablePayments(isVendorMode && data[0].email === user?.email);
-        const filteredBoats = fullBoats.filter((item) => !item.isBookedPrivate);
-        setBoats(() => ({ ...data[0], boats: filteredBoats }));
-        setIsPrivateAvailable(() =>
-          data[0].boats.some(
-            (item) => item.booked === 0 && !item.isBookedPrivate,
-          ),
-        ); // ".some" returns a boolean value, ".find" returns the first match, ".filter" returns array of all the matches
-        setTicketNum(() =>
-          filteredBoats.map((boat) => ({
-            name: boat.name,
-            booked: 0,
-            isBookedPrivate: false,
-            publicSeatPrice: boat.publicSeatPrice,
-            privateBoatPrice: boat.privateBoatPrice,
+        const res1 = await fetch(`/api/fetchBoatingTickets`);
+        const data1 = await res1.json();
+        setActiveBoatingTickets(
+          data1.map((item) => ({
+            data: item.ticketNum,
+            timeSlot: item.dateTime,
           })),
         );
+        setBoats(data[0]);
+        setDisablePayments(isVendorMode && data[0].email === user?.email);
         setLoadingBoats(false);
         setFetchAgain(false);
       } catch (error) {
@@ -288,6 +226,56 @@ export default function BookingPage({ params }) {
     };
     fetchMonuments();
   }, [fetchAgain, user]);
+
+  useEffect(() => {
+    if (showFlag && dateTime.length !== 0 && boats?.boats) {
+      // console.log(activeBoatingTickets);
+      // console.log(boats?.boats);
+      // console.log(dateTime);
+      const filteredData = activeBoatingTickets
+        .filter(
+          (item) =>
+            new Date(item.timeSlot).getTime() === new Date(dateTime).getTime(),
+        )
+        .map((item) => ({ data: item.data }));
+      // console.log(filteredData);
+      const updatedBoats = boats?.boats
+        .map((boat) => {
+          let updatedBoat = { ...boat };
+          filteredData.forEach((ticket) => {
+            ticket.data.forEach((bookedBoat) => {
+              if (bookedBoat.name === boat.name) {
+                if (bookedBoat.booked > 0) {
+                  updatedBoat.booked += bookedBoat.booked;
+                }
+                if (bookedBoat.isBookedPrivate) {
+                  updatedBoat.isBookedPrivate = true;
+                }
+              }
+            });
+          });
+          return updatedBoat;
+        })
+        .filter((boat) => !boat.isBookedPrivate);
+      // console.log(updatedBoats);
+      setBoatsAvailability(updatedBoats);
+      setIsPrivateAvailable(() =>
+        updatedBoats.some((item) => item.booked === 0 && !item.isBookedPrivate),
+      ); // ".some" returns a boolean value, ".find" returns the first match, ".filter" returns array of all the matches
+      setTicketNum(() =>
+        updatedBoats.map((boat) => ({
+          name: boat.name,
+          booked: 0,
+          isBookedPrivate: false,
+          publicSeatPrice: boat.publicSeatPrice,
+          privateBoatPrice: boat.privateBoatPrice,
+        })),
+      );
+      setLoadingBoats(false);
+      setFetchAgain(false);
+    }
+  }, [showFlag, dateTime, boats, activeBoatingTickets]);
+  // console.log(ticketNum);
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -425,7 +413,7 @@ export default function BookingPage({ params }) {
                 <DatePicker
                   selected={dateTime}
                   onChange={(date) => {
-                    setDateTime(date);
+                    setDateTime(new Date(date.setSeconds(0)));
                     setShowFlag(true);
                   }}
                   showTimeSelect
@@ -437,24 +425,19 @@ export default function BookingPage({ params }) {
                   onCalendarClose={() => setBlurFlag(false)} // Trigger when the popper closes
                   minTime={
                     // If today’s date matches selected date & current time has passed closing time, disable all time slots
-                    current_date.toDateString() === dateTime.toDateString() &&
+                    current_date.toDateString() === dateTime?.toDateString() &&
                     new Date() > convertTime(boats.closing_time)
                       ? convertTime(boats.closing_time) // Disable all slots
                       : new Date() > convertTime(boats.opening_time) &&
-                        current_date.toDateString() === dateTime.toDateString()
+                        current_date.toDateString() === dateTime?.toDateString()
                       ? new Date() // Allow selection from current time onwards if within hours
                       : convertTime(boats.opening_time) // Default to opening time
                   }
-                  maxTime={
-                    current_date.toDateString() === dateTime.toDateString() &&
-                    new Date() > convertTime(boats.closing_time)
-                      ? convertTime(boats.closing_time) // Disable all slots
-                      : convertTime(boats.closing_time)
-                  }
+                  maxTime={convertTime(boats.closing_time)}
                   minDate={new Date()} // Here we are setting min. date of the calender to the current date i.e. new Date() as we don't want the user to book tickets for the past
                   customInput={
                     <button className={styles.datepicker_button}>
-                      {dateTime.toLocaleString() && showFlag
+                      {showFlag && dateTime
                         ? dateTime.toLocaleString()
                         : 'Select Date & Time'}
                     </button>
@@ -462,238 +445,240 @@ export default function BookingPage({ params }) {
                 />
               </div>
             </section>
-            <section
-              className={styles.ticketsSection}
-              style={blurFlag ? { filter: 'blur(10px)' } : null}
-            >
-              {isPrivateAvailable && (
-                <>
-                  <h3>Add a private boat</h3>
-                  <div className={styles.tickets}>
-                    {boats.boats.map((item, index, arr) => {
-                      if (item.booked > 0) return;
-                      return (
-                        <div key={index}>
-                          <div>
-                            <section
+            {showFlag && boatsAvailability.length !== 0 && (
+              <section
+                className={styles.ticketsSection}
+                style={blurFlag ? { filter: 'blur(10px)' } : null}
+              >
+                {isPrivateAvailable && (
+                  <>
+                    <h3>Add a private boat</h3>
+                    <div className={styles.tickets}>
+                      {boatsAvailability.map((item, index, arr) => {
+                        if (item.booked > 0) return;
+                        return (
+                          <div key={index}>
+                            <div>
+                              <section
+                                style={
+                                  !ticketNum.some(
+                                    (ticket) =>
+                                      ticket.name === item.name &&
+                                      ticket.booked === 0,
+                                  )
+                                    ? { pointerEvents: 'none', opacity: 0.5 }
+                                    : null
+                                }
+                              >
+                                <div className={styles.ticketInfo}>
+                                  <h1>{item.name}</h1>
+                                  <p>{item.capacity} seater</p>
+                                  <h4>&#8377;{item.privateBoatPrice}</h4>
+                                </div>
+                                <div className={styles.counter}>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 14 14"
+                                    width="1.6em"
+                                    height="1.6em"
+                                    onClick={() => {
+                                      setTicketNum((prev) =>
+                                        prev.map((boat) =>
+                                          boat.name === item.name
+                                            ? {
+                                                ...boat,
+                                                isBookedPrivate:
+                                                  !boat.isBookedPrivate,
+                                                booked: !boat.isBookedPrivate
+                                                  ? 0
+                                                  : boat.booked,
+                                              }
+                                            : boat,
+                                        ),
+                                      );
+                                    }}
+                                    style={
+                                      ticketNum.some(
+                                        (ticket) =>
+                                          ticket.name === item.name &&
+                                          ticket.isBookedPrivate,
+                                      )
+                                        ? {
+                                            transform: 'rotate(45deg)',
+                                            color: 'red',
+                                          }
+                                        : null
+                                    }
+                                  >
+                                    <g
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <circle cx="7" cy="7" r="6.5"></circle>
+                                      <path d="M7 4v6M4 7h6"></path>
+                                    </g>
+                                  </svg>
+                                </div>
+                              </section>
+                            </div>
+                            {arr.length - 1 !== index && <hr />}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+                <h3>Add a public seat</h3>
+                <p>&#8377;{boatsAvailability[0].publicSeatPrice}/seat</p>
+                <div className={styles.tickets}>
+                  {boatsAvailability.map((item, index, arr) => (
+                    <div
+                      key={index}
+                      style={
+                        !ticketNum.some(
+                          (ticket) =>
+                            ticket.name === item.name &&
+                            !ticket.isBookedPrivate,
+                        )
+                          ? { opacity: 0.5, pointerEvents: 'none' }
+                          : null
+                      }
+                    >
+                      <div>
+                        <section>
+                          <div className={styles.ticketInfo}>
+                            <h1>{item.name}</h1>
+                            <p>
+                              Available seats: {item.capacity - item.booked}/
+                              {item.capacity}
+                            </p>
+                          </div>
+                          <div className={styles.counter}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 48 48"
+                              width="1.6em"
+                              height="1.6em"
                               style={
-                                !ticketNum.some(
+                                ticketNum.find(
                                   (ticket) =>
-                                    ticket.name === item.name &&
-                                    ticket.booked === 0,
+                                    ticket.booked <= 0 &&
+                                    ticket.name == item.name,
                                 )
-                                  ? { pointerEvents: 'none', opacity: 0.5 }
+                                  ? { pointerEvents: 'none', opacity: '0.5' }
                                   : null
                               }
-                            >
-                              <div className={styles.ticketInfo}>
-                                <h1>{item.name}</h1>
-                                <p>{item.capacity} seater</p>
-                                <h4>&#8377;{item.privateBoatPrice}</h4>
-                              </div>
-                              <div className={styles.counter}>
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 14 14"
-                                  width="1.6em"
-                                  height="1.6em"
-                                  onClick={() => {
-                                    setTicketNum((prev) =>
-                                      prev.map((boat) =>
-                                        boat.name === item.name
-                                          ? {
-                                              ...boat,
-                                              isBookedPrivate:
-                                                !boat.isBookedPrivate,
-                                              booked: !boat.isBookedPrivate
-                                                ? 0
-                                                : boat.booked,
-                                            }
-                                          : boat,
-                                      ),
-                                    );
-                                  }}
-                                  style={
-                                    ticketNum.some(
-                                      (ticket) =>
-                                        ticket.name === item.name &&
-                                        ticket.isBookedPrivate,
-                                    )
+                              onClick={() => {
+                                setTicketNum((prev) =>
+                                  prev.map((boat) =>
+                                    boat.name === item.name
                                       ? {
-                                          transform: 'rotate(45deg)',
-                                          color: 'red',
+                                          ...boat,
+                                          booked:
+                                            boat.booked - 1 <= 0
+                                              ? 0
+                                              : boat.booked - 1,
                                         }
-                                      : null
-                                  }
-                                >
-                                  <g
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  >
-                                    <circle cx="7" cy="7" r="6.5"></circle>
-                                    <path d="M7 4v6M4 7h6"></path>
-                                  </g>
-                                </svg>
-                              </div>
-                            </section>
-                          </div>
-                          {arr.length - 1 !== index && <hr />}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </>
-              )}
-              <h3>Add a public seat</h3>
-              <p>&#8377;{boats.boats[0].publicSeatPrice}/seat</p>
-              <div className={styles.tickets}>
-                {boats.boats.map((item, index, arr) => (
-                  <div
-                    key={index}
-                    style={
-                      !ticketNum.some(
-                        (ticket) =>
-                          ticket.name === item.name && !ticket.isBookedPrivate,
-                      )
-                        ? { opacity: 0.5, pointerEvents: 'none' }
-                        : null
-                    }
-                  >
-                    <div>
-                      <section>
-                        <div className={styles.ticketInfo}>
-                          <h1>{item.name}</h1>
-                          <p>
-                            Available seats: {item.capacity - item.booked}/
-                            {item.capacity}
-                          </p>
-                        </div>
-                        <div className={styles.counter}>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 48 48"
-                            width="1.6em"
-                            height="1.6em"
-                            style={
-                              ticketNum.find(
-                                (ticket) =>
-                                  ticket.booked <= 0 &&
-                                  ticket.name == item.name,
-                              )
-                                ? { pointerEvents: 'none', opacity: '0.5' }
-                                : null
-                            }
-                            onClick={() => {
-                              setTicketNum((prev) =>
-                                prev.map((boat) =>
-                                  boat.name === item.name
-                                    ? {
-                                        ...boat,
-                                        booked:
-                                          boat.booked - 1 <= 0
-                                            ? 0
-                                            : boat.booked - 1,
-                                      }
-                                    : boat,
-                                ),
-                              );
-                            }}
-                          >
-                            <path
-                              fill="currentColor"
-                              d="M6.5 24c0-9.665 7.835-17.5 17.5-17.5S41.5 14.335 41.5 24S33.665 41.5 24 41.5S6.5 33.665 6.5 24M24 4C12.954 4 4 12.954 4 24s8.954 20 20 20s20-8.954 20-20S35.046 4 24 4M14 24c0-.69.56-1.25 1.25-1.25h17.5a1.25 1.25 0 1 1 0 2.5h-17.5c-.69 0-1.25-.56-1.25-1.25"
-                              stroke="currentColor"
-                              strokeLinecap="round"
-                              strokeWidth="1.2"
-                            ></path>
-                          </svg>
-                          <h1>
-                            {ticketNum.find(
-                              (ticket) => ticket.name === item.name,
-                            ).booked || 0}
-                          </h1>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 14 14"
-                            width="1.6em"
-                            height="1.6em"
-                            onClick={() => {
-                              setTicketNum((prev) =>
-                                prev.map((boat) =>
-                                  boat.name === item.name
-                                    ? {
-                                        ...boat,
-                                        booked:
-                                          boat.booked + 1 >=
-                                          item.capacity - item.booked
-                                            ? item.capacity - item.booked
-                                            : boat.booked + 1,
-                                        isBookedPrivate: false,
-                                      }
-                                    : boat,
-                                ),
-                              );
-                            }}
-                          >
-                            <g
-                              fill="none"
-                              stroke="currentColor"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
+                                      : boat,
+                                  ),
+                                );
+                              }}
                             >
-                              <circle cx="7" cy="7" r="6.5"></circle>
-                              <path d="M7 4v6M4 7h6"></path>
-                            </g>
-                          </svg>
-                        </div>
-                      </section>
+                              <path
+                                fill="currentColor"
+                                d="M6.5 24c0-9.665 7.835-17.5 17.5-17.5S41.5 14.335 41.5 24S33.665 41.5 24 41.5S6.5 33.665 6.5 24M24 4C12.954 4 4 12.954 4 24s8.954 20 20 20s20-8.954 20-20S35.046 4 24 4M14 24c0-.69.56-1.25 1.25-1.25h17.5a1.25 1.25 0 1 1 0 2.5h-17.5c-.69 0-1.25-.56-1.25-1.25"
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeWidth="1.2"
+                              ></path>
+                            </svg>
+                            <h1>
+                              {ticketNum.find(
+                                (ticket) => ticket.name === item.name,
+                              ).booked || 0}
+                            </h1>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 14 14"
+                              width="1.6em"
+                              height="1.6em"
+                              onClick={() => {
+                                setTicketNum((prev) =>
+                                  prev.map((boat) =>
+                                    boat.name === item.name
+                                      ? {
+                                          ...boat,
+                                          booked:
+                                            boat.booked + 1 >=
+                                            item.capacity - item.booked
+                                              ? item.capacity - item.booked
+                                              : boat.booked + 1,
+                                          isBookedPrivate: false,
+                                        }
+                                      : boat,
+                                  ),
+                                );
+                              }}
+                            >
+                              <g
+                                fill="none"
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <circle cx="7" cy="7" r="6.5"></circle>
+                                <path d="M7 4v6M4 7h6"></path>
+                              </g>
+                            </svg>
+                          </div>
+                        </section>
+                      </div>
+                      {arr.length - 1 !== index && <hr />}
                     </div>
-                    {arr.length - 1 !== index && <hr />}
-                  </div>
-                ))}
-              </div>
-
-              <section className={styles.timings}>
-                <h3>Summary</h3>
-                <div>
-                  <p>
-                    Public seats:
-                    <span>
-                      &#8377;
-                      {Object.values(ticketNum).reduce(
-                        (acc, value) => acc + value.booked,
-                        0,
-                      ) * boats.boats[0].publicSeatPrice}
-                      {/*taking "publicSeatPrice" of first boat as all boats have same "publicSeatPrice" */}
-                    </span>
-                  </p>
-                  <p>
-                    Private Boat:
-                    <span>
-                      &#8377;
-                      {ticketNum.reduce((sum, ticket) => {
-                        if (ticket.isBookedPrivate) {
-                          const boat = boats.boats.find(
-                            (b) => b.name === ticket.name,
-                          );
-                          return sum + (boat?.privateBoatPrice || 0);
-                        }
-                        return sum;
-                      }, 0)}
-                    </span>
-                  </p>
-                  <p className={styles.totalAmount}>
-                    Total payable amount:
-                    <span>
-                      &#8377;
-                      {totalAmount}
-                    </span>
-                  </p>
+                  ))}
                 </div>
+
+                {/* <section className={styles.timings}>
+                  <h3>Summary</h3>
+                  <div>
+                    <p>
+                      Public seats:
+                      <span>
+                        &#8377;
+                        {Object.values(ticketNum).reduce(
+                          (acc, value) => acc + value.booked,
+                          0,
+                        ) * boats.boats[0].publicSeatPrice}
+                      </span>
+                    </p>
+                    <p>
+                      Private Boat:
+                      <span>
+                        &#8377;
+                        {ticketNum.reduce((sum, ticket) => {
+                          if (ticket.isBookedPrivate) {
+                            const boat = boats.boats.find(
+                              (b) => b.name === ticket.name,
+                            );
+                            return sum + (boat?.privateBoatPrice || 0);
+                          }
+                          return sum;
+                        }, 0)}
+                      </span>
+                    </p>
+                    <p className={styles.totalAmount}>
+                      Total payable amount:
+                      <span>
+                        &#8377;
+                        {totalAmount}
+                      </span>
+                    </p>
+                  </div>
+                </section> */}
               </section>
-            </section>
+            )}
           </section>
           <button
             className={styles.checkout}
@@ -710,3 +695,8 @@ export default function BookingPage({ params }) {
     </div>
   );
 }
+
+// You can't directly map() over an object, BUT you can convert it into an array using Object methods like:
+// Object.entries() → Best for key-value pairs.
+// Object.keys() → Best if you only need keys.
+// Object.values() → Best if you only need values.
