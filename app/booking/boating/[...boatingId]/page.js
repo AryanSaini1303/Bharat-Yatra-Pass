@@ -60,73 +60,44 @@ export default function BookingPage({ params }) {
         )
         .map((item) => item.ticketNum)
         .flat();
-      if (sameTimeTickets.length === 0) return;
-      for (const ticket of ticketNum) {
-        // here we are not using nested ".map" instead we are using "for" as if we return in a nested ".map" the it doesn't return the parent ".map"
-        for (const same of sameTimeTickets) {
-          if (ticket.name === same.name) {
-            if (
-              ticket.isBookedPrivate &&
-              (same.isBookedPrivate || same.booked > 0)
-            ) {
-              alert(
-                `Private boat ${ticket.name} has just been booked by someone else. Please adjust your selection.`,
-              );
-              setFetchAgain(true);
-              setIsProcessing(false);
-              return;
-            } else if (!ticket.isBookedPrivate && ticket.booked > 0) {
-              if (same.isBookedPrivate) {
+      if (sameTimeTickets.length !== 0) {
+        for (const ticket of ticketNum) {
+          // here we are not using nested ".map" instead we are using "for" as if we return in a nested ".map" the it doesn't return the parent ".map"
+          for (const same of sameTimeTickets) {
+            if (ticket.name === same.name) {
+              if (
+                ticket.isBookedPrivate &&
+                (same.isBookedPrivate || same.booked > 0)
+              ) {
                 alert(
-                  `${ticket.name} has just been privately booked by someone else. Please adjust your selection.`,
+                  `Private boat ${ticket.name} has just been booked by someone else. Please adjust your selection.`,
                 );
                 setFetchAgain(true);
                 setIsProcessing(false);
                 return;
-              }
-              const available = same.capacity - same.booked;
-              if (ticket.booked > available) {
-                alert(
-                  `Only ${available} seats are left for ${ticket.name}. Please adjust your selection.`,
-                );
-                setFetchAgain(true);
-                setIsProcessing(false);
-                return;
+              } else if (!ticket.isBookedPrivate && ticket.booked > 0) {
+                if (same.isBookedPrivate) {
+                  alert(
+                    `${ticket.name} has just been privately booked by someone else. Please adjust your selection.`,
+                  );
+                  setFetchAgain(true);
+                  setIsProcessing(false);
+                  return;
+                }
+                const available = same.capacity - same.booked;
+                if (ticket.booked > available) {
+                  alert(
+                    `Only ${available} seats are left for ${ticket.name}. Please adjust your selection.`,
+                  );
+                  setFetchAgain(true);
+                  setIsProcessing(false);
+                  return;
+                }
               }
             }
           }
         }
       }
-      // const res = await fetch(
-      //   `/api/fetchMonuments?detailed=true&id=${boatingId}&type=boating`,
-      // );
-      // const [latestData] = (await res.json()) || [];
-      // for (const ticket of ticketNum) {
-      //   const boat = latestData.boats.find((b) => b.name === ticket.name);
-      //   if (!boat) continue;
-      //   if (!ticket.isBookedPrivate && ticket.booked > 0) {
-      //     const available = boat.capacity - boat.booked;
-      //     if (ticket.booked > available) {
-      //       alert(
-      //         `Only ${available} seats are left for ${boat.name}. Please adjust your selection.`,
-      //       );
-      //       setFetchAgain(true);
-      //       setIsProcessing(false);
-      //       return;
-      //     }
-      //   }
-      //   if (
-      //     ticket.isBookedPrivate &&
-      //     (boat.booked > 0 || boat.isBookedPrivate)
-      //   ) {
-      //     alert(
-      //       `Private boat ${boat.name} has just been booked by someone else. Please adjust your selection.`,
-      //     );
-      //     setFetchAgain(true);
-      //     setIsProcessing(false);
-      //     return;
-      //   }
-      // }
       if (disablePayments) {
         const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
         setTicketId(referenceId);
@@ -358,13 +329,13 @@ export default function BookingPage({ params }) {
     setTotalAmount(() => publicPrice + privatePrice);
   }, [ticketNum, boats]);
 
-  // if (loadingUser) {
-  //   return <Loader margin={'15rem auto'} />;
-  // } else {
-  //   if (!user) {
-  //     return <div>Unauthenticated...</div>;
-  //   }
-  // }
+  if (loadingUser) {
+    return <Loader margin={'15rem auto'} />;
+  } else {
+    if (!user) {
+      return <div>Unauthenticated...</div>;
+    }
+  }
 
   // console.log(ticketNum);
   // console.log(privateTicketNum);
