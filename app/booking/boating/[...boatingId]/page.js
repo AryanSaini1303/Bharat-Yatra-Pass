@@ -40,13 +40,13 @@ export default function BookingPage({ params }) {
       (ticket) => !ticket.isBookedPrivate && ticket.booked > 0,
     );
     const hasPrivateBoats = ticketNum.some((ticket) => ticket.isBookedPrivate);
-    if (!hasPublicSeats && !hasPrivateBoats) {
-      alert('Select at least 1 seat or a private boat before checkout');
+    if (!showFlag) {
+      alert('Choose a time slot!');
       setIsProcessing(false);
       return;
     }
-    if (!showFlag) {
-      alert('Choose a time slot!');
+    if (!hasPublicSeats && !hasPrivateBoats) {
+      alert('Select at least 1 seat or a private boat before checkout');
       setIsProcessing(false);
       return;
     }
@@ -311,13 +311,13 @@ export default function BookingPage({ params }) {
     setTotalAmount(() => publicPrice + privatePrice);
   }, [ticketNum, boats]);
 
-  if (loadingUser) {
-    return <Loader margin={'15rem auto'} />;
-  } else {
-    if (!user) {
-      return <div>Unauthenticated...</div>;
-    }
-  }
+  // if (loadingUser) {
+  //   return <Loader margin={'15rem auto'} />;
+  // } else {
+  //   if (!user) {
+  //     return <div>Unauthenticated...</div>;
+  //   }
+  // }
 
   // console.log(ticketNum);
   // console.log(privateTicketNum);
@@ -413,7 +413,14 @@ export default function BookingPage({ params }) {
                 <DatePicker
                   selected={dateTime}
                   onChange={(date) => {
-                    setDateTime(new Date(date.setSeconds(0)));
+                    const newDate = (() => {
+                      if (![0, 30].includes(date.getMinutes())) {
+                        date.setMinutes(0);
+                      }
+                      date.setSeconds(0);
+                      return date;
+                    })();// this is a IIFE, how beautiful is this
+                    setDateTime(newDate);
                     setShowFlag(true);
                   }}
                   showTimeSelect
@@ -639,8 +646,7 @@ export default function BookingPage({ params }) {
                     </div>
                   ))}
                 </div>
-
-                {/* <section className={styles.timings}>
+                <section className={styles.timings}>
                   <h3>Summary</h3>
                   <div>
                     <p>
@@ -676,7 +682,7 @@ export default function BookingPage({ params }) {
                       </span>
                     </p>
                   </div>
-                </section> */}
+                </section>
               </section>
             )}
           </section>
