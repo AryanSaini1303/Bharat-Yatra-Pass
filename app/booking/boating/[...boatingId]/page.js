@@ -366,7 +366,7 @@ export default function BookingPage({ params }) {
       </header>
       {loadingBoats ? (
         <Loader margin={'10rem auto'} />
-      ) : boats.length != 0 ? (
+      ) : boats?.length != 0 ? (
         <div className={styles.container}>
           <img
             src={boats.image_url}
