@@ -12,13 +12,11 @@ export default function Boats() {
   const pathname = usePathname();
   const authorizedUsers =
     process.env.NEXT_PUBLIC_AUTHORIZED_BOATING_EMAILS?.split(',') || [];
-
   const [user, setUser] = useState();
   const [loadingUser, setLoadingUser] = useState(true);
   const [boatData, setBoatData] = useState();
   const [ticketsData, setTicketsData] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const router = useRouter();
 
   useEffect(() => {
@@ -34,7 +32,6 @@ export default function Boats() {
 
   useEffect(() => {
     if (!user || !authorizedUsers.includes(user.email)) return;
-
     const fetchVendorDetails = async () => {
       try {
         const res = await fetch(`/api/fetchVendorDetails?email=${user.email}`);
@@ -47,7 +44,6 @@ export default function Boats() {
         console.log(error.message);
       }
     };
-
     const fetchVendorTickets = async (boat) => {
       try {
         const res = await fetch(`/api/fetchVendorTickets?id=${boat.id}`);
@@ -57,7 +53,6 @@ export default function Boats() {
         console.log('Error fetching vendor tickets:', error.message);
       }
     };
-
     fetchVendorDetails();
   }, [user]);
 

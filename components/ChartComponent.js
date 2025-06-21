@@ -39,7 +39,7 @@ export default function TicketsChart({ tickets, analyticFormat }) {
   }, [tickets, analyticFormat]);
 
   return (
-    <div style={{ width: '100%', height: 400 }}>
+    <div style={{ width: '100%', height: 400, fontSize:'12px' }}>
       <ResponsiveContainer width="100%" height="100%" key={analyticFormat}>
         <LineChart
           data={chartData}
@@ -55,7 +55,7 @@ export default function TicketsChart({ tickets, analyticFormat }) {
             stroke="#3b82f6"
             strokeWidth={2}
             dot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2, fill: '#fff' }}
-            activeDot={{ r: 9 }}
+            activeDot={{ r: 8 }}
           />
         </LineChart>
       </ResponsiveContainer>

@@ -86,7 +86,7 @@ export default function TicketsPanel({ tickets }) {
     <Loader margin={'15rem auto'} />
   ) : (
     <div className={styles.wrapper}>
-      <h1 style={{fontSize:'3rem'}}>Boats Status</h1>
+      <h1 style={{fontSize:'1.8rem'}}>Boats Status</h1>
       {hasOnline && <h2 className={styles.header}>Online Tickets</h2>}
       <div className={styles.group}>
         {renderTable('userPanel', 'public')}

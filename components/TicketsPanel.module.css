@@ -1,5 +1,9 @@
 .wrapper {
-  padding: 2rem;
+  margin: 2rem 0;
+  background: white;
+  padding: 1rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }
 
 .tableSection {
@@ -10,10 +14,10 @@
 }
 
 .heading {
-  background-color: #3b82f6;
+  background-color: black;
   color: white;
   padding: 1rem;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   border-radius: 10px 10px 0 0;
   margin: 0;
@@ -22,6 +26,7 @@
 .header {
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
     'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-size: 1.2rem;
 }
 
 .table {
@@ -34,11 +39,12 @@
   padding: 0.75rem 1rem;
   text-align: left;
   border-bottom: 1px solid #e5e7eb;
+  font-size: 0.8rem;
 }
 
 .table th {
-  background-color: #eff6ff;
-  color: #1e3a8a;
+  background-color: #eeeeee;
+  color: #2c2c2c;
 }
 
 .table tr:hover {
@@ -49,4 +55,5 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
+  margin-bottom: 2rem;
 }

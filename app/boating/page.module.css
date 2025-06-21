@@ -9,18 +9,18 @@
 }
 
 .content {
-  padding: 0 5rem;
+  padding: 2rem 5rem;
 }
 
 .heading {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
     'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
   margin-bottom: 1.5rem;
 }
 
 .signOutButton {
-  padding: 0.8rem 1.2rem;
+  padding: 0.8rem 1.5rem;
   background-color: black;
   color: white;
   border: none;
@@ -29,21 +29,21 @@
   cursor: pointer;
   transition: background 0.2s;
   height: fit-content;
-  font-size: 1rem;
+  font-size: 0.8rem;
 }
 
 .book {
-  background-color: #3b82f6;
+  background-color: black;
   color: white;
-  padding: 0.8rem 1.2rem;
+  padding: 0.8rem 1.5rem;
   border: none;
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
   height: fit-content;
-  font-size: 1rem;
-  margin: 3rem 0;
+  font-size: 0.9rem;
+  margin: 1rem 0;
 }
 
 .book:hover {
@@ -79,11 +79,11 @@
 }
 
 .card h2 {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .card p {
-  font-size: 1.8rem;
+  font-size: 1.3rem;
   color: #3b82f6;
 }
 
@@ -92,15 +92,15 @@
   gap: 1rem;
   justify-content: flex-start;
   align-items: center;
-  margin-left: 2rem;
+  padding-left: 2rem;
   margin-top: 0.5rem;
 }
 
 .buttonContainer button {
   color: black;
   background-color: white;
-  padding: 0.6rem 1.4rem;
-  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.8rem;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;

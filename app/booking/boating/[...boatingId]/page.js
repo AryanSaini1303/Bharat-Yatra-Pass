@@ -159,7 +159,6 @@ export default function BookingPage({ params }) {
     date.setHours(hours);
     date.setMinutes(minutes);
     date.setSeconds(0, 0);
-
     // Round to nearest 30-min slot
     const currentMinutes = date.getMinutes();
     if (currentMinutes % 30 !== 0) {
@@ -167,7 +166,6 @@ export default function BookingPage({ params }) {
       if (roundedMinutes === 0) date.setHours(date.getHours() + 1);
       date.setMinutes(roundedMinutes);
     }
-
     return date;
   };
 
@@ -431,15 +429,21 @@ export default function BookingPage({ params }) {
                 <DatePicker
                   selected={dateTime}
                   onChange={(date) => {
+                    const rawDate = new Date(date);
                     const newDate = (() => {
-                      if (![0, 30].includes(date.getMinutes())) {
-                        date.setMinutes(0);
+                      const d = new Date(date);
+                      if (![0, 30].includes(d.getMinutes())) {
+                        d.setMinutes(0);
                       }
-                      date.setSeconds(0);
-                      return date;
-                    })(); // this is a IIFE, how beautiful is this
-                    setDateTime(newDate);
-                    setShowFlag(true);
+                      d.setSeconds(0);
+                      return d;
+                    })();
+                    // console.log('Selected:', rawDate);
+                    // console.log('Now:', new Date());
+                    if (rawDate > new Date()) {
+                      setDateTime(newDate);
+                      setShowFlag(true);
+                    }
                   }}
                   showTimeSelect
                   timeFormat="hh:mm aa"
@@ -459,6 +463,11 @@ export default function BookingPage({ params }) {
                       : convertTime(boats.opening_time) // Default to opening time
                   }
                   maxTime={convertTime(boats.closing_time)}
+                  filterTime={
+                    new Date() > convertTime(boats.closing_time)
+                      ? () => false
+                      : undefined
+                  }
                   minDate={new Date()} // Here we are setting min. date of the calender to the current date i.e. new Date() as we don't want the user to book tickets for the past
                   customInput={
                     <button className={styles.datepicker_button}>
@@ -470,7 +479,7 @@ export default function BookingPage({ params }) {
                 />
               </div>
             </section>
-            {showFlag && boatsAvailability.length !== 0 && (
+            {showFlag && boatsAvailability.length !== 0 ? (
               <section
                 className={styles.ticketsSection}
                 style={blurFlag ? { filter: 'blur(10px)' } : null}
@@ -702,12 +711,19 @@ export default function BookingPage({ params }) {
                   </div>
                 </section>
               </section>
+            ) : (
+              !loadingBoats &&
+              showFlag && (
+                <p style={blurFlag ? { filter: 'blur(10px)' } : null}>
+                  No Boats are available for this time slot, please choose
+                  another!
+                </p>
+              )
             )}
           </section>
           <button
             className={styles.checkout}
             style={blurFlag ? { filter: 'blur(10px)' } : null}
-            // onClick={handleCheckout}
             onClick={handleCheckout}
           >
             {isProcessing ? 'Processing...' : 'Checkout'}

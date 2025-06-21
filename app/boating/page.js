@@ -19,7 +19,7 @@ export default function BoatingAdminPage() {
   const [totalSales, setTotalSales] = useState(0);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
-  const [analyticFormat, setAnalyticFormat] = useState('monthly');
+  const [analyticFormat, setAnalyticFormat] = useState('daily');
 
   const handleBookClick = () => {
     router.push(`/booking/boating/${boatData.id}?mode=vendor`);
@@ -120,8 +120,8 @@ export default function BoatingAdminPage() {
             </div>
           </div>
           <div className={styles.buttonContainer}>
-            <button onClick={()=>setAnalyticFormat('monthly')} style={analyticFormat==='monthly'?{border:"dashed 1.618px black"}:null}>Monthly</button>
             <button onClick={()=>setAnalyticFormat('daily')} style={analyticFormat==='daily'?{border:"dashed 1.618px black"}:null}>Daily</button>
+            <button onClick={()=>setAnalyticFormat('monthly')} style={analyticFormat==='monthly'?{border:"dashed 1.618px black"}:null}>Monthly</button>
           </div>
           <TicketsChart tickets={ticketsData} analyticFormat={analyticFormat}/>
           <button className={styles.book} onClick={handleBookClick}>
