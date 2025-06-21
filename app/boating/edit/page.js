@@ -98,18 +98,11 @@ export default function Boats() {
               className={styles.saveButton}
               onClick={async () => {
                 try {
-                  const res = await fetch('/api/updateBoatPrices', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      vendorId: boatData.id,
-                      updatedBoats: boatData.boats,
-                    }),
-                  });
-
-                  if (res.ok) alert('Prices updated successfully!');
+                  const { error } = await supabase
+                    .from('boating')
+                    .update({ boats: boatData.boats })
+                    .eq('id', boatData.id);
+                  if (!error) alert('Prices updated successfully!');
                   else alert('Failed to update prices.');
                 } catch (error) {
                   alert('Something went wrong.');
