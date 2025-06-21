@@ -14,7 +14,7 @@ export async function GET(request) {
   try {
     const { data, error } = await supabase
       .from('tickets')
-      .select('ticketNum, status, id, dateTime')
+      .select('ticketNum, status, id, dateTime, origin, created_at')
       .match({ service_provider_id: id, service_provider: 'boating' });
     if (error) {
       console.error('Supabase error:', error.message);

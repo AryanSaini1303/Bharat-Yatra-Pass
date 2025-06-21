@@ -193,16 +193,16 @@ export default function Home() {
     };
   }, []);
 
-  // On page load, fetch the city from localStorage
-  useEffect(() => {
-    const savedCity = localStorage.getItem('userCity');
-    if (savedCity) {
-      // console.log("📍 City found in localStorage:", savedCity);
-      setLocation(savedCity);
-    } else {
-      setLocation('Udaipur');
-    }
-  }, []);
+  // // On page load, fetch the city from localStorage
+  // useEffect(() => {
+  //   const savedCity = localStorage.getItem('userCity');
+  //   if (savedCity) {
+  //     // console.log("📍 City found in localStorage:", savedCity);
+  //     setLocation(savedCity);
+  //   } else {
+  //     setLocation('Udaipur');
+  //   }
+  // }, []);
 
   function handleSearch(e) {
     e.preventDefault();

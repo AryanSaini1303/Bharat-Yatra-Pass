@@ -1,0 +1,49 @@
+.sidebar {
+  background-color: #23232b;
+  padding: 1rem;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar ul {
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar ul li {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.sidebar ul li button {
+  color: #3d3270;
+  font-weight: 600;
+  transition: color 0.2s;
+  border: none;
+  background-color: #23232b;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.sidebar ul li button * {
+  filter: brightness(0.6);
+  transition: filter 0.2s ease-in-out;
+}
+
+.sidebar ul li button h4 {
+  text-align: center;
+  margin: 0.5rem 0;
+  color: white;
+  font-weight: lighter;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.sidebar ul li button:hover * {
+  filter: brightness(1);
+  cursor: pointer;
+}
