@@ -66,7 +66,7 @@ export default function Boats() {
     <div className={styles.container}>
       <VendorDashboardSidebar pathname={pathname} router={router} />
       <div className={styles.content}>
-        <TicketsPanel tickets={ticketsData} />
+        <TicketsPanel tickets={ticketsData} loading={loading} />
       </div>
     </div>
   );

@@ -3,11 +3,10 @@ import { useEffect, useState } from 'react';
 import styles from './TicketsPanel.module.css';
 import Loader from './loader';
 
-export default function TicketsPanel({ tickets }) {
+export default function TicketsPanel({ tickets, loading }) {
   const active = tickets.filter((t) => t.status === 'active');
   const [hasOnline, setHasOnline] = useState(false);
   const [hasOffline, setHasOffline] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   const getBoats = (origin, type) => {
     return active
@@ -79,7 +78,6 @@ export default function TicketsPanel({ tickets }) {
     const offlineBoats = active.some((t) => t.origin === 'vendorPanel');
     setHasOnline(onlineBoats);
     setHasOffline(offlineBoats);
-    setLoading(false);
   }, [active]);
 
   return loading ? (
@@ -97,7 +95,7 @@ export default function TicketsPanel({ tickets }) {
         {renderTable('vendorPanel', 'public')}
         {renderTable('vendorPanel', 'private')}
       </div>
-      {!hasOffline && !hasOnline && (
+      {!hasOffline && !hasOnline && !loading && (
         <h2 className={styles.noTickets}>No tickets available!</h2>
       )}
     </div>
