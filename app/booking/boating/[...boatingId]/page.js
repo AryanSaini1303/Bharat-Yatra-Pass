@@ -106,7 +106,7 @@ export default function BookingPage({ params }) {
           }
         }
       }
-      if (!disablePayments) {
+      if (disablePayments) {
         const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
         setTicketId(referenceId);
       } else {
