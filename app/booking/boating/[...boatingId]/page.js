@@ -766,6 +766,7 @@ export default function BookingPage({ params }) {
                           name="phoneNumber"
                           id=""
                           required
+                          maxLength={10}
                         />
                         <button>Submit</button>
                       </form>
