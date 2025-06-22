@@ -243,6 +243,7 @@
   }
   .phoneForm input[type='number'] {
     max-width: 60%;
+    text-align: center;
   }
   .otpSection{
     width: 100%;
