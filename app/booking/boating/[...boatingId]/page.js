@@ -795,7 +795,7 @@ export default function BookingPage({ params }) {
                               pattern="[0-9]*"
                               name={`otp${index + 1}`}
                               key={index}
-                              maxLength="1"
+                              // maxLength="1"
                               required
                               onKeyDown={(e) => {
                                 // handle backspace on empty input to focus previous input
