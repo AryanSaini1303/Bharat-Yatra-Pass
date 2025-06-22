@@ -241,6 +241,9 @@
     flex-direction: column;
     gap: 0;
   }
+  .phoneForm input[type='number'] {
+    max-width: 60%;
+  }
   .otpSection{
     width: 100%;
     padding: 0;
