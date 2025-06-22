@@ -171,7 +171,7 @@
   align-items: center;
 }
 
-.phoneForm input[type='number'] {
+.phoneForm input[type='text'] {
   padding: 0.4rem 0.8rem;
   font-size: 1rem;
   border-radius: 8px;
@@ -179,7 +179,7 @@
   background-color: white;
   color: #000;
 }
-.otpForm input[type='number'] {
+.otpForm input[type='text'] {
   font-size: 1rem;
   border-radius: 8px;
   border: 1px solid #ccc;
@@ -196,7 +196,7 @@
 
 
 
-.otpForm input[type='number'] {
+.otpForm input[type='text'] {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
@@ -209,7 +209,7 @@
   box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.358);
 }
 
-.otpForm input[type='number']:focus {
+.otpForm input[type='text']:focus {
   border-color: #000;
 }
 
@@ -241,7 +241,7 @@
     flex-direction: column;
     gap: 0;
   }
-  .phoneForm input[type='number'] {
+  .phoneForm input[type='text'] {
     max-width: 60%;
     text-align: center;
   }

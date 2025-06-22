@@ -761,12 +761,15 @@ export default function BookingPage({ params }) {
                         <label htmlFor="phoneNumber">
                           Enter Mobile Number:
                         </label>
+                        {/* "maxLength" does not work for "type='number'" so use like below */}
                         <input
-                          type="number"
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
                           name="phoneNumber"
                           id=""
                           required
-                          maxLength={10}
+                          maxLength="10"
                         />
                         <button>Submit</button>
                       </form>
@@ -787,12 +790,12 @@ export default function BookingPage({ params }) {
                         <section>
                           {[...Array(6)].map((_, index) => (
                             <input
-                              type="number"
+                              type="text"
                               inputMode="numeric"
                               pattern="[0-9]*"
                               name={`otp${index + 1}`}
                               key={index}
-                              maxLength={1}
+                              maxLength="1"
                               required
                               onKeyDown={(e) => {
                                 // handle backspace on empty input to focus previous input
