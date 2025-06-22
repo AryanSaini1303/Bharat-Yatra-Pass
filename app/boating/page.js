@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 import TicketsChart from '@/components/ChartComponent';
 import VendorDashboardSidebar from '@/components/vendorDashboardSidebar';
+import NameModal from '@/components/nameModal';
 
 export default function BoatingAdminPage() {
   const authorizedUsers =
@@ -20,10 +21,8 @@ export default function BoatingAdminPage() {
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
   const [analyticFormat, setAnalyticFormat] = useState('daily');
-
-  const handleBookClick = () => {
-    router.push(`/booking/boating/${boatData.id}?mode=vendor`);
-  };
+  const [showModal, setShowModal] = useState(false);
+  const [userName, setUserName] = useState('');
 
   const signOut = async () => {
     try {
@@ -88,6 +87,11 @@ export default function BoatingAdminPage() {
     setTotalSales(total);
   }, [ticketsData]);
 
+  useEffect(() => {
+    if (userName.length === 0) return;
+    router.push(`/booking/boating/${boatData.id}?mode=vendor&name=${userName}`);
+  }, [userName]);
+
   if (loadingUser) {
     return <Loader margin={'15rem auto'} />;
   } else if (!user || !authorizedUsers.includes(user.email)) {
@@ -102,9 +106,7 @@ export default function BoatingAdminPage() {
       ) : boatData.length !== 0 && ticketsData !== 0 ? (
         <section className={styles.content}>
           <header className={styles.header}>
-            <h1 className={styles.heading}>
-              {boatData?.name}
-            </h1>
+            <h1 className={styles.heading}>{boatData?.name}</h1>
             <button className={styles.signOutButton} onClick={signOut}>
               Sign out
             </button>
@@ -120,13 +122,36 @@ export default function BoatingAdminPage() {
             </div>
           </div>
           <div className={styles.buttonContainer}>
-            <button onClick={()=>setAnalyticFormat('daily')} style={analyticFormat==='daily'?{border:"dashed 1.618px black"}:null}>Daily</button>
-            <button onClick={()=>setAnalyticFormat('monthly')} style={analyticFormat==='monthly'?{border:"dashed 1.618px black"}:null}>Monthly</button>
+            <button
+              onClick={() => setAnalyticFormat('daily')}
+              style={
+                analyticFormat === 'daily'
+                  ? { border: 'dashed 1.618px black' }
+                  : null
+              }
+            >
+              Daily
+            </button>
+            <button
+              onClick={() => setAnalyticFormat('monthly')}
+              style={
+                analyticFormat === 'monthly'
+                  ? { border: 'dashed 1.618px black' }
+                  : null
+              }
+            >
+              Monthly
+            </button>
           </div>
-          <TicketsChart tickets={ticketsData} analyticFormat={analyticFormat}/>
-          <button className={styles.book} onClick={handleBookClick}>
+          <TicketsChart tickets={ticketsData} analyticFormat={analyticFormat} />
+          <button className={styles.book} onClick={() => setShowModal(true)}>
             Book Tickets
           </button>
+          <NameModal
+            isOpen={showModal}
+            onClose={() => setShowModal(false)}
+            onSubmit={setUserName}
+          />
         </section>
       ) : (
         <p>No Data Found...</p>

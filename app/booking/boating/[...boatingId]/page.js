@@ -31,11 +31,13 @@ export default function BookingPage({ params }) {
   const [fetchAgain, setFetchAgain] = useState(true);
   const searchParams = useSearchParams();
   const isVendorMode = searchParams.get('mode') === 'vendor';
+  const userName = searchParams.get('userName');
   const [disablePayments, setDisablePayments] = useState(false);
   const [activeBoatingTickets, setActiveBoatingTickets] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
 
   const handleCheckout = async () => {
     setIsProcessing(true);
@@ -120,6 +122,7 @@ export default function BookingPage({ params }) {
   };
 
   const sendOtp = async (phoneNumber) => {
+    setSendingOtp(true);
     if (phoneNumber.startsWith('+91')) {
       phoneNumber = phoneNumber.slice(3); // Remove country code if present
     }
@@ -131,15 +134,20 @@ export default function BookingPage({ params }) {
         },
         body: JSON.stringify({ phoneNumber }),
       });
-      if (!response.ok) {
-        throw new Error('Failed to send OTP');
-      }
       const data = await response.json();
-      console.log('OTP sent successfully:', data);
-      // alert('OTP sent successfully! Please check your phone.');
+      if (!response.ok) {
+        // console.log(data);
+        alert(data.error || 'Failed to send OTP');
+        setSendingOtp(false);
+        return false;
+      }
+      // console.log('OTP sent successfully:', data);
+      setPhoneNumber(phoneNumber);
+      setSendingOtp(false);
       return true; // Indicate success
     } catch (error) {
-      console.error('Error sending OTP:', error);
+      // console.error('Error sending OTP:', error);
+      setSendingOtp(false);
       return false; // Indicate failure
     }
   };
@@ -158,26 +166,20 @@ export default function BookingPage({ params }) {
         throw new Error('Failed to verify OTP');
       }
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       if (data.error) {
         alert(data.error);
         setVerified(false);
         setVerifyingOtp(false);
         return false;
       }
-      // if (data.status === '500') {
-      //   alert('OTP expired!, please try again.');
-      //   setVerified(false);
-      //   setVerifyingOtp(false);
-      //   return false;
-      // }
-      console.log('OTP verified successfully:', data);
+      // console.log('OTP verified successfully:', data);
       alert('OTP verified successfully!');
       setVerifyingOtp(false);
       setVerified(true);
       return true;
     } catch (error) {
-      console.error('Error verifying OTP:', error);
+      // console.error('Error verifying OTP:', error);
       setVerified(false);
       setVerifyingOtp(false);
       return false;
@@ -264,6 +266,7 @@ export default function BookingPage({ params }) {
               service_provider: 'boating',
               origin: isVendorMode ? 'vendorPanel' : 'userPanel',
               user_phone: phoneNumber,
+              user_name: userName || user?.user_metadata?.full_name,
             },
           ])
           .select();
@@ -409,10 +412,6 @@ export default function BookingPage({ params }) {
     }
   }
 
-  // console.log(ticketNum);
-  // console.log(privateTicketNum);
-  // console.log(ticketNum);
-
   return (
     <div
       className="wrapper"
@@ -509,11 +508,15 @@ export default function BookingPage({ params }) {
                       if (![0, 30].includes(d.getMinutes())) {
                         d.setMinutes(0);
                       }
+                      if (
+                        d.getHours() >
+                        convertTime(boats.closing_time).getHours()
+                      ) {
+                        d.setHours(convertTime(boats.closing_time).getHours());
+                      }
                       d.setSeconds(0);
                       return d;
                     })();
-                    // console.log('Selected:', rawDate);
-                    // console.log('Now:', new Date());
                     if (rawDate > new Date()) {
                       setDateTime(newDate);
                       setShowFlag(true);
@@ -524,24 +527,26 @@ export default function BookingPage({ params }) {
                   timeIntervals={30}
                   dateFormat="MMMM d, yyyy h:mm aa"
                   className="datepicker"
-                  onCalendarOpen={() => setBlurFlag(true)} // Trigger when the popper opens
-                  onCalendarClose={() => setBlurFlag(false)} // Trigger when the popper closes
+                  onCalendarOpen={() => setBlurFlag(true)}
+                  onCalendarClose={() => setBlurFlag(false)}
                   minTime={
-                    // If today’s date matches selected date & current time has passed closing time, disable all time slots
-                    current_date.toDateString() === dateTime?.toDateString() &&
-                    new Date() > convertTime(boats.closing_time)
-                      ? convertTime(boats.closing_time) // Disable all slots
-                      : new Date() > convertTime(boats.opening_time) &&
-                        current_date.toDateString() === dateTime?.toDateString()
-                      ? new Date() // Allow selection from current time onwards if within hours
-                      : convertTime(boats.opening_time) // Default to opening time
+                    dateTime?.toDateString() === current_date.toDateString()
+                      ? new Date() > convertTime(boats.opening_time)
+                        ? new Date()
+                        : convertTime(boats.opening_time)
+                      : convertTime(boats.opening_time)
                   }
                   maxTime={convertTime(boats.closing_time)}
-                  filterTime={
-                    new Date() > convertTime(boats.closing_time)
-                      ? () => false
-                      : undefined
-                  }
+                  filterTime={(time) => {
+                    const selectedDate = dateTime?.toDateString();
+                    const isToday =
+                      selectedDate === current_date.toDateString();
+                    const isClosed =
+                      new Date() > convertTime(boats.closing_time);
+                    // Only restrict times if it's today and already closed
+                    if (isToday && isClosed) return false;
+                    return true;
+                  }}
                   minDate={new Date()} // Here we are setting min. date of the calender to the current date i.e. new Date() as we don't want the user to book tickets for the past
                   customInput={
                     <button className={styles.datepicker_button}>
@@ -754,7 +759,6 @@ export default function BookingPage({ params }) {
                         onSubmit={(e) => {
                           sendOtp(e.target.phoneNumber.value);
                           e.preventDefault();
-                          setPhoneNumber(e.target.phoneNumber.value);
                         }}
                         className={styles.phoneForm}
                       >
@@ -771,7 +775,7 @@ export default function BookingPage({ params }) {
                           required
                           maxLength="10"
                         />
-                        <button>Submit</button>
+                        <button>{sendingOtp?"Sending OTP...":"Submit"}</button>
                       </form>
                     ) : (
                       <form

@@ -31,7 +31,68 @@ export default function BookingPage({ params }) {
   const [savingTicket, setSavingTicket] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderId, setOrderId] = useState('');
-  // console.log(user);
+  const [verified, setVerified] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+
+  const sendOtp = async (phoneNumber) => {
+    if (phoneNumber.startsWith('+91')) {
+      phoneNumber = phoneNumber.slice(3); // Remove country code if present
+    }
+    try {
+      const response = await fetch('/api/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phoneNumber }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to send OTP');
+      }
+      const data = await response.json();
+      console.log('OTP sent successfully:', data);
+      // alert('OTP sent successfully! Please check your phone.');
+      return true; // Indicate success
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      return false; // Indicate failure
+    }
+  };
+
+  const verifyOtp = async (code) => {
+    try {
+      setVerifyingOtp(true);
+      const response = await fetch('/api/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phoneNumber, code }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to verify OTP');
+      }
+      const data = await response.json();
+      console.log(data);
+      if (data.error) {
+        alert(data.error);
+        setVerified(false);
+        setVerifyingOtp(false);
+        return false;
+      }
+      console.log('OTP verified successfully:', data);
+      alert('OTP verified successfully!');
+      setVerifyingOtp(false);
+      setVerified(true);
+      return true;
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      setVerified(false);
+      setVerifyingOtp(false);
+      return false;
+    }
+  };
 
   const handlePayment = async () => {
     let breakFlag = false;
@@ -50,6 +111,10 @@ export default function BookingPage({ params }) {
     }
     if (breakFlag && !showFlag) {
       alert('Choose a time slot!');
+      return;
+    }
+    if (verified === false) {
+      alert('Please verify your phone number before proceeding to checkout.');
       return;
     }
     setIsProcessing(true);
@@ -106,27 +171,6 @@ export default function BookingPage({ params }) {
   // Object.keys() → Best if you only need keys.
   // Object.values() → Best if you only need values.
   // function handleCheckout() {
-  //   let breakFlag = false;
-  //   for (let i = 0; i < Object.values(ticketNum).length; i++) {
-  //     if (Object.values(ticketNum)[i] > 0) {
-  //       breakFlag = true;
-  //       break;
-  //     }
-  //     if (
-  //       i == Object.values(ticketNum).length - 1 &&
-  //       Object.values(ticketNum)[i] == 0
-  //     ) {
-  //       alert("Select at least 1 ticket before the checkout");
-  //       return;
-  //     }
-  //   }
-  //   if (breakFlag && !showFlag) {
-  //     alert("Choose a time slot!");
-  //     return;
-  //   }
-  //   const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
-  //   setTicketId(referenceId);
-  // }
 
   useEffect(() => {
     if (!ticketId || !user?.id) return; // Ensure required fields are available
@@ -152,7 +196,6 @@ export default function BookingPage({ params }) {
           return;
         }
         if (data) {
-          // console.log("✅ Ticket saved successfully:", data);
           router.push(`/ticket?q=${encodeURIComponent(ticketId)}`);
         }
       } catch (err) {
@@ -308,36 +351,55 @@ export default function BookingPage({ params }) {
                 <DatePicker
                   selected={dateTime}
                   onChange={(date) => {
-                    setDateTime(date);
-                    setShowFlag(true);
+                    const rawDate = new Date(date);
+                    const newDate = (() => {
+                      const d = new Date(date);
+                      if (![0, 30].includes(d.getMinutes())) {
+                        d.setMinutes(0);
+                      }
+                      if (
+                        d.getHours() >
+                        convertTime(monument.closing_time).getHours()
+                      ) {
+                        d.setHours(convertTime(monument.closing_time).getHours());
+                      }
+                      d.setSeconds(0);
+                      return d;
+                    })();
+                    if (rawDate > new Date()) {
+                      setDateTime(newDate);
+                      setShowFlag(true);
+                    }
                   }}
                   showTimeSelect
                   timeFormat="hh:mm aa"
                   timeIntervals={30}
                   dateFormat="MMMM d, yyyy h:mm aa"
                   className="datepicker"
-                  onCalendarOpen={() => setBlurFlag(true)} // Trigger when the popper opens
-                  onCalendarClose={() => setBlurFlag(false)} // Trigger when the popper closes
+                  onCalendarOpen={() => setBlurFlag(true)}
+                  onCalendarClose={() => setBlurFlag(false)}
                   minTime={
-                    // If today’s date matches selected date & current time has passed closing time, disable all time slots
-                    current_date.toDateString() === dateTime.toDateString() &&
-                    new Date() > convertTime(monument.closing_time)
-                      ? convertTime(monument.closing_time) // Disable all slots
-                      : new Date() > convertTime(monument.opening_time) &&
-                        current_date.toDateString() === dateTime.toDateString()
-                      ? new Date() // Allow selection from current time onwards if within hours
-                      : convertTime(monument.opening_time) // Default to opening time
+                    dateTime?.toDateString() === current_date.toDateString()
+                      ? new Date() > convertTime(monument.opening_time)
+                        ? new Date()
+                        : convertTime(monument.opening_time)
+                      : convertTime(monument.opening_time)
                   }
-                  maxTime={
-                    current_date.toDateString() === dateTime.toDateString() &&
-                    new Date() > convertTime(monument.closing_time)
-                      ? convertTime(monument.closing_time) // Disable all slots
-                      : convertTime(monument.closing_time)
-                  }
+                  maxTime={convertTime(monument.closing_time)}
+                  filterTime={(time) => {
+                    const selectedDate = dateTime?.toDateString();
+                    const isToday =
+                      selectedDate === current_date.toDateString();
+                    const isClosed =
+                      new Date() > convertTime(monument.closing_time);
+                    // Only restrict times if it's today and already closed
+                    if (isToday && isClosed) return false;
+                    return true;
+                  }}
                   minDate={new Date()} // Here we are setting min. date of the calender to the current date i.e. new Date() as we don't want the user to book tickets for the past
                   customInput={
                     <button className={styles.datepicker_button}>
-                      {dateTime.toLocaleString() && showFlag
+                      {showFlag && dateTime
                         ? dateTime.toLocaleString()
                         : 'Select Date & Time'}
                     </button>
@@ -580,6 +642,110 @@ export default function BookingPage({ params }) {
                   </div>
                 </section>
               </div>
+              {!verified && (
+                <section className={styles.otpSection}>
+                  {phoneNumber.length === 0 ? (
+                    <form
+                      onSubmit={(e) => {
+                        sendOtp(e.target.phoneNumber.value);
+                        e.preventDefault();
+                        setPhoneNumber(e.target.phoneNumber.value);
+                      }}
+                      className={styles.phoneForm}
+                    >
+                      <label htmlFor="phoneNumber">Enter Mobile Number:</label>
+                      {/* "maxLength" does not work for "type='number'" so use like below */}
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        name="phoneNumber"
+                        id=""
+                        required
+                        maxLength="10"
+                      />
+                      <button>Submit</button>
+                    </form>
+                  ) : (
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        verifyOtp(
+                          Array.from(
+                            { length: 6 },
+                            (_, i) => e.target[`otp${i + 1}`].value,
+                          ).join(''),
+                        );
+                      }}
+                      className={styles.otpForm}
+                    >
+                      <label htmlFor="otp1">Enter OTP: </label>
+                      <section>
+                        {[...Array(6)].map((_, index) => (
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            name={`otp${index + 1}`}
+                            key={index}
+                            // maxLength="1"
+                            required
+                            onKeyDown={(e) => {
+                              // handle backspace on empty input to focus previous input
+                              const previous = e.target.previousElementSibling;
+                              if (
+                                e.key === 'Backspace' &&
+                                e.target.value === '' &&
+                                previous
+                              ) {
+                                previous.focus();
+                              }
+                            }}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              const form = e.target.form;
+                              if (value.length > 1) {
+                                // Autofill or pasted OTP (from Gboard or iOS suggestion)
+                                const chars = value.slice(0, 6).split('');
+                                chars.forEach((char, idx) => {
+                                  const input = form[`otp${idx + 1}`];
+                                  if (input) input.value = char;
+                                });
+                                // Focus last filled box
+                                const last = form[`otp${chars.length}`];
+                                if (last) last.focus();
+                              } else {
+                                // Normal typing or backspace
+                                const next = e.target.nextElementSibling;
+                                const prev = e.target.previousElementSibling;
+                                if (value && next) next.focus();
+                                if (!value && prev) prev.focus();
+                              }
+                            }}
+                            onPaste={(e) => {
+                              e.preventDefault();
+                              const pasteData = e.clipboardData
+                                .getData('text')
+                                .slice(0, 6)
+                                .split('');
+                              pasteData.forEach((char, idx) => {
+                                const input = e.target.form[`otp${idx + 1}`];
+                                if (input) input.value = char;
+                              });
+                              const last =
+                                e.target.form[`otp${pasteData.length}`];
+                              if (last) last.focus();
+                            }}
+                          />
+                        ))}
+                      </section>
+                      <button>
+                        {verifyingOtp ? 'Verifying...' : 'Verify'}
+                      </button>
+                    </form>
+                  )}
+                </section>
+              )}
               <section className={styles.timings}>
                 <h3>Summary</h3>
                 <div>
