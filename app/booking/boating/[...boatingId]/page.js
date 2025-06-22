@@ -794,6 +794,7 @@ export default function BookingPage({ params }) {
                               maxLength={1}
                               required
                               onKeyDown={(e) => {
+                                // handle backspace on empty input to focus previous input
                                 const previous =
                                   e.target.previousElementSibling;
                                 if (
@@ -804,14 +805,26 @@ export default function BookingPage({ params }) {
                                   previous.focus();
                                 }
                               }}
-                              onInput={(e) => {
+                              onChange={(e) => {
                                 const value = e.target.value;
-                                const next = e.target.nextElementSibling;
-                                const previous =
-                                  e.target.previousElementSibling;
-                                if (value.length === 1 && next) next.focus();
-                                if (value.length === 0 && previous)
-                                  previous.focus();
+                                const form = e.target.form;
+                                if (value.length > 1) {
+                                  // Autofill or pasted OTP (from Gboard or iOS suggestion)
+                                  const chars = value.slice(0, 6).split('');
+                                  chars.forEach((char, idx) => {
+                                    const input = form[`otp${idx + 1}`];
+                                    if (input) input.value = char;
+                                  });
+                                  // Focus last filled box
+                                  const last = form[`otp${chars.length}`];
+                                  if (last) last.focus();
+                                } else {
+                                  // Normal typing or backspace
+                                  const next = e.target.nextElementSibling;
+                                  const prev = e.target.previousElementSibling;
+                                  if (value && next) next.focus();
+                                  if (!value && prev) prev.focus();
+                                }
                               }}
                               onPaste={(e) => {
                                 e.preventDefault();
