@@ -775,7 +775,9 @@ export default function BookingPage({ params }) {
                           required
                           maxLength="10"
                         />
-                        <button>{sendingOtp?"Sending OTP...":"Submit"}</button>
+                        <button disabled={sendingOtp}>
+                          {sendingOtp ? 'Sending OTP...' : 'Submit'}
+                        </button>
                       </form>
                     ) : (
                       <form
@@ -851,7 +853,7 @@ export default function BookingPage({ params }) {
                             />
                           ))}
                         </section>
-                        <button>
+                        <button disabled={verifyingOtp}>
                           {verifyingOtp ? 'Verifying...' : 'Verify'}
                         </button>
                       </form>

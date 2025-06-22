@@ -34,8 +34,10 @@ export default function BookingPage({ params }) {
   const [verified, setVerified] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
 
   const sendOtp = async (phoneNumber) => {
+    setSendingOtp(true);
     if (phoneNumber.startsWith('+91')) {
       phoneNumber = phoneNumber.slice(3); // Remove country code if present
     }
@@ -47,15 +49,20 @@ export default function BookingPage({ params }) {
         },
         body: JSON.stringify({ phoneNumber }),
       });
-      if (!response.ok) {
-        throw new Error('Failed to send OTP');
-      }
       const data = await response.json();
-      console.log('OTP sent successfully:', data);
-      // alert('OTP sent successfully! Please check your phone.');
+      if (!response.ok) {
+        // console.log(data);
+        alert(data.error || 'Failed to send OTP');
+        setSendingOtp(false);
+        return false;
+      }
+      // console.log('OTP sent successfully:', data);
+      setPhoneNumber(phoneNumber);
+      setSendingOtp(false);
       return true; // Indicate success
     } catch (error) {
-      console.error('Error sending OTP:', error);
+      // console.error('Error sending OTP:', error);
+      setSendingOtp(false);
       return false; // Indicate failure
     }
   };
@@ -74,20 +81,20 @@ export default function BookingPage({ params }) {
         throw new Error('Failed to verify OTP');
       }
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       if (data.error) {
         alert(data.error);
         setVerified(false);
         setVerifyingOtp(false);
         return false;
       }
-      console.log('OTP verified successfully:', data);
+      // console.log('OTP verified successfully:', data);
       alert('OTP verified successfully!');
       setVerifyingOtp(false);
       setVerified(true);
       return true;
     } catch (error) {
-      console.error('Error verifying OTP:', error);
+      // console.error('Error verifying OTP:', error);
       setVerified(false);
       setVerifyingOtp(false);
       return false;
@@ -361,7 +368,9 @@ export default function BookingPage({ params }) {
                         d.getHours() >
                         convertTime(monument.closing_time).getHours()
                       ) {
-                        d.setHours(convertTime(monument.closing_time).getHours());
+                        d.setHours(
+                          convertTime(monument.closing_time).getHours(),
+                        );
                       }
                       d.setSeconds(0);
                       return d;
@@ -664,7 +673,9 @@ export default function BookingPage({ params }) {
                         required
                         maxLength="10"
                       />
-                      <button>Submit</button>
+                      <button disabled={sendingOtp}>
+                        {sendingOtp ? 'Sending OTP...' : 'Submit'}
+                      </button>
                     </form>
                   ) : (
                     <form
@@ -739,7 +750,7 @@ export default function BookingPage({ params }) {
                           />
                         ))}
                       </section>
-                      <button>
+                      <button disabled={verifyingOtp}>
                         {verifyingOtp ? 'Verifying...' : 'Verify'}
                       </button>
                     </form>
