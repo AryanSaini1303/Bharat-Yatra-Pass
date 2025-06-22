@@ -33,6 +33,9 @@ export default function BookingPage({ params }) {
   const isVendorMode = searchParams.get('mode') === 'vendor';
   const [disablePayments, setDisablePayments] = useState(false);
   const [activeBoatingTickets, setActiveBoatingTickets] = useState([]);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [verified, setVerified] = useState(false);
 
   const handleCheckout = async () => {
     setIsProcessing(true);
@@ -47,6 +50,11 @@ export default function BookingPage({ params }) {
     }
     if (!hasPublicSeats && !hasPrivateBoats) {
       alert('Select at least 1 seat or a private boat before checkout');
+      setIsProcessing(false);
+      return;
+    }
+    if (verified === false) {
+      alert('Please verify your phone number before proceeding to checkout.');
       setIsProcessing(false);
       return;
     }
@@ -98,7 +106,7 @@ export default function BookingPage({ params }) {
           }
         }
       }
-      if (disablePayments) {
+      if (!disablePayments) {
         const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
         setTicketId(referenceId);
       } else {
@@ -108,6 +116,71 @@ export default function BookingPage({ params }) {
       console.error('Checkout validation error:', error);
       setIsProcessing(false);
       alert('Something went wrong. Please try again.');
+    }
+  };
+
+  const sendOtp = async (phoneNumber) => {
+    if (phoneNumber.startsWith('+91')) {
+      phoneNumber = phoneNumber.slice(3); // Remove country code if present
+    }
+    try {
+      const response = await fetch('/api/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phoneNumber }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to send OTP');
+      }
+      const data = await response.json();
+      console.log('OTP sent successfully:', data);
+      // alert('OTP sent successfully! Please check your phone.');
+      return true; // Indicate success
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      return false; // Indicate failure
+    }
+  };
+
+  const verifyOtp = async (code) => {
+    try {
+      setVerifyingOtp(true);
+      const response = await fetch('/api/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phoneNumber, code }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to verify OTP');
+      }
+      const data = await response.json();
+      console.log(data);
+      if (data.error) {
+        alert(data.error);
+        setVerified(false);
+        setVerifyingOtp(false);
+        return false;
+      }
+      // if (data.status === '500') {
+      //   alert('OTP expired!, please try again.');
+      //   setVerified(false);
+      //   setVerifyingOtp(false);
+      //   return false;
+      // }
+      console.log('OTP verified successfully:', data);
+      alert('OTP verified successfully!');
+      setVerifyingOtp(false);
+      setVerified(true);
+      return true;
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      setVerified(false);
+      setVerifyingOtp(false);
+      return false;
     }
   };
 
@@ -190,6 +263,7 @@ export default function BookingPage({ params }) {
               service_provider_id: boats.id,
               service_provider: 'boating',
               origin: isVendorMode ? 'vendorPanel' : 'userPanel',
+              user_phone: phoneNumber,
             },
           ])
           .select();
@@ -673,6 +747,96 @@ export default function BookingPage({ params }) {
                     </div>
                   ))}
                 </div>
+                {!verified && (
+                  <section className={styles.otpSection}>
+                    {phoneNumber.length === 0 ? (
+                      <form
+                        onSubmit={(e) => {
+                          sendOtp(e.target.phoneNumber.value);
+                          e.preventDefault();
+                          setPhoneNumber(e.target.phoneNumber.value);
+                        }}
+                        className={styles.phoneForm}
+                      >
+                        <label htmlFor="phoneNumber">
+                          Enter Mobile Number:
+                        </label>
+                        <input
+                          type="number"
+                          name="phoneNumber"
+                          id=""
+                          required
+                        />
+                        <button>Submit</button>
+                      </form>
+                    ) : (
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          verifyOtp(
+                            Array.from(
+                              { length: 6 },
+                              (_, i) => e.target[`otp${i + 1}`].value,
+                            ).join(''),
+                          );
+                        }}
+                        className={styles.otpForm}
+                      >
+                        <label htmlFor="otp1">Enter OTP: </label>
+                        <section>
+                          {[...Array(6)].map((_, index) => (
+                            <input
+                              type="number"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
+                              name={`otp${index + 1}`}
+                              key={index}
+                              maxLength={1}
+                              required
+                              onKeyDown={(e) => {
+                                const previous =
+                                  e.target.previousElementSibling;
+                                if (
+                                  e.key === 'Backspace' &&
+                                  e.target.value === '' &&
+                                  previous
+                                ) {
+                                  previous.focus();
+                                }
+                              }}
+                              onInput={(e) => {
+                                const value = e.target.value;
+                                const next = e.target.nextElementSibling;
+                                const previous =
+                                  e.target.previousElementSibling;
+                                if (value.length === 1 && next) next.focus();
+                                if (value.length === 0 && previous)
+                                  previous.focus();
+                              }}
+                              onPaste={(e) => {
+                                e.preventDefault();
+                                const pasteData = e.clipboardData
+                                  .getData('text')
+                                  .slice(0, 6)
+                                  .split('');
+                                pasteData.forEach((char, idx) => {
+                                  const input = e.target.form[`otp${idx + 1}`];
+                                  if (input) input.value = char;
+                                });
+                                const last =
+                                  e.target.form[`otp${pasteData.length}`];
+                                if (last) last.focus();
+                              }}
+                            />
+                          ))}
+                        </section>
+                        <button>
+                          {verifyingOtp ? 'Verifying...' : 'Verify'}
+                        </button>
+                      </form>
+                    )}
+                  </section>
+                )}
                 <section className={styles.timings}>
                   <h3>Summary</h3>
                   <div>
