@@ -38,6 +38,8 @@ export default function BookingPage({ params }) {
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [verified, setVerified] = useState(false);
   const [sendingOtp, setSendingOtp] = useState(false);
+  const [vendorAmount, setVendorAmount] = useState(0);
+  const [adminAmount, setAdminAmount] = useState(0);
 
   const handleCheckout = async () => {
     setIsProcessing(true);
@@ -55,11 +57,11 @@ export default function BookingPage({ params }) {
       setIsProcessing(false);
       return;
     }
-    if (verified === false) {
-      alert('Please verify your phone number before proceeding to checkout.');
-      setIsProcessing(false);
-      return;
-    }
+    // if (verified === false) {
+    //   alert('Please verify your phone number before proceeding to checkout.');
+    //   setIsProcessing(false);
+    //   return;
+    // }
     try {
       const res1 = await fetch(`/api/fetchBoatingTickets`);
       const data1 = await res1.json();
@@ -194,13 +196,13 @@ export default function BookingPage({ params }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ totalAmount }), // sending amount to backend
+        body: JSON.stringify({ totalAmount, vendorAmount, adminAmount }), // sending amount to backend
       });
       const data = await response.json();
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: totalAmount * 100,
-        current: 'INR',
+        currency: 'INR',
         name: 'PERIMETER NETWORK PRIVATE LIMITED',
         description: 'This is a trasaction for the ticket',
         order_id: data.orderId,
@@ -265,7 +267,7 @@ export default function BookingPage({ params }) {
               service_provider_id: boats.id,
               service_provider: 'boating',
               origin: isVendorMode ? 'vendorPanel' : 'userPanel',
-              user_phone: phoneNumber,
+              // user_phone: phoneNumber,
               user_name: userName || user?.user_metadata?.full_name,
             },
           ])
@@ -391,17 +393,38 @@ export default function BookingPage({ params }) {
 
   useEffect(() => {
     if (Object.keys(boats).length === 0) return;
-    const publicPrice =
-      Object.values(ticketNum).reduce((acc, value) => acc + value.booked, 0) *
-      boats.boats[0].publicSeatPrice;
-    const privatePrice = ticketNum.reduce((sum, ticket) => {
+    // Total public tickets
+    const totalPublicTickets = Object.values(ticketNum).reduce(
+      (acc, value) => acc + value.booked,
+      0,
+    );
+    // Public seat prices
+    const publicPrice = totalPublicTickets * boats.boats[0].publicSeatPrice;
+    const adminPublicEarnings = totalPublicTickets * 100;
+    // Private seat prices and earnings
+    let privatePrice = 0;
+    let adminPrivateEarnings = 0;
+    ticketNum.forEach((ticket) => {
       if (ticket.isBookedPrivate) {
         const boat = boats.boats.find((b) => b.name === ticket.name);
-        return sum + (boat?.privateBoatPrice || 0);
+        if (boat) {
+          privatePrice += boat.privateBoatPrice;
+          // Admin share per boat
+          if (boat.name === 'Boat1') {
+            adminPrivateEarnings += 500;
+          } else if (boat.name === 'Boat2') {
+            adminPrivateEarnings += 4000;
+          }
+        }
       }
-      return sum;
-    }, 0);
-    setTotalAmount(() => publicPrice + privatePrice);
+    });
+    const totalAmount = publicPrice + privatePrice;
+    const adminAmount = adminPublicEarnings + adminPrivateEarnings;
+    const vendorAmount = totalAmount - adminAmount;
+    setTotalAmount(() => totalAmount);
+    setAdminAmount(adminAmount);
+    setVendorAmount(vendorAmount);
+    // console.log({ totalAmount, adminAmount, vendorAmount });
   }, [ticketNum, boats]);
 
   if (loadingUser) {
@@ -752,7 +775,7 @@ export default function BookingPage({ params }) {
                     </div>
                   ))}
                 </div>
-                {!verified && (
+                {/* {!verified && (
                   <section className={styles.otpSection}>
                     {phoneNumber.length === 0 ? (
                       <form
@@ -765,7 +788,6 @@ export default function BookingPage({ params }) {
                         <label htmlFor="phoneNumber">
                           Enter Mobile Number:
                         </label>
-                        {/* "maxLength" does not work for "type='number'" so use like below */}
                         <input
                           type="text"
                           inputMode="numeric"
@@ -804,7 +826,6 @@ export default function BookingPage({ params }) {
                               // maxLength="1"
                               required
                               onKeyDown={(e) => {
-                                // handle backspace on empty input to focus previous input
                                 const previous =
                                   e.target.previousElementSibling;
                                 if (
@@ -819,17 +840,14 @@ export default function BookingPage({ params }) {
                                 const value = e.target.value;
                                 const form = e.target.form;
                                 if (value.length > 1) {
-                                  // Autofill or pasted OTP (from Gboard or iOS suggestion)
                                   const chars = value.slice(0, 6).split('');
                                   chars.forEach((char, idx) => {
                                     const input = form[`otp${idx + 1}`];
                                     if (input) input.value = char;
                                   });
-                                  // Focus last filled box
                                   const last = form[`otp${chars.length}`];
                                   if (last) last.focus();
                                 } else {
-                                  // Normal typing or backspace
                                   const next = e.target.nextElementSibling;
                                   const prev = e.target.previousElementSibling;
                                   if (value && next) next.focus();
@@ -859,7 +877,7 @@ export default function BookingPage({ params }) {
                       </form>
                     )}
                   </section>
-                )}
+                )} */}
                 <section className={styles.timings}>
                   <h3>Summary</h3>
                   <div>

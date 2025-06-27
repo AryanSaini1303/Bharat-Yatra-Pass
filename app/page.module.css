@@ -214,6 +214,7 @@
   color: white;
   z-index: 1;
   transition: all 0.2s ease-in-out;
+  width: 90%;
 }
 .monumentList .info * {
   margin: 0.1rem 0;

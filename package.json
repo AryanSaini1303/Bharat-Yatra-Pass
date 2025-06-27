@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
+    "bitly": "^7.1.2",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
     "flatpickr": "^4.6.13",
+    "html2canvas": "^1.4.1",
     "html5-qrcode": "^2.3.8",
     "jsonwebtoken": "^9.0.2",
     "next": "15.2.1",

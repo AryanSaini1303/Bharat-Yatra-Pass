@@ -5,6 +5,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { supabase } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import Loader from './loader';
+import html2canvas from 'html2canvas';
 
 export default function Ticket() {
   const searchParams = useSearchParams();
@@ -14,6 +15,7 @@ export default function Ticket() {
   const [user, setUser] = useState();
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingDetails, setLoadingDetails] = useState(true);
+  const [ticketImage, setTicketImage] = useState('');
   const dateObj = new Date(ticketDetails?.dateTime);
   const router = useRouter();
   const date = dateObj.toLocaleDateString('en-US', {
@@ -26,6 +28,17 @@ export default function Ticket() {
     minute: '2-digit',
     hour12: 'true',
   });
+
+  async function convertImageUrlToBase64(url) {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result); // base64 string
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -53,6 +66,10 @@ export default function Ticket() {
         const data = await response.json();
         setType(Array.isArray(data.ticketNum) ? 'boating' : 'monuments');
         setTicketDetails(data);
+        const image = await convertImageUrlToBase64(data.monumentImage);
+        // console.log(image);
+        setTicketImage(image);
+        // console.log(data);
         setLoadingDetails(false);
       } catch (error) {
         console.error('Error fetching ticket:', error);
@@ -61,6 +78,40 @@ export default function Ticket() {
     };
     fetchTicket();
   }, []);
+
+  useEffect(() => {
+    if (ticketDetails.ticket_sent) return;
+    (async () => {
+      const element = document.getElementById('ticketSection');
+      if (!element) return;
+      // const image = document.getElementById('ticketImage');
+      // await waitForImageToLoad(image);
+      const canvas = await html2canvas(element);
+      try {
+        const blob = await new Promise((resolve) => {
+          canvas.toBlob((b) => resolve(b), 'image/png');
+        });
+        if (!blob) return;
+        const formData = new FormData();
+        formData.append('file', blob, 'ticket.png');
+        formData.append('phone', ticketDetails.user_phone);
+        formData.append('user_id', ticketDetails.user_id)
+        // const response = await fetch('/api/shareTicket', {
+        //   method: 'POST',
+        //   body: formData,
+        // });
+        // const data = await response.json();
+        // console.log(data);
+        // if (response.ok) {
+        //   // alert('📤 Ticket sent via WhatsApp!');
+        // } else {
+        //   // alert('❌ Failed to send ticket via WhatsApp, please try refeshing the page.',);
+        // }
+      } catch (error) {
+        console.log(error.message);
+      }
+    })();
+  }, [ticketDetails, ticketImage]);
 
   if (loadingUser) {
     return <Loader margin={'15rem auto'} />;
@@ -100,12 +151,17 @@ export default function Ticket() {
         </p>
       ) : (
         <div className={styles.ticketSectionContainer}>
-          <section className={styles.ticketSection}>
+          <section className={styles.ticketSection} id="ticketSection">
             <div className={styles.borderCircle}></div>
             <div className={styles.borderCircle}></div>
             <div className={styles.borderCircle}></div>
             <div className={styles.borderCircle}></div>
-            <img src={ticketDetails.monumentImage} alt="" />
+            <img
+              src={ticketImage}
+              alt="Ticket image"
+              id="ticketImage"
+              // crossOrigin="anonymous"
+            />
             <h2>{ticketDetails.monumentName}</h2>
             <h3>{ticketDetails.monumentCity}</h3>
             <section className={styles.dateTime}>
