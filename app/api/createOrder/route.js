@@ -12,6 +12,7 @@ export async function POST(request) {
     const totalAmount = body.totalAmount;
     const vendorAmount = body.vendorAmount;
     const adminAmount = body.adminAmount;
+    const vendorAccount = body.account;
     const order = await new Promise((resolve, reject) => {
       razorpay.orders.create(
         {
@@ -30,7 +31,7 @@ export async function POST(request) {
             //   notes: { role: 'main' },
             // },
             {
-              account: 'acc_Qhr7J5w8x5kLST', // udai kothi
+              account: vendorAccount, // vendor account
               amount: vendorAmount * 100,
               currency: 'INR',
               notes: { role: 'vendor' },

@@ -156,13 +156,19 @@ export default function BookingPage({ params }) {
 
   const handlePayment = async () => {
     setIsProcessing(true);
+    const account = process.env.NEXT_PUBLIC_THEATRE_VENDOR_ACCOUNT;
     try {
       const response = await fetch('/api/createOrder', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ totalAmount, vendorAmount, adminAmount }), // sending amount to backend
+        body: JSON.stringify({
+          totalAmount,
+          vendorAmount,
+          adminAmount,
+          account,
+        }), // sending amount to backend
       });
       const data = await response.json();
       const options = {
@@ -340,7 +346,7 @@ export default function BookingPage({ params }) {
   useEffect(() => {
     if (Object.keys(theatre).length === 0) return;
     const totalAmount = ticketNum.booked * ticketNum.price;
-    const adminAmount = ticketNum.booked * 50; // admin takes 50 rupees per ticket
+    const adminAmount = ticketNum.booked * 100; // admin takes 100 rupees per ticket
     const vendorAmount = totalAmount - adminAmount;
     setTotalAmount(() => totalAmount);
     setAdminAmount(adminAmount);
@@ -505,7 +511,8 @@ export default function BookingPage({ params }) {
                 />
               </div>
             </section>
-            {showFlag && theatreAvailability.length !== 0 ? (
+            {showFlag &&
+            theatreAvailability.capacity - theatreAvailability.booked !== 0 ? (
               <section
                 className={styles.ticketsSection}
                 style={blurFlag ? { filter: 'blur(10px)' } : null}

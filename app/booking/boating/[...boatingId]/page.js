@@ -190,13 +190,19 @@ export default function BookingPage({ params }) {
 
   const handlePayment = async () => {
     setIsProcessing(true);
+    const account = process.env.NEXT_PUBLIC_BOATING_VENDOR_ACCOUNT;
     try {
       const response = await fetch('/api/createOrder', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ totalAmount, vendorAmount, adminAmount }), // sending amount to backend
+        body: JSON.stringify({
+          totalAmount,
+          vendorAmount,
+          adminAmount,
+          account,
+        }), // sending amount to backend
       });
       const data = await response.json();
       const options = {
@@ -400,7 +406,7 @@ export default function BookingPage({ params }) {
     );
     // Public seat prices
     const publicPrice = totalPublicTickets * boats.boats[0].publicSeatPrice;
-    const adminPublicEarnings = totalPublicTickets * 100;// admin takes 100 rupees per public ticket
+    const adminPublicEarnings = totalPublicTickets * 100; // admin takes 100 rupees per public ticket
     // Private seat prices and earnings
     let privatePrice = 0;
     let adminPrivateEarnings = 0;
