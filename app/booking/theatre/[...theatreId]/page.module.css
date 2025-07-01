@@ -1,0 +1,256 @@
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.header svg {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.header svg:active {
+  opacity: 0.5;
+}
+.container {
+  /* width: 90%; */
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+  animation: reveal 0.5s ease-in-out forwards;
+}
+@keyframes reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.container img {
+  /* width: 100%; */
+  width: 100%;
+  margin: auto;
+  border-radius: 10px;
+  box-shadow: 0 8px 5px black;
+}
+.container section * {
+  margin: 0.5rem 0;
+}
+.container section p {
+  font-size: 0.9rem;
+}
+.container .info {
+  margin: 1rem 0;
+  padding-bottom: 1rem;
+  border-bottom: dashed 2px black;
+}
+.timings .time {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+.timings p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+}
+.booking section h3 {
+  margin: 0;
+}
+.dateTimePicker input {
+  margin: 0;
+  padding: 0.5rem 0.5rem;
+  border-radius: 10px;
+  border: dashed grey 1.5px;
+  min-width: 60vw;
+}
+.dateTimePicker > div {
+  margin: 0;
+}
+.blurClass {
+  filter: blur(10px);
+}
+.tickets section {
+  display: flex;
+  justify-content: space-between;
+}
+.tickets .counter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+}
+.tickets {
+  border: solid black 1px;
+  border-radius: 20px;
+  padding: 0 1.5rem;
+  background-color: #f7eddd;
+}
+.ticketsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ticketInfo h1 {
+  font-size: 1.1rem;
+  font-weight: normal;
+}
+.ticketInfo h4 {
+  color: grey;
+  font-weight: normal;
+}
+.tickets .counter svg {
+  transition: all 0.2s ease-in-out;
+}
+.tickets .counter svg:active {
+  transform: scale(0.95);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.74));
+}
+.checkout {
+  padding: 1rem 0;
+  margin: 1rem 0;
+  border-radius: 60px;
+  background-color: black;
+  color: white;
+  font-size: 1.2rem;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 6px 5px rgb(69, 69, 69);
+  border: none;
+  cursor: pointer;
+}
+.checkout:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+  box-shadow: 0 2px 2px rgb(69, 69, 69);
+}
+.totalAmount {
+  border: dashed grey 2px;
+  border-radius: 5px;
+  padding: 0 0.5rem;
+  font-weight: bolder;
+}
+.datepicker_button {
+  border-radius: 60px;
+  border: dashed grey 2px;
+  overflow: hidden;
+  padding: 0.5rem 1rem;
+  background-color: #f7eddd;
+}
+.counter h1 {
+  font-weight: normal;
+}
+
+.otpSection {
+  border-radius: 16px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: #000;
+  width: fit-content;
+  padding: 0 1rem;
+  border: 1px solid black;
+}
+
+.otpSection input::-webkit-outer-spin-button, .otpSection input::-webkit-inner-spin-button{
+  display: none;
+  margin: 0;
+}
+
+.phoneForm,
+.otpForm {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.phoneForm input[type='text'] {
+  padding: 0.4rem 0.8rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: #000;
+}
+.otpForm input[type='text'] {
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: #000;
+  margin: 0;
+}
+
+.otpForm {
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+
+
+.otpForm input[type='text'] {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  text-align: center;
+  border: 2px solid #fff;
+  outline: none;
+  margin: 0 0.2rem;
+  transition: border-color 0.2s ease-in-out;
+  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.358);
+}
+
+.otpForm input[type='text']:focus {
+  border-color: #000;
+}
+
+.phoneForm button,
+.otpForm button {
+  background-color: white;
+  color: black;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease-in-out;
+}
+
+.phoneForm button:hover,
+.otpForm button:hover {
+  background-color: #eee;
+}
+
+@media only screen and (min-width: 600px) {
+  .container img {
+    display: none;
+  }
+}
+
+@media only screen and (max-width:546px){
+  .phoneForm{
+    flex-direction: column;
+    gap: 0;
+  }
+  .phoneForm input[type='text'] {
+    max-width: 60%;
+    text-align: center;
+  }
+  .otpSection{
+    width: 100%;
+    padding: 0;
+  }
+  .otpForm{
+    flex-direction: column;
+    gap: 0;
+  }
+}

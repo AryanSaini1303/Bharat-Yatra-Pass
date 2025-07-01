@@ -1,12 +1,14 @@
 import { supabase } from '@/lib/supabaseClient';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const type = searchParams.get('type') || false;
   try {
     const { data, error } = await supabase
       .from('tickets')
       .select("ticketNum, dateTime")
-      .match({ service_provider: 'boating', status: 'active' });
+      .match({ service_provider: type, status: 'active' });
     if (error) {
       throw error;
     }

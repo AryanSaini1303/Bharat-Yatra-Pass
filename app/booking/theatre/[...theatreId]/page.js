@@ -10,16 +10,16 @@ import Loader from '@/components/loader';
 import Script from 'next/script';
 
 export default function BookingPage({ params }) {
-  const { boatingId } = use(params);
+  const { theatreId } = use(params);
   const router = useRouter();
-  const [boats, setBoats] = useState({});
-  const [boatsAvailability, setBoatsAvailability] = useState([]);
-  const [loadingBoats, setLoadingBoats] = useState(true);
+  const [theatre, setTheaters] = useState({});
+  const [theatreAvailability, setTheatreAvailability] = useState({});
+  const [loadingTheatre, setLoadingTheatre] = useState(true);
   const [user, setUser] = useState();
   const [loadingUser, setLoadingUser] = useState(true);
   const [dateTime, setDateTime] = useState(new Date());
   const [blurFlag, setBlurFlag] = useState(false);
-  const [ticketNum, setTicketNum] = useState([]);
+  const [ticketNum, setTicketNum] = useState({});
   const [totalAmount, setTotalAmount] = useState(0);
   const current_date = new Date();
   const [showFlag, setShowFlag] = useState(false);
@@ -33,7 +33,7 @@ export default function BookingPage({ params }) {
   const isVendorMode = searchParams.get('mode') === 'vendor';
   const userName = searchParams.get('userName');
   const [disablePayments, setDisablePayments] = useState(false);
-  const [activeBoatingTickets, setActiveBoatingTickets] = useState([]);
+  const [activeTheatreTickets, setActiveTheatreTickets] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [verified, setVerified] = useState(false);
@@ -43,17 +43,14 @@ export default function BookingPage({ params }) {
 
   const handleCheckout = async () => {
     setIsProcessing(true);
-    const hasPublicSeats = ticketNum.some(
-      (ticket) => !ticket.isBookedPrivate && ticket.booked > 0,
-    );
-    const hasPrivateBoats = ticketNum.some((ticket) => ticket.isBookedPrivate);
+    const hasSeats = ticketNum.booked > 0;
     if (!showFlag) {
       alert('Choose a time slot!');
       setIsProcessing(false);
       return;
     }
-    if (!hasPublicSeats && !hasPrivateBoats) {
-      alert('Select at least 1 seat or a private boat before checkout');
+    if (!hasSeats) {
+      alert('Select at least 1 seat before checkout');
       setIsProcessing(false);
       return;
     }
@@ -62,53 +59,22 @@ export default function BookingPage({ params }) {
     //   setIsProcessing(false);
     //   return;
     // }
+
     try {
-      const res1 = await fetch(`/api/fetchBoatingTickets`);
+      const res1 = await fetch(`/api/fetchBoatingTickets?type=theatre`);
       const data1 = await res1.json();
-      const sameTimeTickets = data1
-        .filter(
-          (item) =>
-            new Date(item.dateTime).getTime() === new Date(dateTime).getTime(), // new Date(date) === new Date(date) does not equal so if we want to compare time then we have to use getTime() function
-        )
-        .map((item) => item.ticketNum)
-        .flat();
-      if (sameTimeTickets.length !== 0) {
-        for (const ticket of ticketNum) {
-          // here we are not using nested ".map" instead we are using "for" as if we return in a nested ".map" the it doesn't return the parent ".map"
-          for (const same of sameTimeTickets) {
-            if (ticket.name === same.name) {
-              if (
-                ticket.isBookedPrivate &&
-                (same.isBookedPrivate || same.booked > 0)
-              ) {
-                alert(
-                  `Private boat ${ticket.name} has just been booked by someone else. Please adjust your selection.`,
-                );
-                setFetchAgain(true);
-                setIsProcessing(false);
-                return;
-              } else if (!ticket.isBookedPrivate && ticket.booked > 0) {
-                if (same.isBookedPrivate) {
-                  alert(
-                    `${ticket.name} has just been privately booked by someone else. Please adjust your selection.`,
-                  );
-                  setFetchAgain(true);
-                  setIsProcessing(false);
-                  return;
-                }
-                const available = same.capacity - same.booked;
-                if (ticket.booked > available) {
-                  alert(
-                    `Only ${available} seats are left for ${ticket.name}. Please adjust your selection.`,
-                  );
-                  setFetchAgain(true);
-                  setIsProcessing(false);
-                  return;
-                }
-              }
-            }
-          }
-        }
+      const totalBooked = data1.reduce((acc, item) => {
+        const itemTime = normalizeDate(item.dateTime);
+        const selectedTime = normalizeDate(dateTime);
+        return itemTime === selectedTime ? acc + item.ticketNum.booked : acc;
+      }, 0);
+      if (ticketNum.booked > ticketNum.capacity - totalBooked) {
+        alert(
+          'Oops! A few of the seats you selected were just booked by someone else.\nPlease update your selection before proceeding.',
+        );
+        setFetchAgain(true);
+        setIsProcessing(false);
+        return;
       }
       if (disablePayments) {
         const referenceId = `BYP-${Date.now()}-${uuidv4().slice(0, 8)}`;
@@ -230,6 +196,8 @@ export default function BookingPage({ params }) {
     }
   };
 
+  const normalizeDate = (dt) => new Date(dt).toISOString().slice(0, 16); // ISO up to minutes
+
   const convertTime = (timeStr) => {
     const [hours, minutes] = timeStr.split(':').map(Number);
     const date = new Date();
@@ -256,16 +224,16 @@ export default function BookingPage({ params }) {
           .from('tickets')
           .insert([
             {
-              monumentName: boats.name,
-              monumentCity: boats.city,
-              monumentImage: boats.image_url,
+              monumentName: theatre.name,
+              monumentCity: theatre.city,
+              monumentImage: theatre.image_url,
               dateTime: dateTime,
               ticketId,
               ticketNum,
               user_id: user.id,
               status: 'active',
-              service_provider_id: boats.id,
-              service_provider: 'boating',
+              service_provider_id: theatre.id,
+              service_provider: 'theatre',
               origin: isVendorMode ? 'vendorPanel' : 'userPanel',
               // user_phone: phoneNumber,
               user_name: userName || user?.user_metadata?.full_name,
@@ -279,7 +247,7 @@ export default function BookingPage({ params }) {
         if (data) {
           // console.log("✅ Ticket saved successfully:", data);
           if (disablePayments) {
-            router.push(`/boating`);
+            router.push(`/theatre`);
           } else {
             router.push(`/ticket?q=${encodeURIComponent(ticketId)}`);
           }
@@ -295,82 +263,60 @@ export default function BookingPage({ params }) {
 
   useEffect(() => {
     if (!fetchAgain) return;
-    const fetchMonuments = async () => {
+    const fetchTheatre = async () => {
       try {
         const response = await fetch(
-          `/api/fetchMonuments?detailed=${true}&id=${boatingId}&type=boating`,
+          `/api/fetchMonuments?detailed=${true}&id=${theatreId}&type=theatres`,
         );
         const data = await response.json();
-        const res1 = await fetch(`/api/fetchBoatingTickets?type=boating`);
+        const res1 = await fetch(`/api/fetchBoatingTickets?type=theatre`);
         const data1 = await res1.json();
-        setActiveBoatingTickets(
+        // console.log(data1);
+        setActiveTheatreTickets(
           data1.map((item) => ({
             data: item.ticketNum,
             timeSlot: item.dateTime,
           })),
         );
-        setBoats(data[0]);
+        setTheaters(data[0]);
         setDisablePayments(isVendorMode && data[0].email === user?.email);
-        setLoadingBoats(false);
+        setLoadingTheatre(false);
         setFetchAgain(false);
       } catch (error) {
         console.error('Error fetching monuments:', error);
-        setLoadingBoats(false);
+        setLoadingTheatre(false);
       }
     };
-    fetchMonuments();
+    fetchTheatre();
   }, [fetchAgain, user]);
+  // console.log(activeTheatreTickets);
 
   useEffect(() => {
-    if (showFlag && dateTime.length !== 0 && boats?.boats) {
-      // console.log(activeBoatingTickets);
-      // console.log(boats?.boats);
-      // console.log(dateTime);
-      const filteredData = activeBoatingTickets
-        .filter(
-          (item) =>
-            new Date(item.timeSlot).getTime() === new Date(dateTime).getTime(),
-        )
-        .map((item) => ({ data: item.data }));
-      // console.log(filteredData);
-      const updatedBoats = boats?.boats
-        .map((boat) => {
-          let updatedBoat = { ...boat };
-          filteredData.forEach((ticket) => {
-            ticket.data.forEach((bookedBoat) => {
-              if (bookedBoat.name === boat.name) {
-                if (bookedBoat.booked > 0) {
-                  updatedBoat.booked += bookedBoat.booked;
-                }
-                if (bookedBoat.isBookedPrivate) {
-                  updatedBoat.isBookedPrivate = true;
-                }
-              }
-            });
-          });
-          return updatedBoat;
-        })
-        .filter((boat) => !boat.isBookedPrivate);
-      // console.log(updatedBoats);
-      setBoatsAvailability(updatedBoats);
-      setIsPrivateAvailable(() =>
-        updatedBoats.some((item) => item.booked === 0 && !item.isBookedPrivate),
-      ); // ".some" returns a boolean value, ".find" returns the first match, ".filter" returns array of all the matches
-      setTicketNum(() =>
-        updatedBoats.map((boat) => ({
-          name: boat.name,
-          booked: 0,
-          isBookedPrivate: false,
-          publicSeatPrice: boat.publicSeatPrice,
-          privateBoatPrice: boat.privateBoatPrice,
-          capacity: boat.capacity,
-        })),
-      );
-      setLoadingBoats(false);
+    if (showFlag && dateTime.length !== 0 && theatre) {
+      const price = theatre.ticket_price.price;
+      const capacity = theatre.ticket_price.capacity;
+      const name = theatre.name;
+      setTicketNum(() => ({
+        booked: 0,
+        price,
+        capacity,
+        name,
+      }));
+      const totalBooked = activeTheatreTickets.reduce((acc, item) => {
+        const itemTime = normalizeDate(item.timeSlot);
+        const selectedTime = normalizeDate(dateTime);
+        return itemTime === selectedTime ? acc + item.data.booked : acc;
+      }, 0);
+      setTheatreAvailability(() => ({
+        booked: totalBooked,
+        price,
+        capacity,
+        name,
+      }));
+      setLoadingTheatre(false);
       setFetchAgain(false);
     }
-  }, [showFlag, dateTime, boats, activeBoatingTickets]);
-  // console.log(ticketNum);
+  }, [showFlag, dateTime, theatre, activeTheatreTickets]);
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
@@ -392,40 +338,15 @@ export default function BookingPage({ params }) {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(boats).length === 0) return;
-    // Total public tickets
-    const totalPublicTickets = Object.values(ticketNum).reduce(
-      (acc, value) => acc + value.booked,
-      0,
-    );
-    // Public seat prices
-    const publicPrice = totalPublicTickets * boats.boats[0].publicSeatPrice;
-    const adminPublicEarnings = totalPublicTickets * 100;// admin takes 100 rupees per public ticket
-    // Private seat prices and earnings
-    let privatePrice = 0;
-    let adminPrivateEarnings = 0;
-    ticketNum.forEach((ticket) => {
-      if (ticket.isBookedPrivate) {
-        const boat = boats.boats.find((b) => b.name === ticket.name);
-        if (boat) {
-          privatePrice += boat.privateBoatPrice;
-          // Admin share per boat
-          if (boat.name === 'Boat1') {
-            adminPrivateEarnings += 500;
-          } else if (boat.name === 'Boat2') {
-            adminPrivateEarnings += 4000;
-          }
-        }
-      }
-    });
-    const totalAmount = publicPrice + privatePrice;
-    const adminAmount = adminPublicEarnings + adminPrivateEarnings;
+    if (Object.keys(theatre).length === 0) return;
+    const totalAmount = ticketNum.booked * ticketNum.price;
+    const adminAmount = ticketNum.booked * 50; // admin takes 50 rupees per ticket
     const vendorAmount = totalAmount - adminAmount;
     setTotalAmount(() => totalAmount);
     setAdminAmount(adminAmount);
     setVendorAmount(vendorAmount);
     // console.log({ totalAmount, adminAmount, vendorAmount });
-  }, [ticketNum, boats]);
+  }, [ticketNum, theatre]);
 
   if (loadingUser) {
     return <Loader margin={'15rem auto'} />;
@@ -458,12 +379,12 @@ export default function BookingPage({ params }) {
         </svg>
         <h2>Details</h2>
       </header>
-      {loadingBoats ? (
+      {loadingTheatre ? (
         <Loader margin={'10rem auto'} />
-      ) : boats?.length != 0 ? (
+      ) : theatre?.length != 0 ? (
         <div className={styles.container}>
           <img
-            src={boats.image_url}
+            src={theatre.image_url}
             alt="Monument Image"
             style={blurFlag ? { filter: 'blur(10px)' } : null}
           />
@@ -472,12 +393,12 @@ export default function BookingPage({ params }) {
             style={blurFlag ? { filter: 'blur(10px)' } : null}
           >
             <section>
-              <h3>About {boats.name}</h3>
-              <p>{boats.description}</p>
+              <h3>About {theatre.name}</h3>
+              <p>{theatre.description}</p>
             </section>
             <section>
               <h3>Address</h3>
-              <p>{boats.address}</p>
+              <p>{theatre.address}</p>
             </section>
             <section className={styles.timings}>
               <h3>Opening Hours</h3>
@@ -486,7 +407,7 @@ export default function BookingPage({ params }) {
                   Opening Time:
                   <span>
                     {(() => {
-                      const [hours, minutes] = boats.opening_time.split(':');
+                      const [hours, minutes] = theatre.opening_time.split(':');
                       const date = new Date();
                       date.setHours(hours, minutes);
                       return date.toLocaleTimeString('en-US', {
@@ -502,7 +423,7 @@ export default function BookingPage({ params }) {
                   Closing Time:
                   <span>
                     {(() => {
-                      const [hours, minutes] = boats.closing_time.split(':');
+                      const [hours, minutes] = theatre.closing_time.split(':');
                       const date = new Date();
                       date.setHours(hours, minutes);
                       return date.toLocaleTimeString('en-US', {
@@ -528,14 +449,16 @@ export default function BookingPage({ params }) {
                     const rawDate = new Date(date);
                     const newDate = (() => {
                       const d = new Date(date);
-                      if (![0, 30].includes(d.getMinutes())) {
+                      if (![0].includes(d.getMinutes())) {
                         d.setMinutes(0);
                       }
                       if (
                         d.getHours() >
-                        convertTime(boats.closing_time).getHours()
+                        convertTime(theatre.opening_time).getHours()
                       ) {
-                        d.setHours(convertTime(boats.closing_time).getHours());
+                        d.setHours(
+                          convertTime(theatre.opening_time).getHours(),
+                        );
                       }
                       d.setSeconds(0);
                       return d;
@@ -547,25 +470,26 @@ export default function BookingPage({ params }) {
                   }}
                   showTimeSelect
                   timeFormat="hh:mm aa"
-                  timeIntervals={30}
+                  timeIntervals={60}
                   dateFormat="MMMM d, yyyy h:mm aa"
                   className="datepicker"
                   onCalendarOpen={() => setBlurFlag(true)}
                   onCalendarClose={() => setBlurFlag(false)}
                   minTime={
                     dateTime?.toDateString() === current_date.toDateString()
-                      ? new Date() > convertTime(boats.opening_time)
+                      ? new Date() > convertTime(theatre.opening_time)
                         ? new Date()
-                        : convertTime(boats.opening_time)
-                      : convertTime(boats.opening_time)
+                        : convertTime(theatre.opening_time)
+                      : convertTime(theatre.opening_time)
                   }
-                  maxTime={convertTime(boats.closing_time)}
+                  maxTime={convertTime(theatre.opening_time)} // i've added maxTime as opening_time too as we have a one hour slot and there's only one slot in the whole day
                   filterTime={(time) => {
                     const selectedDate = dateTime?.toDateString();
                     const isToday =
                       selectedDate === current_date.toDateString();
                     const isClosed =
-                      new Date() > convertTime(boats.closing_time);
+                      new Date().getTime() >
+                      convertTime(theatre.opening_time).getTime();
                     // Only restrict times if it's today and already closed
                     if (isToday && isClosed) return false;
                     return true;
@@ -581,114 +505,25 @@ export default function BookingPage({ params }) {
                 />
               </div>
             </section>
-            {showFlag && boatsAvailability.length !== 0 ? (
+            {showFlag && theatreAvailability.length !== 0 ? (
               <section
                 className={styles.ticketsSection}
                 style={blurFlag ? { filter: 'blur(10px)' } : null}
               >
-                {isPrivateAvailable && (
-                  <>
-                    <h3>Add a private boat</h3>
-                    <div className={styles.tickets}>
-                      {boatsAvailability.map((item, index, arr) => {
-                        if (item.booked > 0) return;
-                        return (
-                          <div key={index}>
-                            <div>
-                              <section
-                                style={
-                                  !ticketNum.some(
-                                    (ticket) =>
-                                      ticket.name === item.name &&
-                                      ticket.booked === 0,
-                                  )
-                                    ? { pointerEvents: 'none', opacity: 0.5 }
-                                    : null
-                                }
-                              >
-                                <div className={styles.ticketInfo}>
-                                  <h1>{item.name}</h1>
-                                  <p>{item.capacity} seater</p>
-                                  <h4>&#8377;{item.privateBoatPrice}</h4>
-                                </div>
-                                <div className={styles.counter}>
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 14 14"
-                                    width="1.6em"
-                                    height="1.6em"
-                                    onClick={() => {
-                                      setTicketNum((prev) =>
-                                        prev.map((boat) =>
-                                          boat.name === item.name
-                                            ? {
-                                                ...boat,
-                                                isBookedPrivate:
-                                                  !boat.isBookedPrivate,
-                                                booked: !boat.isBookedPrivate
-                                                  ? 0
-                                                  : boat.booked,
-                                              }
-                                            : boat,
-                                        ),
-                                      );
-                                    }}
-                                    style={
-                                      ticketNum.some(
-                                        (ticket) =>
-                                          ticket.name === item.name &&
-                                          ticket.isBookedPrivate,
-                                      )
-                                        ? {
-                                            transform: 'rotate(45deg)',
-                                            color: 'red',
-                                          }
-                                        : null
-                                    }
-                                  >
-                                    <g
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    >
-                                      <circle cx="7" cy="7" r="6.5"></circle>
-                                      <path d="M7 4v6M4 7h6"></path>
-                                    </g>
-                                  </svg>
-                                </div>
-                              </section>
-                            </div>
-                            {arr.length - 1 !== index && <hr />}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </>
-                )}
                 <h3>Add a public seat</h3>
-                <p>&#8377;{boatsAvailability[0].publicSeatPrice}/seat</p>
+                <p>&#8377;{theatreAvailability.price}/seat</p>
                 <div className={styles.tickets}>
-                  {boatsAvailability.map((item, index, arr) => (
-                    <div
-                      key={index}
-                      style={
-                        !ticketNum.some(
-                          (ticket) =>
-                            ticket.name === item.name &&
-                            !ticket.isBookedPrivate,
-                        )
-                          ? { opacity: 0.5, pointerEvents: 'none' }
-                          : null
-                      }
-                    >
+                  {Object.keys(theatreAvailability).length !== 0 && (
+                    <div>
                       <div>
                         <section>
                           <div className={styles.ticketInfo}>
-                            <h1>{item.name}</h1>
+                            <h1>{theatreAvailability.name}</h1>
                             <p>
-                              Available seats: {item.capacity - item.booked}/
-                              {item.capacity}
+                              Available seats:{' '}
+                              {theatreAvailability.capacity -
+                                theatreAvailability.booked}
+                              /{theatreAvailability.capacity}
                             </p>
                           </div>
                           <div className={styles.counter}>
@@ -698,28 +533,16 @@ export default function BookingPage({ params }) {
                               width="1.6em"
                               height="1.6em"
                               style={
-                                ticketNum.find(
-                                  (ticket) =>
-                                    ticket.booked <= 0 &&
-                                    ticket.name == item.name,
-                                )
+                                ticketNum.booked <= 0
                                   ? { pointerEvents: 'none', opacity: '0.5' }
                                   : null
                               }
                               onClick={() => {
-                                setTicketNum((prev) =>
-                                  prev.map((boat) =>
-                                    boat.name === item.name
-                                      ? {
-                                          ...boat,
-                                          booked:
-                                            boat.booked - 1 <= 0
-                                              ? 0
-                                              : boat.booked - 1,
-                                        }
-                                      : boat,
-                                  ),
-                                );
+                                setTicketNum((prev) => ({
+                                  ...prev,
+                                  booked:
+                                    prev.booked - 1 <= 0 ? 0 : prev.booked - 1,
+                                }));
                               }}
                             >
                               <path
@@ -730,32 +553,30 @@ export default function BookingPage({ params }) {
                                 strokeWidth="1.2"
                               ></path>
                             </svg>
-                            <h1>
-                              {ticketNum.find(
-                                (ticket) => ticket.name === item.name,
-                              ).booked || 0}
-                            </h1>
+                            <h1>{ticketNum.booked || 0}</h1>
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 14 14"
                               width="1.6em"
                               height="1.6em"
+                              style={
+                                ticketNum.booked >=
+                                theatreAvailability.capacity -
+                                  theatreAvailability.booked
+                                  ? { pointerEvents: 'none', opacity: '0.5' }
+                                  : null
+                              }
                               onClick={() => {
-                                setTicketNum((prev) =>
-                                  prev.map((boat) =>
-                                    boat.name === item.name
-                                      ? {
-                                          ...boat,
-                                          booked:
-                                            boat.booked + 1 >=
-                                            item.capacity - item.booked
-                                              ? item.capacity - item.booked
-                                              : boat.booked + 1,
-                                          isBookedPrivate: false,
-                                        }
-                                      : boat,
-                                  ),
-                                );
+                                setTicketNum((prev) => ({
+                                  ...prev,
+                                  booked:
+                                    prev.booked + 1 >=
+                                    theatreAvailability.capacity -
+                                      theatreAvailability.booked
+                                      ? theatreAvailability.capacity -
+                                        theatreAvailability.booked
+                                      : prev.booked + 1,
+                                }));
                               }}
                             >
                               <g
@@ -771,9 +592,8 @@ export default function BookingPage({ params }) {
                           </div>
                         </section>
                       </div>
-                      {arr.length - 1 !== index && <hr />}
                     </div>
-                  ))}
+                  )}
                 </div>
                 {/* {!verified && (
                   <section className={styles.otpSection}>
@@ -882,28 +702,10 @@ export default function BookingPage({ params }) {
                   <h3>Summary</h3>
                   <div>
                     <p>
-                      Public seats:
+                      Seats:
                       <span>
                         &#8377;
-                        {Object.values(ticketNum).reduce(
-                          (acc, value) => acc + value.booked,
-                          0,
-                        ) * boats.boats[0].publicSeatPrice}
-                      </span>
-                    </p>
-                    <p>
-                      Private Boat:
-                      <span>
-                        &#8377;
-                        {ticketNum.reduce((sum, ticket) => {
-                          if (ticket.isBookedPrivate) {
-                            const boat = boats.boats.find(
-                              (b) => b.name === ticket.name,
-                            );
-                            return sum + (boat?.privateBoatPrice || 0);
-                          }
-                          return sum;
-                        }, 0)}
+                        {ticketNum.booked * ticketNum.price}
                       </span>
                     </p>
                     <p className={styles.totalAmount}>
@@ -917,10 +719,10 @@ export default function BookingPage({ params }) {
                 </section>
               </section>
             ) : (
-              !loadingBoats &&
+              !loadingTheatre &&
               showFlag && (
                 <p style={blurFlag ? { filter: 'blur(10px)' } : null}>
-                  No Boats are available for this time slot, please choose
+                  No shows are available for this time slot, please choose
                   another!
                 </p>
               )

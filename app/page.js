@@ -458,12 +458,16 @@ export default function Home() {
             </p>
           ) : monuments.length != 0 ? (
             monuments.map(
-              (monument) =>
+              (monument, index) =>
                 monument.image_url && (
-                  <li key={monument.id}>
+                  <li key={index}>
                     <a
                       href={`booking/${
-                        monument.boats ? 'boating' : 'monument'
+                        monument.type === 'boating'
+                          ? 'boating'
+                          : monument.type === 'theatre'
+                          ? 'theatre'
+                          : 'monument'
                       }/${monument.id}`}
                       className={styles.cardLink}
                     >

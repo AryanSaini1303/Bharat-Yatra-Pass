@@ -10,7 +10,7 @@ import html2canvas from 'html2canvas';
 export default function Ticket() {
   const searchParams = useSearchParams();
   const ticketId = decodeURIComponent(searchParams.get('q'));
-  const [type, setType] = useState('monuments');
+  const [type, setType] = useState('');
   const [ticketDetails, setTicketDetails] = useState({});
   const [user, setUser] = useState();
   const [loadingUser, setLoadingUser] = useState(true);
@@ -64,7 +64,7 @@ export default function Ticket() {
       try {
         const response = await fetch(`/api/fetchTicket?tickedId=${ticketId}`);
         const data = await response.json();
-        setType(Array.isArray(data.ticketNum) ? 'boating' : 'monuments');
+        setType(data.service_provider);
         setTicketDetails(data);
         const image = await convertImageUrlToBase64(data.monumentImage);
         // console.log(image);
@@ -95,7 +95,7 @@ export default function Ticket() {
         const formData = new FormData();
         formData.append('file', blob, 'ticket.png');
         formData.append('phone', ticketDetails.user_phone);
-        formData.append('user_id', ticketDetails.user_id)
+        formData.append('user_id', ticketDetails.user_id);
         // const response = await fetch('/api/shareTicket', {
         //   method: 'POST',
         //   body: formData,
@@ -169,7 +169,8 @@ export default function Ticket() {
               <h4>{time}</h4>
             </section>
             {ticketDetails.ticketNum &&
-              (type !== 'boating' ? (
+              type.length !== 0 &&
+              (type === 'monument' ? (
                 <ul>
                   {ticketDetails.ticketNum.adult != 0 && (
                     <li>
@@ -193,7 +194,7 @@ export default function Ticket() {
                     </li>
                   )}
                 </ul>
-              ) : (
+              ) : type === 'boating' ? (
                 <ul>
                   {ticketDetails.ticketNum.map((item, index) => {
                     if (item.booked > 0) {
@@ -212,6 +213,14 @@ export default function Ticket() {
                     }
                   })}
                 </ul>
+              ) : type === 'theatre' ? (
+                <ul>
+                  <li>
+                    Seats <span>x {ticketDetails.ticketNum.booked}</span>
+                  </li>
+                </ul>
+              ) : (
+                'loading...'
               ))}
             <div className={styles.separator}>
               <hr />

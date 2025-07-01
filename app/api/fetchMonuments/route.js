@@ -21,10 +21,15 @@ export async function GET(request) {
       // Fetch from boating
       const { data: boating, error: boatingError } = await supabase
         .from('boating')
-        .select('image_url, name, city, id, boats')
+        .select('image_url, name, city, id, boats, type')
         .ilike('city', `%${city}%`);
-      if (boatingError) throw boatingError;
-      const combined = [...monuments, ...boating];
+      // Fetch from theatres
+      const { data: theatres, error: theatresError } = await supabase
+        .from('theatres')
+        .select('image_url, name, city, id, type')
+        .ilike('city', `%${city}%`);
+      if (theatresError) throw theatresError;
+      const combined = [...monuments, ...boating, ...theatres];
       return NextResponse.json(combined, { status: 200 });
     } else {
       const { data: monumentDetail, error: monumentError } = await supabase
